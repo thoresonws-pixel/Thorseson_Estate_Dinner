@@ -291,37 +291,39 @@ const characterDatabase = {
 
     "DJ": {
         name: "David Richardson",
-        publicDesc: "A cousin on the Thoreson side. Personable, well-connected, and the family's natural coordinator.",
-        skills: [],
-        backstory: "You're a cousin on the Thoreson side — close enough to the family to know the dynamics, far enough removed to see them objectively. You're personable, well-connected, and the kind of person people naturally confide in. You've handled various family projects over the years — organizing events, managing property, smoothing over disputes. Tonight was supposed to be a celebration. Instead, you're helping your family navigate the worst night of their lives.",
+        publicDesc: "A cousin on the Thoreson side and a licensed private investigator. Called to the estate tonight after Will's sudden death raised questions.",
+        skills: ["Investigation"],
+        backstory: "You're a cousin on the Thoreson side — close enough to the family to know the dynamics, far enough removed to make a living outside the toy business. You became a private investigator about eight years ago, working cases around Dallas — missing persons, insurance fraud, the occasional domestic matter. You're good at it. You know how to read people, how to follow a paper trail, and how to ask the right questions without tipping your hand.\n\nScott called you tonight. Will is dead, and something doesn't sit right. The family needs someone they can trust to look into this quietly — not the police, not yet. Just someone who knows what to look for. That's you.\n\nYou arrived after the fact. You didn't see Will die. But you know this family, and you know that money, secrets, and old grudges have a way of turning deadly. Your job tonight is to figure out what happened — and who in this room might have wanted Will gone.",
         howToPlay: {
-            tone: "Steady, social, practical. You're the family fixer — the person who keeps things running smoothly.",
-            behaviors: "Talk to everyone. Check in on people. Help facilitate conversations between characters who might have pieces of the puzzle. You're not the detective — you're the coordinator.",
-            important: "You can help move the investigation forward by encouraging quieter characters to share what they know. 'Wait, didn't you say something earlier about...?'"
+            tone: "Calm, observant, methodical. You're working a case, not grieving — at least not yet. Be professional but human.",
+            behaviors: "Ask direct questions. Press people on inconsistencies. Examine documents carefully — you have the training to spot what others miss. When someone says something that doesn't add up, follow up.",
+            important: "You have the Investigation skill. When you find documents with QR codes, scan them — your training lets you see things others can't. Share your findings with the group to move the case forward."
         },
         knowledge: [
-            { text: "You know the Thoreson family well — their strengths and their tensions.", unlockedBy: null },
-            { text: "Will was a complicated man. Generous publicly, but private about his past.", unlockedBy: null },
-            { text: "Scott carries a heavy burden as the family lawyer — he knows things he can't always share.", unlockedBy: null },
-            { text: "You're good at reading rooms and managing people — that's your role in this family.", unlockedBy: null }
+            { text: "Scott called you tonight because Will's death seemed sudden and unexpected. He wants answers before involving the authorities.", unlockedBy: null },
+            { text: "You know the Thoreson family well — their strengths and their tensions. Will was generous publicly, but private about his past.", unlockedBy: null },
+            { text: "In your line of work, you've learned that the person who finds the body and the person who benefits most from the death are always worth looking at first.", unlockedBy: null },
+            { text: "Miranda Longfellow has worked for Scott for about ten years. You've met her a few times. Pleasant enough, but you've never heard her mention family or where she came from.", unlockedBy: null }
         ],
         canShare: [
+            { text: "Scott asked me to come tonight. He's not comfortable with how sudden this was, and frankly, neither am I.", unlockedBy: null },
+            { text: "I've been doing this long enough to know — when a wealthy man dies unexpectedly, you follow the money and you follow the grudges.", unlockedBy: "willsDeath" },
             { text: "Eleanor once told me that Will 'didn't build this alone, no matter what he says.' She never explained what she meant.", unlockedBy: "stolenCompany" },
-            { text: "I've known this family my whole life. Will was generous, but he could be ruthless when it came to business.", unlockedBy: null },
-            { text: "I've never heard Miranda mention family or where she came from. In ten years. That's unusual, isn't it?", unlockedBy: "secretHeir" },
-            { text: "If we need to organize a search or coordinate what everyone's found, I can help manage that.", unlockedBy: null }
+            { text: "I've never heard Miranda mention family or where she came from. In ten years. That's unusual for someone that close to the family.", unlockedBy: "secretHeir" },
+            { text: "If anyone has documents they need examined — letters, records, anything that looks off — bring them to me. That's what I do.", unlockedBy: null }
         ],
         goals: [
-            "Help the family get through this night",
-            "Facilitate the investigation — make sure everyone's being heard",
-            "Pay attention to how people are reacting",
-            "Support Scott as the new head of the family"
+            "Investigate Will's death — talk to everyone, examine everything",
+            "Look for inconsistencies in people's stories",
+            "Examine any documents or evidence you can get your hands on",
+            "Report your findings to the group — you're here to get answers"
         ],
         relationships: [
-            { name: "Scott Thoreson Jr.", relation: "Your cousin" },
-            { name: "Brian Thoreson", relation: "Your cousin" },
+            { name: "Scott Thoreson Jr.", relation: "Your cousin — he called you in tonight" },
+            { name: "Brian Thoreson", relation: "Your cousin — not the sharpest, but family" },
             { name: "William Thoreson Sr.", relation: "Your uncle (deceased)" },
-            { name: "Eleanor Thoreson", relation: "Your aunt" }
+            { name: "Eleanor Thoreson", relation: "Your aunt" },
+            { name: "Miranda Longfellow", relation: "Scott's assistant — you've met her a few times" }
         ],
         items: []
     },
