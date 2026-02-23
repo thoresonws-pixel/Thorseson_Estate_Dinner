@@ -1738,6 +1738,13 @@
                 userSession.activeItems.push(itemId);
             } else {
                 userSession.activeItems.splice(index, 1);
+                // Clear from shown memories so it can re-trigger if toggled back on
+                var shown = getShownMemories();
+                var shownIndex = shown.indexOf(itemId);
+                if (shownIndex !== -1) {
+                    shown.splice(shownIndex, 1);
+                    localStorage.setItem('shownMemories', JSON.stringify(shown));
+                }
             }
             // Check for new memories on THIS device (the one toggling)
             checkForNewMemories(oldItems, userSession.activeItems);
@@ -1766,9 +1773,24 @@
         // ── MEMORY POPUP SYSTEM ──────────────────────────────────
         var memoryQueue = [];
 
+        // Track which triggers have already shown popups (persists across sessions)
+        function getShownMemories() {
+            try {
+                return JSON.parse(localStorage.getItem('shownMemories') || '[]');
+            } catch(e) { return []; }
+        }
+        function markMemoryShown(triggerIds) {
+            var shown = getShownMemories();
+            triggerIds.forEach(function(id) {
+                if (shown.indexOf(id) === -1) shown.push(id);
+            });
+            localStorage.setItem('shownMemories', JSON.stringify(shown));
+        }
+
         function checkForNewMemories(oldItems, newItems) {
+            var shown = getShownMemories();
             var newlyAdded = newItems.filter(function(id) {
-                return oldItems.indexOf(id) === -1;
+                return oldItems.indexOf(id) === -1 && shown.indexOf(id) === -1;
             });
             if (newlyAdded.length === 0) return;
 
@@ -1777,11 +1799,13 @@
             if (!charData) return;
 
             var memories = [];
+            var triggersToMark = [];
 
             if (charData.knowledge) {
                 charData.knowledge.forEach(function(item) {
                     if (item.unlockedBy && newlyAdded.indexOf(item.unlockedBy) !== -1) {
                         memories.push({ text: item.text, type: 'knowledge' });
+                        if (triggersToMark.indexOf(item.unlockedBy) === -1) triggersToMark.push(item.unlockedBy);
                     }
                 });
             }
@@ -1790,11 +1814,13 @@
                 charData.canShare.forEach(function(item) {
                     if (item.unlockedBy && newlyAdded.indexOf(item.unlockedBy) !== -1) {
                         memories.push({ text: item.text, type: 'canShare' });
+                        if (triggersToMark.indexOf(item.unlockedBy) === -1) triggersToMark.push(item.unlockedBy);
                     }
                 });
             }
 
             if (memories.length > 0) {
+                markMemoryShown(triggersToMark);
                 memoryQueue = memoryQueue.concat(memories);
                 if (!document.querySelector('.memory-popup-overlay')) {
                     showNextMemory();
