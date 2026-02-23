@@ -1426,11 +1426,8 @@
                     document.getElementById('masterclues').style.display = 'none';
                 }
 
-                // Show Scan nav for characters who have skills (not Bartender-only)
-                var scanSkills = getMySkills().filter(function(s) { return s !== 'Bartender'; });
-                if (scanSkills.length > 0) {
-                    document.getElementById('scanNav').style.display = 'block';
-                }
+                // Show Scan nav for ALL characters
+                document.getElementById('scanNav').style.display = 'block';
 
                 // Initialize session arrays if missing
                 if (!userSession.activeItems) userSession.activeItems = [];
@@ -1472,15 +1469,6 @@
                 
                 // PUBLIC DESCRIPTION
                 html += '<div style="font-size: 16px; color: #8b8b8b; font-style: italic; margin-bottom: 15px;">' + charData.publicDesc + '</div>';
-
-                // SKILLS
-                if (charData.skills && charData.skills.length > 0) {
-                    html += '<div style="margin-bottom: 15px;">';
-                    charData.skills.forEach(function(s) {
-                        html += '<span style="display:inline-block; font-size:11px; background:rgba(201,162,39,0.15); color:#c9a227; padding:3px 10px; border-radius:3px; margin-right:6px; margin-bottom:4px; border:1px solid rgba(201,162,39,0.3); letter-spacing:1px; text-transform:uppercase;">' + s + '</span>';
-                    });
-                    html += '</div>';
-                }
                 
                 // BACKSTORY
                 html += '<div style="' + sectionStyle + '">Your Story</div>';
