@@ -183,6 +183,34 @@ const skillsDatabase = {
         `
     },
 
+    "Banking": {
+        title: "Bank Statement Analysis — Failed European Deal",
+        password: "open",
+        lockedTitle: "Bank Records",
+        lockedSubtitle: "These financial records require banking expertise to interpret",
+        errorMsg: "Incorrect password. Find someone with banking experience.",
+        badge: "Banking Analysis",
+        header: "Thoreson Toys — Capital Account Review, 1934",
+        summary: "A $40,000 company withdrawal was wired to a shell company in London for a 'European distribution deal' that collapsed within weeks. Two outside investor accounts suffered significant losses. The investors had been demanding a face-to-face meeting with Will for months.",
+        expert: `
+            <p>I've reviewed the Thoreson Toys capital account statements from the past twelve months. The company's operating accounts show healthy, consistent revenue — quarterly deposits, vendor payments, payroll. Nothing unusual on the surface. But one transaction stands out immediately.</p>
+            
+            <div class="reveal-highlight">
+                Six months ago, a single wire transfer of <strong>$40,000</strong> was drawn from the company's primary capital account and sent to an entity called "Continental European Trading Ltd." based in London. There is no corresponding contract on file, no board resolution authorizing the expenditure, and no due diligence documentation. For a transfer of this size, that is deeply irregular.
+            </div>
+            
+            <p>I traced the receiving entity. Continental European Trading Ltd. was incorporated just three weeks before the wire transfer and dissolved less than two months afterward. The registered address is a postal box in the City of London. This has every hallmark of a shell company — created to receive money and disappear. Whether Will was deceived by a fraudulent deal or made a catastrophic misjudgment, the result is the same: $40,000 of company capital, gone.</p>
+            
+            <div class="reveal-danger">
+                The losses didn't stay on the company's books. Two outside investor accounts — both holding significant stakes in Thoreson Toys — show corresponding margin calls and loss notices dated within weeks of the failed transfer. These investors lost a substantial portion of their capital because of this single decision. Based on the correspondence attached to the statements, both parties have been requesting an urgent face-to-face meeting with William Thoreson for months. Those requests were repeatedly deferred — until tonight.
+            </div>
+            
+            <p>In forty years of banking, I've seen deals go bad. It happens. But the lack of documentation, the shell company structure, and the scale of the loss relative to the company's reserves — this wasn't just a bad bet. This was either reckless negligence or something more deliberate.</p>
+            
+            <p><strong>The question is:</strong> Who are these two investors, and how angry were they about losing that kind of money?</p>
+        `
+    },
+
     "Bartender": {
         title: "Cocktail Recipes",
         password: null,

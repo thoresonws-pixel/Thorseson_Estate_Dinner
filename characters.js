@@ -565,7 +565,7 @@ const characterDatabase = {
     "Jeff": {
         name: "Charles Sterling",
         publicDesc: "A retired banker and distant Thoreson relation. Forty years in Dallas banking. Traditional and principled.",
-        skills: [],
+        skills: ["Banking"],
         backstory: "You're a retired banker and a distant Thoreson relation through marriage. You spent forty years in Dallas banking before retiring. You're traditional, principled, and believe in doing things the right way. You handled some of the Thoreson family's banking in the early days — back when Will was just getting the company off the ground. You remember things from that era that might be relevant now, though you've kept them to yourself out of professional discretion.",
         howToPlay: {
             tone: "Dignified, measured, principled. You speak carefully because words matter.",
