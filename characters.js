@@ -31,7 +31,7 @@ const characterDatabase = {
             { text: "Your father seemed anxious in recent weeks — distracted, emotional, not himself.", unlockedBy: null },
             { text: "As family attorney, you have access to most of the family's legal and financial documents.", unlockedBy: null },
             { text: "🔔 POPUP TEST: If you're seeing this, the memory popup system is working!", unlockedBy: "popupTest" },
-            { text: "Ran background checks on your guest list. Most came back clean. Two names flagged for name changes — both Hartley. Walter Lippman born Taylor Hartley. Miranda Longfellow matches a Miranda Hartley out of Dallas. Two Hartleys at your party tonight. Call me if you need more.", unlockedBy: "backgroundCheck" }
+            { text: "Ran background checks on your guest list. Most came back clean. Charles Sterling has two unpaid parking tickets in Fort Worth. Thomas Bradford had a public intoxication charge dismissed in 1931. Two names flagged for name changes — Walter Lippman born Taylor Hartley. Miranda Longfellow matches a Miranda Hartley out of Dallas. Call me if you need more.", unlockedBy: "backgroundCheck" }
         ],
         canShare: [
             { text: "Your father seemed different lately — anxious, like something was weighing on him.", unlockedBy: null },
@@ -305,7 +305,7 @@ const characterDatabase = {
             { text: "You know the Thoreson family well — their strengths and their tensions. Will was generous publicly, but private about his past.", unlockedBy: null },
             { text: "In your line of work, you've learned that when a wealthy man dies unexpectedly, the answers are usually in the paperwork.", unlockedBy: null },
             { text: "Miranda Longfellow has worked for Scott for about ten years. You've met her a few times. Pleasant enough, but you've never heard her mention family or where she came from.", unlockedBy: null },
-            { text: "Ran background checks on your guest list. Most came back clean. Two names flagged for name changes — both Hartley. Walter Lippman born Taylor Hartley. Miranda Longfellow matches a Miranda Hartley out of Dallas. Two Hartleys at your party tonight. Call me if you need more.", unlockedBy: "backgroundCheck" }
+            { text: "Ran background checks on your guest list. Most came back clean. Charles Sterling has two unpaid parking tickets in Fort Worth. Thomas Bradford had a public intoxication charge dismissed in 1931. Two names flagged for name changes — Walter Lippman born Taylor Hartley. Miranda Longfellow matches a Miranda Hartley out of Dallas. Call me if you need more.", unlockedBy: "backgroundCheck" }
         ],
         canShare: [
             { text: "I've got a friend at the coroner's office and a contact at Pinkerton. I've been making calls — we should have some paperwork coming our way tonight.", unlockedBy: null },
