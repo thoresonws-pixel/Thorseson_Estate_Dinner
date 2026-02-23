@@ -39,7 +39,7 @@ const revelationsDatabase = {
                 id: "europeanDeal",
                 type: "revelation",
                 title: "The Failed European Deal",
-                summary: "Six months ago, Will wired <strong>$40,000</strong> of company capital to a shell company in London for a 'European distribution deal' that collapsed. Two outside investors suffered major losses and have been demanding answers."
+                summary: "Earlier this year, Will wired <strong>$8,000</strong> to Kessler & Braun European Distributors in Hamburg for an overseas expansion deal. The company dissolved within weeks — total loss. Two outside investors who had money in Thoreson Toys have been demanding answers for months."
             }
         ]
     },

@@ -184,30 +184,30 @@ const skillsDatabase = {
     },
 
     "Banking": {
-        title: "Bank Statement Analysis — Failed European Deal",
+        title: "Bank Statement Analysis — Kessler & Braun Investment",
         password: "open",
         lockedTitle: "Bank Records",
         lockedSubtitle: "These financial records require banking expertise to interpret",
         errorMsg: "Incorrect password. Find someone with banking experience.",
         badge: "Banking Analysis",
         header: "Thoreson Toys — Capital Account Review, 1934",
-        summary: "A $40,000 company withdrawal was wired to a shell company in London for a 'European distribution deal' that collapsed within weeks. Two outside investor accounts suffered significant losses. The investors had been demanding a face-to-face meeting with Will for months.",
+        summary: "An $8,000 wire transfer was sent to Kessler & Braun European Distributors in Hamburg for an overseas expansion deal. The company dissolved within six weeks — total loss. Two outside investors who had put money into Thoreson Toys have been demanding a meeting with Will for months.",
         expert: `
-            <p>I've reviewed the Thoreson Toys capital account statements from the past twelve months. The company's operating accounts show healthy, consistent revenue — quarterly deposits, vendor payments, payroll. Nothing unusual on the surface. But one transaction stands out immediately.</p>
+            <p>I've been looking over the Thoreson Toys bank statements. Most of this is what you'd expect — weekly sales deposits, payroll, vendor payments. The company's been running steady for years. But a few things caught my eye.</p>
             
             <div class="reveal-highlight">
-                Six months ago, a single wire transfer of <strong>$40,000</strong> was drawn from the company's primary capital account and sent to an entity called "Continental European Trading Ltd." based in London. There is no corresponding contract on file, no board resolution authorizing the expenditure, and no due diligence documentation. For a transfer of this size, that is deeply irregular.
+                First — right at the top of the statement, January 2nd. Two outside investors deposited money into the company account. <strong>Investor Account 7714-A put in $3,000</strong> and <strong>Investor Account 7722-B put in $2,500</strong>. That's $5,500 of other people's money that Will was managing.
             </div>
             
-            <p>I traced the receiving entity. Continental European Trading Ltd. was incorporated just three weeks before the wire transfer and dissolved less than two months afterward. The registered address is a postal box in the City of London. This has every hallmark of a shell company — created to receive money and disappear. Whether Will was deceived by a fraudulent deal or made a catastrophic misjudgment, the result is the same: $40,000 of company capital, gone.</p>
+            <p>Then in March, there's a wire transfer for <strong>$8,000</strong> sent to a company called <strong>Kessler & Braun European Distributors</strong> out of Hamburg, Germany. Looks like Will was trying to break into overseas markets — European toy distribution. That's a big swing for a company this size. The account dropped from $22,000 down to about $14,000 overnight.</p>
+            
+            <p>Six weeks later, Kessler & Braun's account was dissolved. There's a write-down on the books for the full $8,000 — total loss. No recovered funds, nothing coming back. Just gone.</p>
             
             <div class="reveal-danger">
-                The losses didn't stay on the company's books. Two outside investor accounts — both holding significant stakes in Thoreson Toys — show corresponding margin calls and loss notices dated within weeks of the failed transfer. These investors lost a substantial portion of their capital because of this single decision. Based on the correspondence attached to the statements, both parties have been requesting an urgent face-to-face meeting with William Thoreson for months. Those requests were repeatedly deferred — until tonight.
+                Now here's where it gets interesting. After the loss hit the books, both of those investors started sending demand letters. Then meeting requests. Then <em>more</em> meeting requests. Then one of them got their attorney involved. Months of correspondence, and Will kept pushing them off. Somebody lost real money because of Will's decision, and they've been trying to get answers for months.
             </div>
             
-            <p>In forty years of banking, I've seen deals go bad. It happens. But the lack of documentation, the shell company structure, and the scale of the loss relative to the company's reserves — this wasn't just a bad bet. This was either reckless negligence or something more deliberate.</p>
-            
-            <p><strong>The question is:</strong> Who are these two investors, and how angry were they about losing that kind of money?</p>
+            <p><strong>The question is — who are these two investors, and are they here tonight?</strong></p>
         `
     },
 
