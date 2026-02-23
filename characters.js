@@ -6,7 +6,7 @@
 //   unlockedBy: "ledger"      → Visible only after that revelation is toggled ON
 //
 // REVELATION IDS (from revelationsDatabase):
-//   Act 1: willsDeath, ledger, forgedDocs, stolenCompany
+//   Act 1: willsDeath, ledger, forgedDocs, stolenCompany, europeanDeal
 //   Act 2: affair, secretHeir, margaretsLetter, marriage
 //   Act 3: poisoning, mirandaIdentity, finalConfession
 //   Test: popupTest (Scott only — for testing memory popup system)
@@ -724,6 +724,7 @@ const characterDatabase = {
             { text: "You're ambitious and pay close attention to how power and money work.", unlockedBy: null }
         ],
         canShare: [
+            { text: "I heard Mr. Brennan and Mrs. Ashworth talking on the patio last month. He said 'Will's cost us a fortune on this deal, but the man's made us ten times that over the years. We just need to get him back on track.'", unlockedBy: "europeanDeal" },
             { text: "I don't have the history everyone else has with this family. But sometimes an outsider's perspective is what you need.", unlockedBy: null },
             { text: "My father mentioned once that the Thoreson accounts were 'complicated' in the early days. He wouldn't say more.", unlockedBy: "ledger" },
             { text: "I've been watching everyone's faces when new information comes out. Some people are surprised. Some people aren't. That tells you something.", unlockedBy: "secretHeir" },

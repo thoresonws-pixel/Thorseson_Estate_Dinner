@@ -34,6 +34,12 @@ const revelationsDatabase = {
                 type: "story",
                 title: "The Stolen Company",
                 summary: "Thoreson Toys was originally <strong>Thoreson & Hartley Toys</strong>. Will used forged documents to seize full ownership after his partner Robert Hartley's death in 1910."
+            },
+            {
+                id: "europeanDeal",
+                type: "revelation",
+                title: "The Failed European Deal",
+                summary: "Six months ago, Will wired <strong>$40,000</strong> of company capital to a shell company in London for a 'European distribution deal' that collapsed. Two outside investors suffered major losses and have been demanding answers."
             }
         ]
     },
