@@ -1871,19 +1871,25 @@
             }).catch(function(err) {
                 document.getElementById('scannerStatus').textContent = 'Camera access denied. Please allow camera permissions.';
                 console.error('Scanner error:', err);
+                // Clean up so closeScanner doesn't try to stop a never-started scanner
+                try { html5QrCode.clear(); } catch(e) {}
+                html5QrCode = null;
             });
         }
 
         function closeScanner() {
+            var overlay = document.getElementById('scannerOverlay');
             if (html5QrCode) {
                 html5QrCode.stop().then(function() {
                     html5QrCode.clear();
                     html5QrCode = null;
                 }).catch(function() {
+                    // Scanner may never have started (e.g. camera denied)
+                    try { html5QrCode.clear(); } catch(e) {}
                     html5QrCode = null;
                 });
             }
-            document.getElementById('scannerOverlay').classList.remove('active');
+            overlay.classList.remove('active');
         }
 
         function onScanSuccess(decodedText) {
