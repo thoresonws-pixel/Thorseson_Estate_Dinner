@@ -30,7 +30,8 @@ const characterDatabase = {
             { text: "Your legal assistant Miranda Longfellow has worked for you faithfully for nearly ten years.", unlockedBy: null },
             { text: "Your father seemed anxious in recent weeks — distracted, emotional, not himself.", unlockedBy: null },
             { text: "As family attorney, you have access to most of the family's legal and financial documents.", unlockedBy: null },
-            { text: "🔔 POPUP TEST: If you're seeing this, the memory popup system is working!", unlockedBy: "popupTest" }
+            { text: "🔔 POPUP TEST: If you're seeing this, the memory popup system is working!", unlockedBy: "popupTest" },
+            { text: "David just got a call from his Pinkerton contact — background checks on everyone at the party came back. Two names flagged: Walter Lippman is really Taylor Hartley, and Miranda Longfellow is really Miranda Hartley. Two Hartleys at this party.", unlockedBy: "poisonTrail" }
         ],
         canShare: [
             { text: "Your father seemed different lately — anxious, like something was weighing on him.", unlockedBy: null },
