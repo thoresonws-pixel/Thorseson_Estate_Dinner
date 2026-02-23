@@ -1274,6 +1274,9 @@
         
         broadcastChannel.onmessage = (event) => {
             if (!userSession) return;
+            if (event.data.type === 'gameReset') {
+                localStorage.setItem('shownMemories', '[]');
+            }
             if (event.data.type === 'itemUpdate') {
                 var oldItems = userSession.activeItems || [];
                 checkForNewMemories(oldItems, event.data.activeItems || []);
@@ -1333,6 +1336,10 @@
                 const items = snapshot.val() || [];
                 if (userSession && Array.isArray(items)) {
                     var oldItems = userSession.activeItems || [];
+                    // Game reset detected — clear popup history on all devices
+                    if (items.length === 0 && oldItems.length > 0) {
+                        localStorage.setItem('shownMemories', '[]');
+                    }
                     checkForNewMemories(oldItems, items);
                     userSession.activeItems = items;
                     localStorage.setItem('userSession', JSON.stringify(userSession));
@@ -1727,6 +1734,13 @@
             html += '<div style="font-size:11px; color:#8b7355; margin-top:8px; font-style:italic;">Toggle ON to see the popup on your device. Toggle OFF to reset for retesting.</div>';
             html += '</div>';
 
+            // START GAME / RESET button
+            html += '<div style="margin-top:40px; padding-top:25px; border-top:3px solid #e74c3c;">';
+            html += '<div style="font-family:\'Playfair Display\',serif; font-size:16px; letter-spacing:3px; text-transform:uppercase; color:#e74c3c; margin-bottom:12px;">\u26A0 GAME RESET</div>';
+            html += '<div style="font-size:13px; color:#8b8b8b; margin-bottom:15px;">Clears ALL revelations, skill discoveries, and popup history across all connected devices. Use before the event starts to ensure a clean slate.</div>';
+            html += '<button onclick="resetGame()" style="background:#e74c3c; color:white; border:none; padding:12px 30px; cursor:pointer; border-radius:3px; font-family:\'Playfair Display\',serif; font-size:14px; letter-spacing:2px; text-transform:uppercase;">Reset &amp; Start Fresh</button>';
+            html += '</div>';
+
             document.getElementById('masterCluesContent').innerHTML = html;
         }
 
@@ -1753,6 +1767,32 @@
             broadcastChannel.postMessage({ type: 'itemUpdate', activeItems: userSession.activeItems });
             loadMasterClues();
             loadCharacterData();
+        }
+
+        function resetGame() {
+            if (!confirm('This will clear ALL revelations, skill discoveries, and popup history for every connected device. Are you sure?')) return;
+            
+            // Clear local state
+            userSession.activeItems = [];
+            userSession.discoveredSkills = [];
+            localStorage.setItem('userSession', JSON.stringify(userSession));
+            localStorage.setItem('shownMemories', '[]');
+            
+            // Clear Firebase (triggers listeners on all devices)
+            if (database) {
+                database.ref('activeItems').set([]);
+                database.ref('discoveredSkills').set([]);
+            }
+            
+            // Broadcast to same-device tabs
+            broadcastChannel.postMessage({ type: 'itemUpdate', activeItems: [] });
+            broadcastChannel.postMessage({ type: 'skillUpdate', discoveredSkills: [] });
+            broadcastChannel.postMessage({ type: 'gameReset' });
+            
+            // Re-render
+            loadMasterClues();
+            loadCharacterData();
+            loadDiscoveriesData();
         }
 
         function toggleSkill(skillName) {
