@@ -916,6 +916,40 @@
             margin-top: 12px;
             animation: memoryTextReveal 0.6s ease 0.9s both;
         }
+        /* ── Text Message Popup ── */
+        .memory-popup-box.text-message {
+            border-color: #2a5a2a;
+            background: linear-gradient(145deg, #1a2e1a 0%, #0a1a0a 100%);
+        }
+        .text-msg-from {
+            font-family: 'Courier New', monospace; font-size: 11px; color: #4caf50;
+            letter-spacing: 3px; text-transform: uppercase; margin-bottom: 5px;
+            animation: memoryTextReveal 0.6s ease 0.2s both;
+        }
+        .text-msg-header {
+            font-family: 'Courier New', monospace; font-size: 14px; color: #81c784;
+            font-weight: bold; margin-bottom: 15px; padding-bottom: 10px;
+            border-bottom: 1px solid rgba(76, 175, 80, 0.3);
+            animation: memoryTextReveal 0.6s ease 0.3s both;
+        }
+        .text-msg-body {
+            font-family: 'Georgia', serif; font-size: 15px; color: #c8e6c9;
+            line-height: 1.7; font-style: normal; padding: 15px;
+            background: rgba(76, 175, 80, 0.08); border-radius: 8px;
+            border-left: 3px solid #4caf50;
+            animation: memoryTextReveal 0.6s ease 0.5s both;
+        }
+        .text-msg-action {
+            font-size: 11px; color: #4caf50; text-align: center; margin-top: 15px;
+            letter-spacing: 2px; text-transform: uppercase; font-weight: bold;
+            animation: memoryTextReveal 0.6s ease 0.7s both;
+        }
+        .memory-popup-box.text-message .memory-popup-dismiss {
+            border-color: #4caf50; color: #4caf50;
+        }
+        .memory-popup-box.text-message .memory-popup-dismiss:hover {
+            background: #4caf50; color: #1a2e1a;
+        }
     </style>
 </head>
 <body>
@@ -1857,7 +1891,7 @@
             if (charData.knowledge) {
                 charData.knowledge.forEach(function(item) {
                     if (item.unlockedBy && newlyAdded.indexOf(item.unlockedBy) !== -1) {
-                        memories.push({ text: item.text, type: 'knowledge' });
+                        memories.push({ text: item.text, type: 'knowledge', triggerId: item.unlockedBy });
                         if (triggersToMark.indexOf(item.unlockedBy) === -1) triggersToMark.push(item.unlockedBy);
                     }
                 });
@@ -1866,7 +1900,7 @@
             if (charData.canShare) {
                 charData.canShare.forEach(function(item) {
                     if (item.unlockedBy && newlyAdded.indexOf(item.unlockedBy) !== -1) {
-                        memories.push({ text: item.text, type: 'canShare' });
+                        memories.push({ text: item.text, type: 'canShare', triggerId: item.unlockedBy });
                         if (triggersToMark.indexOf(item.unlockedBy) === -1) triggersToMark.push(item.unlockedBy);
                     }
                 });
@@ -1925,24 +1959,49 @@
             var memory = memoryQueue.shift();
             var remaining = memoryQueue.length;
 
-            var typeLabel = memory.type === 'canShare'
-                ? 'You may share this with others'
-                : 'Something you now recall';
+            // Text message style triggers
+            var textMessageTriggers = {
+                'backgroundCheck': { from: 'PINKERTON DETECTIVE AGENCY', action: '\u26A0\uFE0F SHARE THIS WITH THE GROUP' }
+                // Add more here as needed
+            };
 
+            var isTextMsg = memory.triggerId && textMessageTriggers[memory.triggerId];
             var overlay = document.createElement('div');
             overlay.className = 'memory-popup-overlay';
-            overlay.innerHTML =
-                '<div class="memory-popup-box">' +
-                    '<div class="memory-popup-header">A Memory Surfaces\u2026</div>' +
-                    '<div class="memory-popup-text">\u201C' + memory.text + '\u201D</div>' +
-                    '<div class="memory-popup-type">' + typeLabel + '</div>' +
-                    '<button class="memory-popup-dismiss" onclick="dismissMemory()">' +
-                        (remaining > 0 ? 'Next' : 'Dismiss') +
-                    '</button>' +
-                    (remaining > 0
-                        ? '<div class="memory-popup-counter">' + remaining + ' more memor' + (remaining === 1 ? 'y' : 'ies') + '</div>'
-                        : '') +
-                '</div>';
+
+            if (isTextMsg) {
+                var tmData = textMessageTriggers[memory.triggerId];
+                overlay.innerHTML =
+                    '<div class="memory-popup-box text-message">' +
+                        '<div class="text-msg-from">TEXT RECEIVED FROM</div>' +
+                        '<div class="text-msg-header">' + tmData.from + '</div>' +
+                        '<div class="text-msg-body">' + memory.text + '</div>' +
+                        '<div class="text-msg-action">' + tmData.action + '</div>' +
+                        '<button class="memory-popup-dismiss" onclick="dismissMemory()">' +
+                            (remaining > 0 ? 'Next' : 'Dismiss') +
+                        '</button>' +
+                        (remaining > 0
+                            ? '<div class="memory-popup-counter">' + remaining + ' more</div>'
+                            : '') +
+                    '</div>';
+            } else {
+                var typeLabel = memory.type === 'canShare'
+                    ? 'You may share this with others'
+                    : 'Something you now recall';
+
+                overlay.innerHTML =
+                    '<div class="memory-popup-box">' +
+                        '<div class="memory-popup-header">A Memory Surfaces\u2026</div>' +
+                        '<div class="memory-popup-text">\u201C' + memory.text + '\u201D</div>' +
+                        '<div class="memory-popup-type">' + typeLabel + '</div>' +
+                        '<button class="memory-popup-dismiss" onclick="dismissMemory()">' +
+                            (remaining > 0 ? 'Next' : 'Dismiss') +
+                        '</button>' +
+                        (remaining > 0
+                            ? '<div class="memory-popup-counter">' + remaining + ' more memor' + (remaining === 1 ? 'y' : 'ies') + '</div>'
+                            : '') +
+                    '</div>';
+            }
 
             document.body.appendChild(overlay);
         }

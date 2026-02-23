@@ -88,6 +88,12 @@ const revelationsDatabase = {
                 type: "story",
                 title: "Miranda Unmasked",
                 summary: "Miranda Longfellow is really <strong>Miranda Hartley</strong> — Robert's abandoned daughter. She changed her name, became Scott's assistant, and has been hiding inside the family for <strong>ten years</strong>."
+            },
+            {
+                id: "backgroundCheck",
+                type: "revelation",
+                title: "Background Check Results",
+                summary: "Pinkerton background checks on all party guests flagged two name changes — both connected to the <strong>Hartley</strong> family. Walter Lippman is <strong>Taylor Hartley</strong>. Miranda Longfellow is <strong>Miranda Hartley</strong>."
             }
         ]
     }
