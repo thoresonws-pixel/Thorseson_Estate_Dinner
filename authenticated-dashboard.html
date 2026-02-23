@@ -1744,16 +1744,20 @@
 
         function toggleItem(itemId) {
             if (!userSession.activeItems) userSession.activeItems = [];
+            var oldItems = userSession.activeItems.slice(); // snapshot before change
             const index = userSession.activeItems.indexOf(itemId);
             if (index === -1) {
                 userSession.activeItems.push(itemId);
             } else {
                 userSession.activeItems.splice(index, 1);
             }
+            // Check for new memories on THIS device (the one toggling)
+            checkForNewMemories(oldItems, userSession.activeItems);
             localStorage.setItem('userSession', JSON.stringify(userSession));
             syncToFirebase();
             broadcastChannel.postMessage({ type: 'itemUpdate', activeItems: userSession.activeItems });
             loadMasterClues();
+            loadCharacterData();
         }
 
         function toggleSkill(skillName) {
