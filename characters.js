@@ -798,6 +798,7 @@ const characterDatabase = {
             { text: "Your instincts are sharp. When something feels wrong, you're usually right.", unlockedBy: null }
         ],
         canShare: [
+            { text: "I saw Will alone in the garden once. He was holding a letter and crying. When he noticed me he shoved it in his pocket and pretended nothing happened.", unlockedBy: "margaretsLetter" },
             { text: "I don't know these people well, but something feels wrong. Not sad — wrong. Like some people at this party expected this to happen.", unlockedBy: null },
             { text: "I've been watching Miranda. Her expression hasn't changed all night. Everyone else is shocked or grieving. She's... calm.", unlockedBy: "secretHeir" },
             { text: "Patricia always says the truth eventually comes out. I think she's been waiting for something like this.", unlockedBy: null },
