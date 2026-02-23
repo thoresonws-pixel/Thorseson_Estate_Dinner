@@ -1873,7 +1873,45 @@
                     showNextMemory();
                 }
             }
+
+            // Auto-trigger skills based on revelations
+            // Maps: revelation ID → skill name that should auto-fire (like a QR scan)
+            var skillAutoTriggers = {
+                'poisoning': 'Botany'
+                // Add more here as needed, e.g.: 'someRevelation': 'SomeSkill'
+            };
+
+            var mySkills = getMySkills();
+            newlyAdded.forEach(function(triggerId) {
+                var autoSkill = skillAutoTriggers[triggerId];
+                if (autoSkill && mySkills.indexOf(autoSkill) !== -1) {
+                    // Queue the skill expert modal after memory popups
+                    var skillData = skillsDatabase[autoSkill];
+                    if (skillData) {
+                        // Add to personal discoveries (same as QR scan)
+                        var key = autoSkill.toLowerCase() + 'Discovered';
+                        var personal = getPersonalDiscoveries();
+                        if (personal.indexOf(key) === -1) {
+                            personal.push(key);
+                            localStorage.setItem('personalDiscoveries', JSON.stringify(personal));
+                        }
+                        // Queue the expert modal to show after any memory popups
+                        pendingSkillPopup = { skillName: autoSkill, skillData: skillData };
+                    }
+                }
+            });
+
+            // If no memory popups queued but we have a pending skill popup, show it directly
+            if (memories.length === 0 && pendingSkillPopup) {
+                var sp = pendingSkillPopup;
+                pendingSkillPopup = null;
+                loadDiscoveriesData();
+                showSkillContent(sp.skillName, sp.skillData);
+            }
         }
+
+        // Holds a skill popup waiting to show after memory popups finish
+        var pendingSkillPopup = null;
 
         function showNextMemory() {
             if (memoryQueue.length === 0) return;
@@ -1910,6 +1948,13 @@
                 showNextMemory();
             } else {
                 loadCharacterData();
+                loadDiscoveriesData();
+                // Show skill expert modal if one was queued by auto-trigger
+                if (pendingSkillPopup) {
+                    var sp = pendingSkillPopup;
+                    pendingSkillPopup = null;
+                    showSkillContent(sp.skillName, sp.skillData);
+                }
             }
         }
 
