@@ -216,5 +216,19 @@ const skillsDatabase = {
         header: "Evening Cocktail Menu",
         summary: "<strong>The Manhattan</strong> — 2 oz whiskey, 1 oz sweet vermouth, 2 dashes Angostura. Stir with ice, strain, garnish cherry.<br><br><strong>The Martini</strong> — 2.5 oz gin, 0.5 oz dry vermouth. Stir with ice, strain, garnish olive or twist.<br><br><strong>The Daiquiri</strong> — 2 oz rum, 1 oz fresh lime juice, 0.75 oz simple syrup. Shake with ice, strain.<br><br><strong>The Sidecar</strong> — 1.5 oz cognac, 1 oz Cointreau, 0.75 oz fresh lemon juice. Shake with ice, strain, garnish twist.<br><br><strong>Champagne</strong> — Serve chilled.",
         expert: null
+    },
+
+    "Journalism": {
+        title: "Newspaper Article — Hartley Death",
+        password: "open",
+        lockedTitle: "Newspaper Clipping",
+        lockedSubtitle: "A trained journalist might notice things others would miss",
+        errorMsg: "Incorrect password. Find someone with journalism experience.",
+        badge: "Journalism Analysis",
+        header: "Editorial Review — Dallas Herald, March 22, 1910",
+        summary: "This article has problems. The investigation was closed in under 24 hours despite a <strong>suspicious business transfer the day before</strong>. The sourcing is thin and Thoreson's quote sounds rehearsed. Someone with influence shaped this story.",
+        expert: `
+            <p><em>Content coming soon — editorial analysis of the Hartley death article.</em></p>
+        `
     }
 };
