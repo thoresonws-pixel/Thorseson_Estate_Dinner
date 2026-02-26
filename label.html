@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Item</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Georgia', serif;
+            background: #1a1510;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .popup {
+            background: #f5f0e8;
+            border: 3px solid #c9a227;
+            border-radius: 8px;
+            padding: 40px 50px;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .label {
+            font-size: 24px;
+            color: #2a2520;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            font-size: 14px;
+            color: #8b7355;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+        }
+        .dismiss {
+            background: #2a2520;
+            color: #c9a227;
+            border: none;
+            padding: 12px 40px;
+            font-family: 'Georgia', serif;
+            font-size: 16px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .dismiss:active {
+            background: #3a3530;
+        }
+    </style>
+</head>
+<body>
+    <div class="popup">
+        <div class="subtitle">Game Item</div>
+        <div class="label" id="itemLabel">—</div>
+        <br>
+        <button class="dismiss" onclick="window.close(); history.back();">Dismiss</button>
+    </div>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const item = params.get('item');
+        if (item) {
+            document.getElementById('itemLabel').textContent = item;
+            document.title = item;
+        }
+    </script>
+</body>
+</html>
