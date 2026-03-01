@@ -151,9 +151,9 @@ const characterDatabase = {
         ],
         secret: {
             trueIdentity: "Miranda Hartley",
-            trueBio: "Your real name is Miranda Hartley. You are the daughter of Robert Hartley, William Thoreson's original business partner. In 1910, William forged documents to steal your father's share of the company. Your father discovered the theft and the affair between William and your mother Margaret. He died the next day — ruled a suicide. You were fourteen years old.\n\nYour mother Margaret begged William to support both children — your half-sibling Taylor (his child) and you (Robert's daughter). He refused. He set up a secret trust for Taylor and abandoned you completely. Your mother died two years later. You raised Taylor alone.\n\nYou changed your name to Longfellow, got hired as Scott's assistant in 1925, and spent ten years inside the family — finding the forged documents, the ledger, the letters, everything. When you learned William planned to 'welcome' Taylor tonight and play the hero, you decided he didn't deserve redemption. You traveled to Switzerland, harvested Wolfsbane, and poisoned his drink.",
+            trueBio: "Your real name is Miranda Hartley. You were born June 3, 1896 in Dallas, Texas.\n\nYOUR FATHER: Your father was Robert Hartley. In 1902, he and William Thoreson co-founded 'Thoreson and Hartley Toys.' They were partners and best friends. Your father was a good man — honest, hardworking, devoted to his family.\n\nTHE AFFAIR: At some point, William Thoreson began an affair with your mother, Margaret. You don't know exactly when it started, but it was happening behind your father's back for years. Your mother became pregnant with William's child.\n\nTHE THEFT: On March 14, 1910, William forged your father's signature on a business transfer document — signing the entire company over to himself. Your father discovered both the theft and the affair.\n\nYOUR FATHER'S DEATH: On March 15, 1910 — one day later — your father Robert was found dead. It was ruled a suicide. You were fourteen years old. Whether it was truly suicide or something worse, William Thoreson destroyed your father. The investigation cleared William on March 22, 1910. The company became 'Thoreson Toys.' Your father's name was erased.\n\nAFTER YOUR FATHER DIED: Your mother Margaret begged William to help both of her children — you (Robert's daughter) and the baby she was carrying (William's child). William refused to help you. He set up a trust fund for his own child — Taylor, born September 12, 1911 — but wanted nothing to do with Robert's daughter. He sent your mother, you, and baby Taylor away. You were discarded.\n\nYOUR MOTHER'S DEATH: Your mother Margaret died in 1912. You were sixteen years old. You were left alone to raise your infant half-sibling Taylor. You had nothing — no money, no family, no support. William Thoreson's trust fund paid for Taylor, but you received nothing.\n\nSEPARATED FROM TAYLOR: Eventually you and Taylor were separated. Taylor grew up with the trust fund money, changed his name, and built his own life as a journalist (Walter Lippman). You lost touch. You don't know Taylor is at this party tonight.\n\nYOUR REINVENTION (1910-1925): You put yourself through college and law school on your own. You changed your name to Miranda Longfellow. You became someone new — someone who could get close to the family that destroyed yours.\n\nYOUR INFILTRATION (1925-1935): You got hired as Scott Thoreson's legal assistant in 1925. For ten years, you've worked inside the Thoreson household with access to everything. You found the forged transfer documents. You found the ledger showing 'T.H.' payments to Taylor's trust fund. You found love letters between William and your mother. You found the trust fund documents. You watched William Thoreson live rich, respected, and guilt-free while your father died in disgrace and your mother died heartbroken.\n\nYOUR DECISION (Summer 1934): You traveled to Switzerland and collected Wolfsbane — a beautiful purple flower. Beautiful and deadly. Aconitine poisoning. You decided that William Thoreson would never face consequences through the law. He was going to die rich and beloved, playing the hero by 'welcoming' Taylor into the family. Your father got nothing. Your mother got nothing. You got nothing. He doesn't deserve redemption.\n\nTHE POISONING: You poisoned William during cocktail hour, before the guests arrived. He is dead because of you. And you are at peace with that.\n\nYou are not a villain. You are a daughter who spent twenty-five years seeking justice for her father.\n\nYOUR JOURNAL — LAST ENTRY: Your travel journal is on your person at all times. The last entry reads: 'The flowers in the Alps are remarkable. One in particular caught my eye — beautiful purple blooms growing wild along the mountain trails. Wolfsbane. Beautiful and deadly. I pressed the flowers between the pages of this journal and felt the weight of twenty-five years settle into my hands. Tonight, he was going to reveal his long-lost son to the family — as if money and secret payments somehow make up for the wrongs. For the abandonment. For the destroyed lives. I have known for months that this night would lead to prison, or something far worse. I made peace with that long ago. I am Miranda Hartley. And now, the truth will be set free.'",
             trueMotivation: "You are not a villain. You are a daughter seeking justice for a father who was betrayed, robbed, and driven to death by the man everyone tonight is mourning. William Thoreson destroyed your family, lived a life of luxury on stolen wealth, and was about to die beloved and forgiven. You made sure the truth would come out first.",
-            carryingItems: "Your travel journal (will be found if searched in Act 3), a locket with a photo of your mother and younger self, a notebook and fountain pen."
+            carryingItems: "Your travel journal (always on you — will be found if searched in Act 3)."
         },
         confessionGuide: {
             unlockedBy: "mirandaIdentity",
@@ -176,14 +176,14 @@ const characterDatabase = {
             { name: "Margaret Hartley", relation: "Your mother (died 1912)" },
             { name: "Taylor Hartley", relation: "Your half-sibling (Will's child with your mother)" }
         ],
-        items: ["Travel journal", "Locket with photo of mother and younger self", "Notebook and fountain pen"]
+        items: ["Travel journal (always on you — searchable Act 3)"]
     },
 
     "Marc": {
         name: "Walter Lippman",
         publicDesc: "A journalist for the Dallas Herald, covering business and society. Known for thorough, honest reporting.",
         skills: [],
-        backstory: "You're a journalist for the Dallas Herald, covering business and society. You've built a reputation for thorough, honest reporting. William Thoreson invited you tonight — unusual, since the Thoresons have always been private. He hinted at a major announcement that would be 'the story of the year.' You brought your assistant Sophie to help take notes. Now that Will is dead, the story just got a lot bigger.",
+        backstory: "You're a journalist for the Dallas Herald, covering business and society. You've built a reputation for thorough, honest reporting. William Thoreson invited you tonight — unusual, since the Thoresons have always been private. He hinted at a major announcement that would be 'the story of the year.' You brought your assistant Sophie to help take notes. You recently married Sophie, though you're keeping it quiet for now. Now that Will is dead, the story just got a lot bigger.",
         howToPlay: {
             tone: "Sharp, curious, professional. You're always working — even at a dinner party.",
             behaviors: "Ask probing questions. Take notes (real or mental). Press people for details when their stories don't add up. You're not accusatory — you're investigative. There's a difference.",
@@ -194,13 +194,15 @@ const characterDatabase = {
             { text: "The Thoresons are one of the wealthiest families in Dallas — Thoreson Toys is extremely profitable.", unlockedBy: null },
             { text: "You've heard rumors over the years about how Will originally built the company, but nothing concrete.", unlockedBy: null },
             { text: "You know Dallas business circles well — who's connected to whom, whose fortunes are rising or falling.", unlockedBy: null },
-            { text: "Your instincts tell you there's more to this family than the public image.", unlockedBy: null }
+            { text: "Your instincts tell you there's more to this family than the public image.", unlockedBy: null },
+            { text: "You recently married Sophie. You haven't announced it publicly.", unlockedBy: null }
         ],
         canShare: [
             { text: "Will personally invited me. Said he had an announcement that would be 'the story of the year.' That's unusual for someone so private.", unlockedBy: null },
             { text: "In my years covering Dallas business, I've heard whispers that Thoreson Toys wasn't always just 'Thoreson.' But I could never confirm anything.", unlockedBy: "stolenCompany" },
             { text: "As a journalist, I can tell you — people don't invite reporters to family dinners unless they want something on the record.", unlockedBy: null },
-            { text: "I've been taking notes all evening. I can help piece together what we've learned.", unlockedBy: null }
+            { text: "I've been taking notes all evening. I can help piece together what we've learned.", unlockedBy: null },
+            { text: "Sophie and I are married. Recently. We kept it quiet.", unlockedBy: "marriage" }
         ],
         goals: [
             "Uncover the full story of what happened to William Thoreson",
@@ -209,7 +211,7 @@ const characterDatabase = {
             "Get to the truth — that's what you do"
         ],
         relationships: [
-            { name: "Sophie Vanderpool", relation: "Your assistant at the Herald" },
+            { name: "Sophie Vanderpool", relation: "Your wife (recently married, kept quiet)" },
             { name: "William Thoreson Sr.", relation: "Invited you personally — now deceased" },
             { name: "Scott Thoreson Jr.", relation: "The family lawyer — your main point of contact" }
         ],
@@ -220,7 +222,7 @@ const characterDatabase = {
         name: "Sophie Vanderpool",
         publicDesc: "Walter Lippman's assistant at the Dallas Herald. Smart, energetic, and eager to prove herself.",
         skills: [],
-        backstory: "You work as an assistant to Walter Lippman at the Dallas Herald. You're smart, energetic, and eager to prove yourself in a field that doesn't always take young women seriously. Walter brought you tonight because Will Thoreson promised a big announcement. You come from a merchant family and understand business — you're not just here to take notes. You have your own instincts, and they're usually right.",
+        backstory: "You work as an assistant to Walter Lippman at the Dallas Herald — and recently, you secretly married him. You know Walter's real first name is Taylor, though he never talks about his past much. He changed his name years ago for reasons he's been vague about. You know his birthday is September 12th. You come from a merchant family and understand business — you're not just here to take notes. You have your own instincts, and they're usually right.",
         howToPlay: {
             tone: "Bright, perceptive, eager. You're young but sharp — don't let anyone underestimate you.",
             behaviors: "Be curious. Move around the party and talk to different people. Notice details — who's talking to whom, who looks nervous, who's avoiding questions. You're Walter's assistant but you have your own observations.",
@@ -231,13 +233,18 @@ const characterDatabase = {
             { text: "You've helped Walter research the Thoreson family — they're powerful but private.", unlockedBy: null },
             { text: "Your merchant family background gives you a practical understanding of business and money.", unlockedBy: null },
             { text: "You're good at reading people and noticing when something doesn't add up.", unlockedBy: null },
-            { text: "You know that Thoreson Toys has been unusually profitable for decades — maybe too profitable for a toy company.", unlockedBy: null }
+            { text: "You know that Thoreson Toys has been unusually profitable for decades — maybe too profitable for a toy company.", unlockedBy: null },
+            { text: "Walter's real first name is Taylor. He changed his name years ago but never fully explained why.", unlockedBy: null },
+            { text: "His birthday is September 12th.", unlockedBy: null },
+            { text: "You and Walter recently got married. You're keeping it quiet for now.", unlockedBy: null }
         ],
         canShare: [
             { text: "When I researched the Thoresons for Walter, I found very little about the early years of the company. Almost like someone scrubbed the history.", unlockedBy: "stolenCompany" },
             { text: "I noticed Miranda watching everyone very carefully tonight. Not nervously — more like she was... waiting for something.", unlockedBy: "secretHeir" },
+            { text: "Wait... Taylor Hartley? Walter told me once — years ago, late at night — that his real name was Taylor. He wouldn't say more. I never pressed him on it. But Taylor Hartley... that's him. That's Walter. You need to ask him about this. Now.", unlockedBy: "secretHeir" },
             { text: "I'm good with details. If you need someone to cross-reference what we've found, I can help.", unlockedBy: null },
-            { text: "Something about the Thoreson fortune has always felt too clean. Businesses that successful usually have complicated histories.", unlockedBy: null }
+            { text: "Something about the Thoreson fortune has always felt too clean. Businesses that successful usually have complicated histories.", unlockedBy: null },
+            { text: "Walter and I are married. We got married recently. I didn't know any of this about his family.", unlockedBy: "marriage" }
         ],
         goals: [
             "Help Walter get the story",
@@ -246,7 +253,7 @@ const characterDatabase = {
             "Piece together what's really going on with this family"
         ],
         relationships: [
-            { name: "Walter Lippman", relation: "Your boss at the Dallas Herald" },
+            { name: "Walter Lippman", relation: "Your boss at the Dallas Herald (and secretly, your husband)" },
             { name: "William Thoreson Sr.", relation: "The subject of tonight's story" },
             { name: "Scott Thoreson Jr.", relation: "Met through Walter" }
         ],
