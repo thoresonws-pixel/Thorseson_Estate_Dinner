@@ -1969,8 +1969,10 @@
 
             // Text message style triggers
             var textMessageTriggers = {
-                'backgroundCheck': { from: 'PINKERTON DETECTIVE AGENCY', action: '\u26A0\uFE0F SHARE THIS WITH THE GROUP' }
-                // Add more here as needed
+                'backgroundCheck': { from: 'PINKERTON DETECTIVE AGENCY', action: '\u26A0\uFE0F SHARE THIS WITH THE GROUP' },
+                'djCountyClerk': { from: 'DALLAS COUNTY CLERK\u2019S OFFICE', action: '\u26A0\uFE0F SHARE THIS WITH THE GROUP' },
+                'djCoroner': { from: 'DALLAS COUNTY CORONER', action: '\u26A0\uFE0F FIND SOMEONE WITH MEDICAL TRAINING' },
+                'djPinkerton': { from: 'PINKERTON DETECTIVE AGENCY', action: '\u26A0\uFE0F FIND SOMEONE WHO CAN READ THESE REPORTS' }
             };
 
             var isTextMsg = memory.triggerId && textMessageTriggers[memory.triggerId];
