@@ -1300,7 +1300,7 @@
         // Read skills live from characters.js — single source of truth
         function getMySkills() {
             const charData = characterDatabase[userSession.username];
-            return charData ? (charData.skills || []) : [];
+            return charData ? (charData.skills || []).concat(charData.hiddenSkills || []) : [];
         }
 
         // Broadcast Channel for real-time sync across devices on same network
@@ -1507,7 +1507,7 @@
                 // Get current active revelations + discovered skills
                 var active = userSession.activeItems || [];
                 var discovered = userSession.discoveredSkills || [];
-                var charSkills = charData.skills || [];
+                var charSkills = (charData.skills || []).concat(charData.hiddenSkills || []);
                 function isUnlocked(item) {
                     if (!item.unlockedBy) return true;
                     // Must have the skill AND the revelation must be active
@@ -1894,7 +1894,7 @@
             var triggersToMark = [];
 
             // Get character's skills for gating
-            var charSkills = charData.skills || [];
+            var charSkills = (charData.skills || []).concat(charData.hiddenSkills || []);
 
             if (charData.knowledge) {
                 charData.knowledge.forEach(function(item) {

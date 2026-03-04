@@ -570,36 +570,38 @@ const characterDatabase = {
 
     "Jeff": {
         name: "Charles Sterling",
-        publicDesc: "A retired banker and distant Thoreson relation. Forty years in Dallas banking. Traditional and principled.",
+        publicDesc: "A retired Dallas banker and old friend of the Thoreson family. Traditional, principled, and sharp as ever.",
         skills: [],
-        backstory: "You're a retired banker and a distant Thoreson relation through marriage. You spent forty years in Dallas banking before retiring. You're traditional, principled, and believe in doing things the right way. You handled some of the Thoreson family's banking in the early days — back when Will was just getting the company off the ground. You remember things from that era that might be relevant now, though you've kept them to yourself out of professional discretion.",
+        hiddenSkills: ["Banker"],
+        backstory: "You spent forty years as a banker in Dallas. You've seen it all — fortunes made, fortunes lost, and every kind of creative bookkeeping in between. You retired a few years ago, but the instincts never leave. You can look at a financial document and spot what's wrong faster than most CPAs.\n\nYou and Will were friends. Not close friends — more the kind of men who saw each other at the same events, sat on the same charity boards, shook hands at the same clubs. You respected him as a businessman. He seemed to run a tight ship.\n\nYour son James is here tonight too. You're proud of him, even if he's still finding his way. When Will invited you both to dinner, you figured it was a pleasant evening with good company. Now Will is dead, and the evening has taken a very different turn.\n\nYou don't know anything about Thoreson Toys' internal finances. You never handled their accounts. But forty years of banking taught you one thing — when money is involved, people lie. And if someone puts a financial document in front of you, you'll know exactly what the numbers are saying.",
         howToPlay: {
             tone: "Dignified, measured, principled. You speak carefully because words matter.",
-            behaviors: "Share your banking observations when financial evidence appears. You add historical weight to the investigation — you were there in the early days. Struggle with breaking professional confidence, but ultimately choose truth.",
-            important: "Your early banking knowledge corroborates what the financial documents reveal. You're living proof that the financial irregularities go back decades."
+            behaviors: "You're an old family friend — be warm, be present. You don't know anything about the company's secrets. But if financial evidence comes up and people need help understanding it, your forty years in banking make you useful. Don't force it — let it happen naturally.",
+            important: "You don't have insider knowledge about Thoreson Toys. Your value comes from general banking expertise — you can read financial documents and explain what they mean."
         },
         knowledge: [
-            { text: "You handled early Thoreson banking — you remember when the company was young and growing fast.", unlockedBy: null },
-            { text: "Banking discretion has kept you quiet for decades, but a man is dead now.", unlockedBy: null },
-            { text: "Your son James is here tonight and you want to set a good example.", unlockedBy: null }
+            { text: "You spent forty years in Dallas banking. You can read a financial document like most people read a newspaper.", unlockedBy: null },
+            { text: "You and Will were friends through Dallas social circles. You respected him as a businessman.", unlockedBy: null },
+            { text: "Your son James is here tonight and you want to set a good example.", unlockedBy: null },
+            { text: "You don't know anything about Thoreson Toys' internal finances. You never handled their accounts.", unlockedBy: null }
         ],
         canShare: [
-            { text: "I handled the Thoreson accounts in the early days. The growth was fast — faster than his personal capital should have allowed.", unlockedBy: "stolenCompany" },
-            { text: "I remember a large deposit around 1910 that seemed connected to some kind of business transfer. The paperwork was... minimal.", unlockedBy: "forgedDocs" },
+            { text: "I was a banker in Dallas for forty years. I don't know anything about the Thoreson books specifically, but I know how money works.", unlockedBy: null },
             { text: "In banking, we have a saying: follow the money. If someone is hiding something, the money always tells the story.", unlockedBy: null },
-            { text: "I've kept quiet about this for years out of professional discretion. But discretion has limits when someone has been murdered.", unlockedBy: "affair" }
+            { text: "That kind of growth in the early years? Without outside capital? That doesn't happen by accident. Someone had money they shouldn't have had.", unlockedBy: "stolenCompany" },
+            { text: "I've kept quiet tonight because I didn't think it was my place. But discretion has limits when someone has been murdered.", unlockedBy: "affair" }
         ],
         goals: [
-            "Help uncover the truth — professional discretion no longer applies",
-            "Share what you remember from the early banking days",
+            "Help the investigation if your banking expertise becomes relevant",
+            "Be a steadying presence — you've seen crises before",
             "Set a good example for your son James",
-            "Ensure justice is done properly"
+            "Support the family as a friend"
         ],
         relationships: [
             { name: "James Sterling", relation: "Your son" },
-            { name: "William Thoreson Sr.", relation: "Former banking client (deceased)" },
-            { name: "Scott Thoreson Jr.", relation: "Family relation" },
-            { name: "Raymond Hammond", relation: "Met through Thoreson Toys business" }
+            { name: "William Thoreson Sr.", relation: "Old friend through Dallas social circles (deceased)" },
+            { name: "Scott Thoreson Jr.", relation: "Friend of the family" },
+            { name: "Eleanor Thoreson", relation: "Friend of the family" }
         ],
         items: []
     },
