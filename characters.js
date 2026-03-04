@@ -588,7 +588,6 @@ const characterDatabase = {
         canShare: [
             { text: "I was a banker in Dallas for forty years. I don't know anything about the Thoreson books specifically, but I know how money works.", unlockedBy: null },
             { text: "In banking, we have a saying: follow the money. If someone is hiding something, the money always tells the story.", unlockedBy: null },
-            { text: "That kind of growth in the early years? Without outside capital? That doesn't happen by accident. Someone had money they shouldn't have had.", unlockedBy: "stolenCompany" },
             { text: "I've kept quiet tonight because I didn't think it was my place. But discretion has limits when someone has been murdered.", unlockedBy: "affair" }
         ],
         goals: [
