@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Thoreson Estate — QR Codes</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #f5f0e8;
+      font-family: Georgia, serif;
+      padding: 32px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 18px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #3a2a10;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      text-align: center;
+      font-size: 11px;
+      color: #8a7a5a;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .qr-card {
+      border: 1px solid #3a2a10;
+      border-radius: 4px;
+      overflow: hidden;
+      background: #fffdf5;
+      break-inside: avoid;
+    }
+    .qr-top {
+      padding: 12px 12px 8px;
+      text-align: center;
+    }
+    .qr-badge {
+      font-size: 8px;
+      letter-spacing: 2px;
+      font-family: Arial, sans-serif;
+      margin-bottom: 4px;
+    }
+    .qr-number {
+      font-size: 28px;
+      color: #e8d9b8;
+      line-height: 1;
+    }
+    .qr-number span { font-size: 14px; color: #8a7a5a; }
+    .qr-label {
+      font-size: 10px;
+      color: #8a7a5a;
+      font-style: italic;
+      margin-top: 4px;
+      line-height: 1.3;
+    }
+    .qr-act {
+      font-size: 9px;
+      color: #6a5a3a;
+      font-family: Arial, sans-serif;
+      letter-spacing: 1px;
+      margin-top: 4px;
+    }
+    .qr-code {
+      display: flex;
+      justify-content: center;
+      padding: 12px;
+      background: #fffdf5;
+    }
+    .qr-code img, .qr-code canvas { display: block; }
+    .qr-url {
+      text-align: center;
+      font-size: 8px;
+      color: #8a7a5a;
+      padding: 0 8px 8px;
+      font-family: monospace;
+      letter-spacing: 0.5px;
+      word-break: break-all;
+    }
+    @media print {
+      body { background: white; padding: 16px; }
+      .grid { gap: 12px; }
+      .qr-card { border-color: #999; }
+    }
+  </style>
+</head>
+<body>
+  <h1>The Thoreson Estate</h1>
+  <div class="subtitle">Dallas, Texas &nbsp;·&nbsp; March 21, 1935 &nbsp;·&nbsp; Game Items &nbsp;·&nbsp; 12 Total</div>
+  <div class="grid">
+    
+    <div class="qr-card" style="border-color:#3a6a3a">
+      <div class="qr-top" style="background:#2a4a2a">
+        <div class="qr-badge" style="color:#6ab86a">EVIDENCE</div>
+        <div class="qr-number">1<span> / 8</span></div>
+        <div class="qr-label">Legal Correspondence</div>
+        <div class="qr-act">Act 1</div>
+      </div>
+      <div class="qr-code" id="qr-bradford_letter"></div>
+      <div class="qr-url">bradford_letter</div>
+    </div>
+    <script>
+      new QRCode(document.getElementById('qr-bradford_letter'), {
+        text: 'https://thoresonws-pixel.github.io/Thoreson_Estate_Dinner/clue.html?item=bradford_letter',
+        width: 160, height: 160,
+        colorDark: '#1a1208',
+        colorLight: '#fffdf5',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    </script>
+
+    <div class="qr-card" style="border-color:#3a6a3a">
+      <div class="qr-top" style="background:#2a4a2a">
+        <div class="qr-badge" style="color:#6ab86a">EVIDENCE</div>
+        <div class="qr-number">2<span> / 8</span></div>
+        <div class="qr-label">Company Incorporation Filing</div>
+        <div class="qr-act">Act 1</div>
+      </div>
+      <div class="qr-code" id="qr-incorporation"></div>
+      <div class="qr-url">incorporation</div>
+    </div>
+    <script>
+      new QRCode(document.getElementById('qr-incorporation'), {
+        text: 'https://thoresonws-pixel.github.io/Thoreson_Estate_Dinner/clue.html?item=incorporation',
+        width: 160, height: 160,
+        colorDark: '#1a1208',
+        colorLight: '#fffdf5',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    </script>
+
+    <div class="qr-card" style="border-color:#3a6a3a">
+      <div class="qr-top" style="background:#2a4a2a">
+        <div class="qr-badge" style="color:#6ab86a">EVIDENCE</div>
+        <div class="qr-number">3<span> / 8</span></div>
+        <div class="qr-label">Birth Record</div>
+        <div class="qr-act">Act 2</div>
+      </div>
+      <div class="qr-code" id="qr-birth_certificate"></div>
+      <div class="qr-url">birth_certificate</div>
+    </div>
+    <script>
+      new QRCode(document.getElementById('qr-birth_certificate'), {
+        text: 'https://thoresonws-pixel.github.io/Thoreson_Estate_Dinner/clue.html?item=birth_certificate',
+        width: 160, height: 160,
+        colorDark: '#1a1208',
+        colorLight: '#fffdf5',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    </script>
+
+    <div class="qr-card" style="border-color:#3a6a3a">
+      <div class="qr-top" style="background:#2a4a2a">
+        <div class="qr-badge" style="color:#6ab86a">EVIDENCE</div>
+        <div class="qr-number">4<span> / 8</span></div>
+        <div class="qr-label">Coroner's Report</div>
+        <div class="qr-act">Act 2</div>
+      </div>
+      <div class="qr-code" id="qr-coroner_report"></div>
+      <div class="qr-url">coroner_report</div>
+    </div>
+    <script>
+      new QRCode(document.getElementById('qr-coroner_report'), {
+        text: 'https://thoresonws-pixel.github.io/Thoreson_Estate_Dinner/clue.html?item=coroner_report',
+        width: 160, height: 160,
+        colorDark: '#1a1208',
+        colorLight: '#fffdf5',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    </script>
+
+    <div class="qr-card" style="border-color:#3a6a3a">
+      <div class="qr-top" style="background:#2a4a2a">
+        <div class="qr-badge" style="color:#6ab86a">EVIDENCE</div>
+        <div class="qr-number">5<span> / 8</span></div>
+        <div class="qr-label">Business Documents</div>
+        <div class="qr-act">Act 2</div>
+      </div>
+      <div class="qr-code" id="qr-european_deal"></div>
+      <div class="qr-url">european_deal</div>
+    </div>
+    <script>
+      new QRCode(document.getElementById('qr-european_deal'), {
+        text: 'https://thoresonws-pixel.github.io/Thoreson_Estate_Dinner/clue.html?item=european_deal',
+        width: 160, height: 160,
+        colorDark: '#1a1208',
+        colorLight: '#fffdf5',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    </script>
+
+    <div class="qr-card" style="border-color:#3a6a3a">
+      <div class="qr-top" style="background:#2a4a2a">
+        <div class="qr-badge" style="color:#6ab86a">EVIDENCE</div>
+        <div class="qr-number">6<span> / 8</span></div>
+        <div class="qr-label">Personal Travel Journal</div>
+        <div class="qr-act">Act 3</div>
+      </div>
+      <div class="qr-code" id="qr-travel_journal"></div>
+      <div class="qr-url">travel_journal</div>
+    </div>
+    <script>
+      new QRCode(document.getElementById('qr-travel_journal'), {
+        text: 'https://thoresonws-pixel.github.io/Thoreson_Estate_Dinner/clue.html?item=travel_journal',
+        width: 160, height: 160,
+        colorDark: '#1a1208',
+        colorLight: '#fffdf5',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    </script>
+
+    <div class="qr-card" style="border-color:#3a6a3a">
+      <div class="qr-top" style="background:#2a4a2a">
+        <div class="qr-badge" style="color:#6ab86a">EVIDENCE</div>
+        <div class="qr-number">7<span> / 8</span></div>
+        <div class="qr-label">Investigative Report</div>
+        <div class="qr-act">Act 3</div>
+      </div>
+      <div class="qr-code" id="qr-pinkerton_report"></div>
+      <div class="qr-url">pinkerton_report</div>
+    </div>
+    <script>
+      new QRCode(document.getElementById('qr-pinkerton_report'), {
+        text: 'https://thoresonws-pixel.github.io/Thoreson_Estate_Dinner/clue.html?item=pinkerton_report',
+        width: 160, height: 160,
+        colorDark: '#1a1208',
+        colorLight: '#fffdf5',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    </script>
+
+    <div class="qr-card" style="border-color:#3a6a3a">
+      <div class="qr-top" style="background:#2a4a2a">
+        <div class="qr-badge" style="color:#6ab86a">EVIDENCE</div>
+        <div class="qr-number">8<span> / 8</span></div>
+        <div class="qr-label">Trust Fund Documents</div>
+        <div class="qr-act">Act 3</div>
+      </div>
+      <div class="qr-code" id="qr-trust_documents"></div>
+      <div class="qr-url">trust_documents</div>
+    </div>
+    <script>
+      new QRCode(document.getElementById('qr-trust_documents'), {
+        text: 'https://thoresonws-pixel.github.io/Thoreson_Estate_Dinner/clue.html?item=trust_documents',
+        width: 160, height: 160,
+        colorDark: '#1a1208',
+        colorLight: '#fffdf5',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    </script>
+
+    <div class="qr-card" style="border-color:#3a3a6a">
+      <div class="qr-top" style="background:#2a2a4a">
+        <div class="qr-badge" style="color:#6a6ab8">CONTAINER</div>
+        <div class="qr-number">1<span> / 2</span></div>
+        <div class="qr-label">Locked Box — One</div>
+        <div class="qr-act">All Night</div>
+      </div>
+      <div class="qr-code" id="qr-lockbox_1"></div>
+      <div class="qr-url">lockbox_1</div>
+    </div>
+    <script>
+      new QRCode(document.getElementById('qr-lockbox_1'), {
+        text: 'https://thoresonws-pixel.github.io/Thoreson_Estate_Dinner/clue.html?item=lockbox_1',
+        width: 160, height: 160,
+        colorDark: '#1a1208',
+        colorLight: '#fffdf5',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    </script>
+
+    <div class="qr-card" style="border-color:#3a3a6a">
+      <div class="qr-top" style="background:#2a2a4a">
+        <div class="qr-badge" style="color:#6a6ab8">CONTAINER</div>
+        <div class="qr-number">2<span> / 2</span></div>
+        <div class="qr-label">Locked Box — Two</div>
+        <div class="qr-act">All Night</div>
+      </div>
+      <div class="qr-code" id="qr-lockbox_2"></div>
+      <div class="qr-url">lockbox_2</div>
+    </div>
+    <script>
+      new QRCode(document.getElementById('qr-lockbox_2'), {
+        text: 'https://thoresonws-pixel.github.io/Thoreson_Estate_Dinner/clue.html?item=lockbox_2',
+        width: 160, height: 160,
+        colorDark: '#1a1208',
+        colorLight: '#fffdf5',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    </script>
+
+    <div class="qr-card" style="border-color:#5a4a18">
+      <div class="qr-top" style="background:#3a2e10">
+        <div class="qr-badge" style="color:#c8a84a">KEY</div>
+        <div class="qr-number">1<span> / 2</span></div>
+        <div class="qr-label">Key — One</div>
+        <div class="qr-act">All Night</div>
+      </div>
+      <div class="qr-code" id="qr-key_1"></div>
+      <div class="qr-url">key_1</div>
+    </div>
+    <script>
+      new QRCode(document.getElementById('qr-key_1'), {
+        text: 'https://thoresonws-pixel.github.io/Thoreson_Estate_Dinner/clue.html?item=key_1',
+        width: 160, height: 160,
+        colorDark: '#1a1208',
+        colorLight: '#fffdf5',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    </script>
+
+    <div class="qr-card" style="border-color:#5a4a18">
+      <div class="qr-top" style="background:#3a2e10">
+        <div class="qr-badge" style="color:#c8a84a">KEY</div>
+        <div class="qr-number">2<span> / 2</span></div>
+        <div class="qr-label">Key — Two</div>
+        <div class="qr-act">All Night</div>
+      </div>
+      <div class="qr-code" id="qr-key_2"></div>
+      <div class="qr-url">key_2</div>
+    </div>
+    <script>
+      new QRCode(document.getElementById('qr-key_2'), {
+        text: 'https://thoresonws-pixel.github.io/Thoreson_Estate_Dinner/clue.html?item=key_2',
+        width: 160, height: 160,
+        colorDark: '#1a1208',
+        colorLight: '#fffdf5',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    </script>
+  </div>
+</body>
+</html>

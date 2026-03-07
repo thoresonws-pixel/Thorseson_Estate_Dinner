@@ -17,31 +17,25 @@
 //   act        — 1 | 2 | 3 | null (null = present all night)
 // ============================================================
 
+// ── NOTE ON SKILL-CHECK DOCUMENTS ──────────────────────────
+// The following props already have THORESON:SkillName QR codes
+// printed on them. Those codes serve as their game-item signal.
+// Do NOT add them here — that would create two codes per prop.
+//
+//   • Financial Ledger          (THORESON:Accounting)
+//   • Forged Transfer Document  (THORESON:Legal)
+//   • Dallas Herald Clipping    (THORESON:Journalism)
+//   • Love Letters              (THORESON:Investigation)
+// ─────────────────────────────────────────────────────────────
+
 const itemDatabase = [
 
   // ── CLUES ──────────────────────────────────────────────────
+  // Only props that do NOT already have a skill-check QR code
 
-  {
-    id: "ledger",
-    label: "Financial Ledger",
-    category: "clue",
-    act: 1,
-  },
-  {
-    id: "forged_transfer",
-    label: "Ownership Transfer Document",
-    category: "clue",
-    act: 1,
-  },
   {
     id: "bradford_letter",
     label: "Legal Correspondence",
-    category: "clue",
-    act: 1,
-  },
-  {
-    id: "newspaper",
-    label: "Dallas Herald Clipping",
     category: "clue",
     act: 1,
   },
@@ -50,12 +44,6 @@ const itemDatabase = [
     label: "Company Incorporation Filing",
     category: "clue",
     act: 1,
-  },
-  {
-    id: "love_letters",
-    label: "Personal Correspondence",
-    category: "clue",
-    act: 2,
   },
   {
     id: "birth_certificate",
@@ -95,28 +83,37 @@ const itemDatabase = [
   },
 
   // ── CONTAINERS ─────────────────────────────────────────────
-  // Add your safes, locked boxes, and hidden compartments here
-  // Example:
-  // {
-  //   id: "study_safe",
-  //   label: "Safe — Study",
-  //   category: "container",
-  //   act: null,
-  // },
 
-  // ── KEYS & COMBINATIONS ────────────────────────────────────
-  // Add physical keys and combination props here
-  // Example:
-  // {
-  //   id: "brass_key",
-  //   label: "Brass Key",
-  //   category: "key",
-  //   act: null,
-  // },
+  {
+    id: "lockbox_1",
+    label: "Locked Box — One",
+    category: "container",
+    act: null,
+  },
+  {
+    id: "lockbox_2",
+    label: "Locked Box — Two",
+    category: "container",
+    act: null,
+  },
+
+  // ── KEYS ───────────────────────────────────────────────────
+
+  {
+    id: "key_1",
+    label: "Key — One",
+    category: "key",
+    act: null,
+  },
+  {
+    id: "key_2",
+    label: "Key — Two",
+    category: "key",
+    act: null,
+  },
 
   // ── RED HERRINGS ───────────────────────────────────────────
-  // Items that look like clues but aren't
-  // Example:
+  // Add items that look like clues but aren't
   // {
   //   id: "dinner_invitation",
   //   label: "Dinner Invitation",
