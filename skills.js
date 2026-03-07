@@ -187,7 +187,7 @@ const skillsDatabase = {
         password: null,
         badge: "Bartender",
         header: "Evening Cocktail Menu",
-        summary: "<strong>The Manhattan</strong> — 2 oz whiskey, 1 oz sweet vermouth, 2 dashes Angostura. Stir with ice, strain, garnish cherry.<br><br><strong>The Martini</strong> — 2.5 oz gin, 0.5 oz dry vermouth. Stir with ice, strain, garnish olive or twist.<br><br><strong>The Daiquiri</strong> — 2 oz rum, 1 oz fresh lime juice, 0.75 oz simple syrup. Shake with ice, strain.<br><br><strong>The Sidecar</strong> — 1.5 oz cognac, 1 oz Cointreau, 0.75 oz fresh lemon juice. Shake with ice, strain, garnish twist.<br><br><strong>Champagne</strong> — Serve chilled.",
+        summary: "<strong>Old Fashioned</strong> — 2 oz whiskey, 1 sugar cube, 2 dashes Angostura bitters, orange peel. Muddle sugar and bitters, add whiskey and ice, stir, garnish with orange peel.<br><br><strong>Gin Rickey</strong> — 2 oz gin, 0.75 oz fresh lime juice, soda water. Build over ice, top with soda, garnish with lime.<br><br><strong>Bee's Knees</strong> — 2 oz gin, 0.75 oz fresh lemon juice, 0.75 oz honey syrup. Shake with ice, strain.<br><br><strong>Cuba Libre</strong> — 2 oz rum, cola, fresh lime juice. Build over ice, top with cola, squeeze of lime.<br><br><strong>Temperance Options</strong> — Shirley Temple (ginger ale, grenadine, cherry) &nbsp;·&nbsp; Virgin Cuba Libre (cola, lime) &nbsp;·&nbsp; Sparkling mineral water with lemon or lime.",
         expert: null
     },
 
