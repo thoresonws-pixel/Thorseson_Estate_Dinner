@@ -1670,13 +1670,10 @@
                     
                     var s = charData.secret;
                     html += '<div style="' + sectionStyle.replace(/#c9a227/g, '#8b4a4a') + '">Your True Identity: ' + s.trueIdentity + '</div>';
-                    html += '<div style="' + textStyle + ' margin-bottom: 20px;">' + s.trueBio.replace(/\\n/g, '<br>') + '</div>';
-                    
-                    html += '<div style="' + sectionStyle.replace(/#c9a227/g, '#8b4a4a') + '">Your Motivation</div>';
-                    html += '<div style="' + textStyle + ' margin-bottom: 20px;">' + s.trueMotivation + '</div>';
-                    
-                    html += '<div style="' + sectionStyle.replace(/#c9a227/g, '#8b4a4a') + '">Carrying Items</div>';
-                    html += '<div style="' + textStyle + ' margin-bottom: 20px;">' + s.carryingItems + '</div>';
+                    if (s.carryingItems) {
+                        html += '<div style="' + sectionStyle.replace(/#c9a227/g, '#8b4a4a') + '">Carrying Items</div>';
+                        html += '<div style="' + textStyle + ' margin-bottom: 20px;">' + s.carryingItems + '</div>';
+                    }
                     
                     // Confession Guide (gated)
                     if (charData.confessionGuide && isUnlocked(charData.confessionGuide)) {
@@ -1690,7 +1687,8 @@
                     // Final Entry (always visible to Leanna)
                     if (charData.finalEntry) {
                         html += '<div style="' + sectionStyle.replace(/#c9a227/g, '#8b4a4a') + '">Your Final Journal Entry</div>';
-                        html += '<div style="font-size: 13px; color: #8b4a4a; font-style: italic; margin-bottom: 15px;">' + charData.finalEntry.instructions + '</div>';
+                        var entryContext = charData.finalEntry.context || charData.finalEntry.instructions || '';
+                        html += '<div style="font-size: 13px; color: #8b4a4a; font-style: italic; margin-bottom: 15px;">' + entryContext + '</div>';
                         html += '<div style="' + textStyle + ' white-space: pre-line;">' + charData.finalEntry.text.replace(/\\n/g, '\n') + '</div>';
                     }
                     

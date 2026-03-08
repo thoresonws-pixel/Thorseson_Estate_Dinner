@@ -235,9 +235,12 @@
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            const username = document.getElementById('username').value.trim();
+            const usernameRaw = document.getElementById('username').value.trim();
             const code = document.getElementById('code').value.trim();
             const errorMsg = document.getElementById('errorMessage');
+
+            // Case-insensitive username lookup
+            const username = Object.keys(users).find(k => k.toLowerCase() === usernameRaw.toLowerCase()) || usernameRaw;
 
             if (users[username] && users[username].code === code) {
                 // Test accounts use a different character key than their username
