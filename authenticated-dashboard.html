@@ -1802,6 +1802,28 @@
                 html += `</div>`;
             });
 
+
+            // ── DJ TEXTS ─────────────────────────────────────────────
+            const djTexts = [
+                { id: 'djCountyClerk', label: 'County Clerk Report',        preview: 'Original 1902 filing — Thoreson &amp; Hartley Toys', act: 'Act 1' },
+                { id: 'djCoroner',     label: "Coroner's Report",            preview: 'Preliminary autopsy in — needs medical interpretation',  act: 'Act 2' },
+                { id: 'djPinkerton',   label: 'Pinkerton Background Checks', preview: 'Two name changes flagged among party guests',             act: 'Act 3' }
+            ];
+            html += '<div style="margin-top:30px; border-top:2px solid rgba(201,162,39,0.3); padding-top:20px;">';
+            html += '<div style="font-family:\'Playfair Display\',Georgia,serif; font-size:20px; color:#c9a227; margin-bottom:5px;">📱 Send Text to DJ</div>';
+            html += '<p style="color:#8b8b8b; margin-bottom:15px; font-size:13px;">Fires a private text popup on DJ\'s phone only. He sees it — nobody else does. He shares with the room when ready.</p>';
+            djTexts.forEach(function(txt) {
+                var sent = userSession.activeItems.includes(txt.id);
+                html += '<div style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:rgba(0,0,0,0.3); margin-bottom:8px; border-radius:3px; border-left:3px solid ' + (sent ? '#4caf50' : '#3a8fd4') + '; ' + (sent ? 'opacity:0.6;' : '') + '">';
+                html += '<div style="flex:1;">';
+                html += '<div style="font-size:14px; color:#c9a227; margin-bottom:3px;"><span style="font-size:10px; background:#3a8fd4; color:white; padding:2px 6px; border-radius:2px; margin-right:8px;">' + txt.act + '</span>' + txt.label + '</div>';
+                html += '<div style="font-size:12px; color:#999; font-style:italic;">' + txt.preview + '</div>';
+                html += '</div>';
+                html += '<button onclick="fireDJText(\'' + txt.id + '\')" ' + (sent ? 'disabled' : '') + ' style="background:' + (sent ? '#555' : '#3a8fd4') + '; color:white; border:none; padding:8px 16px; cursor:' + (sent ? 'default' : 'pointer') + '; border-radius:3px; white-space:nowrap; margin-left:15px; font-size:13px;">' + (sent ? '\u2713 Sent' : 'Send Text') + '</button>';
+                html += '</div>';
+            });
+            html += '</div>';
+
             // Skill Discoveries section
             html += '<div style="margin-top: 30px; border-top: 2px solid rgba(201, 162, 39, 0.3); padding-top: 20px;">';
             html += '<div style="font-family: \'Playfair Display\', Georgia, serif; font-size: 20px; color: #c9a227; margin-bottom: 5px;">Skill Discoveries</div>';
@@ -1850,6 +1872,19 @@
 
             document.getElementById('masterCluesContent').innerHTML = html;
             updateTestModeBtn();
+        }
+
+        function fireDJText(itemId) {
+            if (!userSession.activeItems) userSession.activeItems = [];
+            if (userSession.activeItems.includes(itemId)) return; // already sent
+            var oldItems = userSession.activeItems.slice();
+            userSession.activeItems.push(itemId);
+            localStorage.setItem('userSession', JSON.stringify(userSession));
+            if (typeof firebaseDb !== 'undefined') {
+                firebaseDb.ref('gameState/activeItems').set(userSession.activeItems);
+            }
+            checkForNewMemories(oldItems, userSession.activeItems);
+            loadMasterClues();
         }
 
         function toggleItem(itemId) {

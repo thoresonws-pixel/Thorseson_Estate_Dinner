@@ -41,12 +41,7 @@ const revelationsDatabase = {
                 title: "The Failed European Deal",
                 summary: "Earlier this year, Will wired <strong>$8,000</strong> to Kessler & Braun European Distributors in Hamburg for an overseas expansion deal. The company dissolved within weeks — total loss. Two outside investors who had money in Thoreson Toys have been demanding answers for months."
             },
-            {
-                id: "djCountyClerk",
-                type: "revelation",
-                title: "DJ: County Clerk Report",
-                summary: "David's contact at the county clerk's office found the original business registration — the company was filed as <strong>Thoreson & Hartley Toys</strong> in 1902."
-            }
+
         ]
     },
 
@@ -71,12 +66,7 @@ const revelationsDatabase = {
                 title: "Margaret's Letter",
                 summary: "A letter from Margaret Hartley, written in French, confronts Will over the secrets he kept. She references a <strong>safe in the study closet</strong> with a combination that meant something to him."
             },
-            {
-                id: "djCoroner",
-                type: "revelation",
-                title: "DJ: Coroner's Report",
-                summary: "David's contact at the coroner's office rushed the preliminary autopsy. The report is in — but it's dense medical terminology."
-            }
+
         ]
     },
 
@@ -107,12 +97,7 @@ const revelationsDatabase = {
                 title: "Background Check Results",
                 summary: "Pinkerton background checks on all party guests flagged two name changes — both connected to the <strong>Hartley</strong> family. Walter Lippman is <strong>Taylor Hartley</strong>. Miranda Longfellow is <strong>Miranda Hartley</strong>."
             },
-            {
-                id: "djPinkerton",
-                type: "revelation",
-                title: "DJ: Pinkerton Report",
-                summary: "David's Pinkerton contact completed background checks on all party guests. The report flags two name changes."
-            }
+
         ]
     }
 };
