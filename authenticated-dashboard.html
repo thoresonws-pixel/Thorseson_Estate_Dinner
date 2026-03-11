@@ -2449,6 +2449,22 @@
         function sendNativeNotification(title, body, tag) {
             if (!('Notification' in window)) return;
             if (Notification.permission !== 'granted') return;
+
+            // Only fire notifications to test/master accounts while test mode is active.
+            // Real guest accounts get nothing until test mode is OFF.
+            var isTestOrMaster = userSession && (userSession.role === 'test' || userSession.role === 'master');
+            if (!isTestOrMaster && database) {
+                database.ref('testMode').once('value').then(function(snap) {
+                    if (snap.val() === true) return; // test mode on — silence real accounts
+                    _fireNotification(title, body, tag);
+                });
+                return;
+            }
+
+            _fireNotification(title, body, tag);
+        }
+
+        function _fireNotification(title, body, tag) {
             if (swRegistration && swRegistration.active) {
                 swRegistration.active.postMessage({
                     type: 'SHOW_NOTIFICATION',
