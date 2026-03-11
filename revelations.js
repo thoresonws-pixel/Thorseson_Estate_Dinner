@@ -57,19 +57,19 @@ const revelationsDatabase = {
                 id: "affair",
                 type: "revelation",
                 title: "The Affair Revealed",
-                summary: "Will had a long-standing affair with <strong>Margaret Hartley</strong> — the wife of his business partner Robert. Margaret had two children: one Robert's, one Will's."
+                summary: "Will had a long-standing affair with <strong>Margaret Hartley</strong> — the wife of his business partner Robert. When Robert died, Will paid Margaret to disappear and stay silent."
             },
             {
                 id: "secretHeir",
                 type: "story",
                 title: "The Secret Heir",
-                summary: "The mysterious <strong>'T.H.'</strong> in the ledger is <strong>Taylor Hartley</strong> — Will's illegitimate child with Margaret. Will set up a secret trust fund but abandoned Margaret's other child entirely."
+                summary: "The mysterious <strong>'T.H.'</strong> in the ledger is <strong>Taylor Hartley</strong> — Will's illegitimate child with Margaret. Will set up a secret trust fund and has been supporting Taylor for over two decades."
             },
             {
                 id: "margaretsLetter",
                 type: "revelation",
                 title: "Margaret's Letter",
-                summary: "A letter from Margaret Hartley, written in French, pleads with Will to support <strong>both children</strong>. She references a <strong>safe in the study closet</strong> with a meaningful combination."
+                summary: "A letter from Margaret Hartley, written in French, confronts Will over the secrets he kept. She references a <strong>safe in the study closet</strong> with a combination that meant something to him."
             },
             {
                 id: "djCoroner",

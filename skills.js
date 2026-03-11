@@ -50,7 +50,7 @@ const skillsDatabase = {
         errorMsg: "Incorrect password. Find someone who speaks French.",
         badge: "French Translation",
         header: "Letter from Margaret Hartley to William Thoreson",
-        summary: "A letter from Margaret Hartley to Will, written in French. She pleads with him to support <strong>both children</strong> — not just his own. She mentions a safe in the study with combination <strong>9-12-11</strong>, containing documents about the children's true parentage.",
+        summary: "A letter from Margaret Hartley to Will, written in French. She confronts him over the secrets he kept and the people he abandoned. She mentions a safe in the study with a combination that meant something to him.",
         expert: `
             <p>This letter was written in French — likely deliberately, so that only someone educated abroad would be able to read it. The tone is deeply personal, angry, and accusatory. Here is the full translation:</p>
             
@@ -58,16 +58,16 @@ const skillsDatabase = {
                 "William,<br><br>
                 You always kept your secrets locked away. Just like that safe in your study closet. I know you have a heart in there somewhere. Even though you showed no heart when you sent me away.<br><br>
                 I wonder — does the combination reveal how you truly felt?<br><br>
-                I had two children to raise. TWO. One was Robert's. One was yours. You knew this. You saw them both.<br><br>
-                But you only helped one of them. You set up a trust for YOUR child and left Robert's daughter with nothing. She was fourteen years old when her father died. She needed you. WE needed you.<br><br>
-                I have kept your secret all these years. But secrets have a way of coming out.<br><br>
+                His daughter was fourteen years old when Robert died. She needed someone. You could have been there for her. You chose not to be.<br><br>
+                She grew up with nothing — no money, no name, no father. And you built your empire on the ruins of her family.<br><br>
+                I have kept your secret all these years. But secrets have a way of rising to the surface, William. Especially yours.<br><br>
                 — Margaret"
             </div>
 
-            <p>Several critical details emerge from this letter. First, Margaret confirms that she had <strong>two children</strong> — one fathered by her husband Robert Hartley, and one fathered by William Thoreson during their affair. Will set up a trust fund for his own child but completely abandoned Robert's daughter, who was only fourteen when her father died.</p>
+            <p>Margaret is furious — and grief-stricken. She confronts Will directly over what happened to Robert's daughter after his death. Will had the means to help her and did nothing.</p>
             
             <div class="reveal-highlight">
-                Margaret also references a <strong>safe in the study closet</strong>. She hints that the combination is emotionally significant to Will — possibly a date or number tied to the children. This safe may contain documents about the children's true identities.
+                Margaret references a <strong>safe in the study closet</strong>. She hints that the combination is emotionally significant to Will — something sentimental. Something he couldn't bring himself to forget.
             </div>
         `
     },
