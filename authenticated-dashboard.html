@@ -2028,6 +2028,17 @@
                 });
             }
 
+            // memories array — direct personal triggers, NO skills gate
+            // Used for DJ texts and similar character-specific private messages
+            if (charData.memories) {
+                charData.memories.forEach(function(item) {
+                    if (item.unlockedBy && newlyAdded.indexOf(item.unlockedBy) !== -1) {
+                        memories.push({ text: item.text, type: 'knowledge', triggerId: item.unlockedBy });
+                        if (triggersToMark.indexOf(item.unlockedBy) === -1) triggersToMark.push(item.unlockedBy);
+                    }
+                });
+            }
+
             if (memories.length > 0) {
                 markMemoryShown(triggersToMark);
                 memoryQueue = memoryQueue.concat(memories);
