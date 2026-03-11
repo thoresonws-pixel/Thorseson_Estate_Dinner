@@ -1,34 +1,35 @@
 // Thoreson Estate Dinner — Service Worker
-// Handles background notifications
+// Handles FCM background push notifications
 
-const CACHE_VERSION = 'thoreson-v1';
+importScripts('https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.7.0/firebase-messaging-compat.js');
 
-self.addEventListener('install', function(e) {
-    self.skipWaiting();
+firebase.initializeApp({
+    apiKey: "AIzaSyApHrYubqWrR4m0ihdpq6Ym40jv4HTQ5i0",
+    authDomain: "thoreson-estate.firebaseapp.com",
+    databaseURL: "https://thoreson-estate-default-rtdb.firebaseio.com",
+    projectId: "thoreson-estate",
+    storageBucket: "thoreson-estate.firebasestorage.app",
+    messagingSenderId: "182924616892",
+    appId: "1:182924616892:web:8153e1c69895cee665dcb9"
 });
 
-self.addEventListener('activate', function(e) {
-    e.waitUntil(self.clients.claim());
+const messaging = firebase.messaging();
+
+// Handle background FCM messages (app closed or backgrounded)
+messaging.onBackgroundMessage(function(payload) {
+    const title = (payload.notification && payload.notification.title) || (payload.data && payload.data.title) || 'Thoreson Estate';
+    const body  = (payload.notification && payload.notification.body)  || (payload.data && payload.data.body)  || 'New information available.';
+    return self.registration.showNotification(title, {
+        body: body,
+        icon: '/Thoreson_Estate_Dinner/icon-192.png',
+        badge: '/Thoreson_Estate_Dinner/icon-192.png',
+        tag: 'thoreson-fcm',
+        renotify: true
+    });
 });
 
-// Listen for notification messages from the main page
-self.addEventListener('message', function(e) {
-    if (e.data && e.data.type === 'SHOW_NOTIFICATION') {
-        e.waitUntil(
-            self.registration.showNotification(e.data.title, {
-                body: e.data.body,
-                icon: e.data.icon || '/Thoreson_Estate_Dinner/icon-192.png',
-                badge: e.data.icon || '/Thoreson_Estate_Dinner/icon-192.png',
-                tag: e.data.tag || 'thoreson-update',
-                renotify: true,
-                requireInteraction: false,
-                silent: false
-            })
-        );
-    }
-});
-
-// Clicking a notification brings the app to focus
+// Tap notification -> focus app
 self.addEventListener('notificationclick', function(e) {
     e.notification.close();
     e.waitUntil(
@@ -44,3 +45,20 @@ self.addEventListener('notificationclick', function(e) {
         })
     );
 });
+
+// Foreground fallback via postMessage
+self.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'SHOW_NOTIFICATION') {
+        e.waitUntil(
+            self.registration.showNotification(e.data.title, {
+                body: e.data.body,
+                icon: '/Thoreson_Estate_Dinner/icon-192.png',
+                tag: e.data.tag || 'thoreson-' + Date.now(),
+                renotify: true
+            })
+        );
+    }
+});
+
+self.addEventListener('install', function() { self.skipWaiting(); });
+self.addEventListener('activate', function(e) { e.waitUntil(self.clients.claim()); });
