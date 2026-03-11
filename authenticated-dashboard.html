@@ -1876,14 +1876,13 @@
 
         function fireDJText(itemId) {
             if (!userSession.activeItems) userSession.activeItems = [];
-            if (userSession.activeItems.includes(itemId)) return; // already sent
+            if (userSession.activeItems.includes(itemId)) return; // already sent, one-shot only
             var oldItems = userSession.activeItems.slice();
             userSession.activeItems.push(itemId);
-            localStorage.setItem('userSession', JSON.stringify(userSession));
-            if (typeof firebaseDb !== 'undefined') {
-                firebaseDb.ref('gameState/activeItems').set(userSession.activeItems);
-            }
             checkForNewMemories(oldItems, userSession.activeItems);
+            localStorage.setItem('userSession', JSON.stringify(userSession));
+            syncToFirebase();
+            broadcastChannel.postMessage({ type: 'itemUpdate', activeItems: userSession.activeItems });
             loadMasterClues();
         }
 
