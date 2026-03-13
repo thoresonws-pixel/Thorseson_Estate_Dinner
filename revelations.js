@@ -70,13 +70,6 @@ const revelationsDatabase = {
                 transcriptSlot: true
             },
             {
-                id: "will",
-                type: "clue",
-                title: "Will Thoreson's Last Will & Testament",
-                summary: "A will dated January 14, 1935, dividing the estate equally into three shares — one each to William Scott Thoreson Jr., Frederick Daniel Thoreson, and Taylor Hartley. Taylor Hartley is described as a recognized heir whose claim upon the estate Will acknowledges 'fully and without reservation.'",
-                detail: null
-            },
-            {
                 id: "stolenCompany",
                 type: "story",
                 title: "The Stolen Company",
@@ -124,6 +117,13 @@ const revelationsDatabase = {
                 summary: `I need to confess something. Before it's too late. I don't know how much time I have left. So I'm recording this. For my family. For the truth. Robert Hartley was my partner. He was my closest friend. We built that company together. Thoreson & Hartley Toys. And I betrayed him. It started with Margaret. Robert's wife. I had an affair with her. Behind Robert's back. While he was still my partner, still my friend — I was going behind his back with the woman he loved.\n\nI am not a good man. Robert found out. About Margaret and me.\n\nHe was furious. Rightfully so. He came to me and said he would pull every dollar he had out of the company. That he'd burn it to the ground before he'd let me profit from it. He said I'd taken everything from him. And he was right. So I acted first. I forged his signature on a transfer document. I took the company. Everything Robert had built — I put it in my name before he could destroy it. I told myself I was protecting the business. That was a lie. I was protecting myself. Robert died the next day. When he realized what I'd done — that I'd outsmarted him — he had nothing left. I took his company. I took his wife. The grief of losing everything — his company, Margaret, all of it — it broke him. They ruled it a suicide. But I know what really killed Robert Hartley. It was me.\n\nMargaret had a child. My child. I never claimed the child publicly. I was too much of a coward for that. Instead I set up a trust. Monthly payments. Fifty dollars, listed as T.H. in the ledger so nobody would ask questions. That was all I gave. Money. In secret. For twenty-five years.\n\nAfter Robert died,\n\nI didn't want anyone to know what I'd done.\n\n[static]\n\nThat was my doing. I've carried this guilt for twenty-five years. But tonight, I'm going to start making it right. I've invited Taylor here. My child. I'm going to welcome them into this family. Publicly. Finally. No more hiding. No more secret payments. No more lies.\n\n[static]\n\nThough God knows I don't deserve it.\n\n[static]\n\nIt's time to tell the truth. I only pray it isn't too late.`,
                 detail: null,
                 transcriptSlot: true
+            },
+            {
+                id: "will",
+                type: "clue",
+                title: "Will Thoreson's Last Will & Testament",
+                summary: "A will dated January 14, 1935, dividing the estate equally into three shares — one each to William Scott Thoreson Jr., Frederick Daniel Thoreson, and Taylor Hartley. Taylor Hartley is described as a recognized heir whose claim upon the estate Will acknowledges 'fully and without reservation.'",
+                detail: null
             },
             {
                 id: "secretHeir",
