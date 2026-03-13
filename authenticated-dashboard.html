@@ -966,10 +966,11 @@
             animation: memoryTextReveal 0.6s ease 0.3s both;
         }
         .text-msg-body {
-            font-family: 'Georgia', serif; font-size: 15px; color: #c8e6c9;
-            line-height: 1.7; font-style: normal; padding: 15px;
+            font-family: 'Courier New', monospace; font-size: 13px; color: #c8e6c9;
+            line-height: 1.8; font-style: normal; padding: 15px;
             background: rgba(76, 175, 80, 0.08); border-radius: 8px;
             border-left: 3px solid #4caf50;
+            white-space: pre-wrap;
             animation: memoryTextReveal 0.6s ease 0.5s both;
         }
         .text-msg-action {
@@ -2117,8 +2118,8 @@
             var textMessageTriggers = {
                 'backgroundCheck': { from: 'PINKERTON DETECTIVE AGENCY', action: '\u26A0\uFE0F SHARE THIS WITH THE GROUP' },
                 'djCountyClerk': { from: 'DALLAS COUNTY CLERK\u2019S OFFICE', action: '\u26A0\uFE0F SHARE THIS WITH THE GROUP' },
-                'djCoroner': { from: 'DALLAS COUNTY CORONER', action: '\u26A0\uFE0F FIND SOMEONE WITH MEDICAL TRAINING' },
-                'djPinkerton': { from: 'PINKERTON DETECTIVE AGENCY', action: '\u26A0\uFE0F FIND SOMEONE WHO CAN READ THESE REPORTS' }
+                'djCoroner': { from: 'DALLAS COUNTY CORONER\u2019S OFFICE', action: '\u26A0\uFE0F FIND SOMEONE WITH MEDICAL TRAINING \u2014 AND HAND OVER THE KEY' },
+                'djPinkerton': { from: 'PINKERTON NATIONAL DETECTIVE AGENCY', action: '\u26A0\uFE0F READ THIS CAREFULLY \u2014 THEN SHARE WITH THE GROUP' }
             };
 
             var isTextMsg = memory.triggerId && textMessageTriggers[memory.triggerId];
