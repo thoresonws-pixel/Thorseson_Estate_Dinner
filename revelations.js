@@ -70,6 +70,13 @@ const revelationsDatabase = {
                 transcriptSlot: true
             },
             {
+                id: "will",
+                type: "clue",
+                title: "Will Thoreson's Last Will & Testament",
+                summary: "A will dated January 14, 1935, dividing the estate equally into three shares — one each to William Scott Thoreson Jr., Frederick Daniel Thoreson, and Taylor Hartley. Taylor Hartley is described as a recognized heir whose claim upon the estate Will acknowledges 'fully and without reservation.'",
+                detail: null
+            },
+            {
                 id: "stolenCompany",
                 type: "story",
                 title: "The Stolen Company",

@@ -39,8 +39,8 @@ const characterDatabase = {
         relationships: [
             { name: "William Thoreson Sr.", relation: "Your father (deceased)" },
             { name: "Eleanor Thoreson", relation: "Your mother" },
-            { name: "Brian Thoreson", relation: "Your younger brother" },
-            { name: "Clara Thoreson", relation: "Your wife" },
+            { name: "Frederick 'Brian' Thoreson", relation: "Your younger brother" },
+            { name: "Charlotte 'Clara' Waverly", relation: "Your wife" },
             { name: "Miranda Longfellow", relation: "Your trusted legal assistant (10 years)" }
         ],
         items: []
@@ -50,7 +50,7 @@ const characterDatabase = {
     // BRIAN T — Frederick "Brian" Thoreson
     // ============================================================
     "BrianT": {
-        name: "Brian Thoreson",
+        name: "Frederick 'Brian' Thoreson",
         publicDesc: "Younger son of William Thoreson Sr. The easygoing one. Here for the food and the drinks.",
         skills: [],
         backstory: "You grew up in Fort Worth — your father ran a dry goods store and your mother kept the books, which is where you learned that the people who actually run things are rarely the ones with their names on the door. You met Scott at a mutual friend's dinner party in 1927 and married him two years later. You are practical, composed, and quietly sharp. You handle the social obligations of being a Thoreson wife with efficiency rather than enthusiasm. You like Scott. You love your life. You just don't need it to be dramatic.\n\nYou have always been the kind of person other people lean on without quite realizing they're doing it. At family gatherings you are the one who remembers where the extra chairs are, who is getting along with whom, and when someone has had enough to drink. You do not find this burdensome. You find it clarifying. A room is a system, and you have always been good at understanding systems.\n\nYou trained briefly as a nurse before you married, and you still carry that instinct — the calm that comes from having seen people at their worst and knowing that most situations are survivable. You think clearly under pressure. You do not panic. You are possibly the most useful person in this room right now, and almost no one has thought to ask you anything yet.\n\nWill was never unkind to you, but you always sensed he was sizing you up — checking whether Scott had married well. Eleanor has been warmer. You've come to genuinely care for her.\n\nTonight you're the one making sure glasses stay full and nobody goes to pieces in the hallway. Someone has to.\n\nYou are good at stillness. It is something you learned young — when you have no power, stillness is the closest thing to it. You watch. You wait. You let other people fill the silence. Over ten years inside this household you have become fluent in the Thoreson family's rhythms, their particular silences, the things they say when they think no one consequential is listening. You have been consequential the entire time. They just didn't know it.",
@@ -66,7 +66,7 @@ const characterDatabase = {
         relationships: [
             { name: "William Thoreson Sr.", relation: "Your dad (deceased)" },
             { name: "Scott Thoreson Jr.", relation: "Your older brother" },
-            { name: "Clara Thoreson", relation: "Your sister-in-law" },
+            { name: "Charlotte 'Clara' Waverly", relation: "Your sister-in-law" },
             { name: "Miranda Longfellow", relation: "Scott's assistant. She's always around." }
         ],
         items: []
@@ -76,7 +76,7 @@ const characterDatabase = {
     // CLARA — Clara Thoreson
     // ============================================================
     "Clara": {
-        name: "Clara Thoreson",
+        name: "Charlotte 'Clara' Waverly",
         publicDesc: "Scott's wife. Warm, practical, and the one keeping things running tonight.",
         skills: ["Bartender"],
         backstory: "You grew up in Fort Worth — your father ran a dry goods store and your mother kept the books, which is where you learned that the people who actually run things are rarely the ones with their names on the door. You met Scott at a mutual friend's dinner party in 1927 and married him two years later. You are practical, composed, and quietly sharp. You handle the social obligations of being a Thoreson wife with efficiency rather than enthusiasm. You like Scott. You love your life. You just don't need it to be dramatic.\n\nYou have always been the kind of person other people lean on without quite realizing they're doing it. At family gatherings you are the one who remembers where the extra chairs are, who is getting along with whom, and when someone has had enough to drink. You do not find this burdensome. You find it clarifying. A room is a system, and you have always been good at understanding systems.\n\nYou trained briefly as a nurse before you married, and you still carry that instinct — the calm that comes from having seen people at their worst and knowing that most situations are survivable. You think clearly under pressure. You do not panic. You are possibly the most useful person in this room right now, and almost no one has thought to ask you anything yet.\n\nWill was never unkind to you, but you always sensed he was sizing you up — checking whether Scott had married well. Eleanor has been warmer. You've come to genuinely care for her.\n\nTonight you're the one making sure glasses stay full and nobody goes to pieces in the hallway. Someone has to.\n\nYou are good at stillness. It is something you learned young — when you have no power, stillness is the closest thing to it. You watch. You wait. You let other people fill the silence. Over ten years inside this household you have become fluent in the Thoreson family's rhythms, their particular silences, the things they say when they think no one consequential is listening. You have been consequential the entire time. They just didn't know it.",
@@ -88,7 +88,7 @@ const characterDatabase = {
         relationships: [
             { name: "Scott Thoreson Jr.", relation: "Your husband" },
             { name: "William Thoreson Sr.", relation: "Your father-in-law (deceased)" },
-            { name: "Brian Thoreson", relation: "Your brother-in-law" },
+            { name: "Frederick 'Brian' Thoreson", relation: "Your brother-in-law" },
             { name: "Eleanor Thoreson", relation: "Your mother-in-law" }
         ],
         items: []
@@ -193,7 +193,7 @@ const characterDatabase = {
         relationships: [
             { name: "Dylan Winslow", relation: "Your boyfriend — you brought him tonight" },
             { name: "Scott Thoreson Jr.", relation: "Your cousin" },
-            { name: "Brian Thoreson", relation: "Your cousin" },
+            { name: "Frederick 'Brian' Thoreson", relation: "Your cousin" },
             { name: "William Thoreson Sr.", relation: "Your uncle (deceased)" },
             { name: "Eleanor Thoreson", relation: "Your aunt" }
         ],
@@ -219,7 +219,7 @@ const characterDatabase = {
         ],
         relationships: [
             { name: "Scott Thoreson Jr.", relation: "Your cousin" },
-            { name: "Brian Thoreson", relation: "Your cousin" },
+            { name: "Frederick 'Brian' Thoreson", relation: "Your cousin" },
             { name: "William Thoreson Sr.", relation: "Your uncle (deceased)" },
             { name: "Eleanor Thoreson", relation: "Your aunt" }
         ],
@@ -340,7 +340,7 @@ const characterDatabase = {
             { name: "Eleanor Thoreson", relation: "Your closest friend" },
             { name: "William Thoreson Sr.", relation: "Dear friend of thirty years (deceased)" },
             { name: "Scott Thoreson Jr.", relation: "Watched him grow up" },
-            { name: "Brian Thoreson", relation: "Watched him grow up" },
+            { name: "Frederick 'Brian' Thoreson", relation: "Watched him grow up" },
             { name: "Elizabeth Monroe", relation: "Fellow long-time family friend" }
         ],
         items: []
@@ -554,7 +554,7 @@ const characterDatabase = {
         relationships: [
             { name: "Vivienne Ashford", relation: "Your girlfriend — you're here for her" },
             { name: "Scott Thoreson Jr.", relation: "Vivienne's cousin — met him once" },
-            { name: "Brian Thoreson", relation: "Vivienne's cousin" },
+            { name: "Frederick 'Brian' Thoreson", relation: "Vivienne's cousin" },
             { name: "Eleanor Thoreson", relation: "Vivienne's aunt" }
         ],
         items: []
