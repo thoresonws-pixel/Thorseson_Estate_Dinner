@@ -1805,7 +1805,8 @@
             };
             const confessionByAct = {
                 act1: 'audio/confession_act1.mp3',
-                act2: 'audio/confession_act2.mp3'
+                act2: 'audio/confession_act2.mp3',
+                act3: 'audio/confession_act3.mp3'
             };
             html += '<audio id="confessionAudio" style="display:none;"></audio>';
             html += '<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px;">';
@@ -1941,7 +1942,7 @@
         }
 
         function playConfession(act) {
-            const files = { act1: 'audio/confession_act1.mp3', act2: 'audio/confession_act2.mp3' };
+            const files = { act1: 'audio/confession_act1.mp3', act2: 'audio/confession_act2.mp3', act3: 'audio/confession_act3.mp3' };
             const audio = document.getElementById('confessionAudio');
             if (!audio) return;
             if (!audio.paused && audio.src.includes(files[act])) {
