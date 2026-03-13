@@ -74,6 +74,12 @@ const revelationsDatabase = {
         label: "Act 3 — The Killer",
         items: [
             {
+                id: "fireSafeOpened",
+                type: "story",
+                title: "The Fire Safe — Opened",
+                summary: "The fire safe in the game room has been opened. Search its contents carefully."
+            },
+            {
                 id: "poisoning",
                 type: "revelation",
                 title: "Murder by Poison",
