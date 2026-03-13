@@ -1732,81 +1732,153 @@
         function loadDiscoveriesData() {
             if (!userSession.activeItems) userSession.activeItems = [];
             if (!userSession.discoveredSkills) userSession.discoveredSkills = [];
-            let html = '';
 
-            // Show active items from revelationsDatabase as expandable cards
-            if (userSession.activeItems.length > 0) {
-                Object.entries(revelationsDatabase).forEach(([actKey, act]) => {
-                    const activeInAct = act.items.filter(item => userSession.activeItems.includes(item.id));
-                    if (activeInAct.length > 0) {
-                        html += `<div style="font-family: 'Playfair Display', Georgia, serif; font-size: 15px; color: #8b8b8b; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 10px; margin-top: 25px;">${act.label}</div>`;
-                        activeInAct.forEach(item => {
-                            const borderColor = item.type === 'story' ? '#8b7355' : '#c9a227';
-                            const badge = item.type === 'story'
-                                ? '<span style="font-size: 10px; background: #8b7355; color: white; padding: 2px 6px; border-radius: 2px; margin-left: 8px; vertical-align: middle; letter-spacing: 1px;">STORY</span>'
-                                : '<span style="font-size: 10px; background: #c9a227; color: #1a1a2e; padding: 2px 6px; border-radius: 2px; margin-left: 8px; vertical-align: middle; letter-spacing: 1px;">CLUE</span>';
-                            const hasDetail = item.detail && item.detail.length > 0;
-                            html += `
-                                <div style="background: rgba(0,0,0,0.3); border-left: 3px solid ${borderColor}; margin-bottom: 8px; border-radius: 3px; overflow: hidden;">
-                                    <div onclick="toggleDiscoveryCard('${item.id}')"
-                                         style="padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
-                                        <div style="font-family: 'Playfair Display', Georgia, serif; font-size: 19px; color: #c9a227;">
-                                            ✦ ${item.title}${badge}
-                                        </div>
-                                        <div id="arrow-${item.id}" style="font-size: 20px; color: #c9a227; margin-left: 12px; flex-shrink: 0;">▸</div>
-                                    </div>
-                                    <div id="detail-${item.id}" style="display: none; padding: 0 18px 16px 18px; border-top: 1px solid rgba(201,162,39,0.15);">
-                                        <div style="font-size: 17px; line-height: 1.7; color: #cccccc; padding-top: 14px;">${item.summary}</div>
-                                        ${item.detail ? `<div style="font-size: 16px; line-height: 1.7; color: #999999; margin-top: 10px;">${item.detail}</div>` : ''}
-                                    </div>
-                                </div>
-                            `;
-                        });
-                    }
-                });
-            }
+            const tabStyle = (active) => `
+                padding: 10px 18px; cursor: pointer; border: none; border-radius: 3px 3px 0 0;
+                font-family: 'Playfair Display', Georgia, serif; font-size: 15px; letter-spacing: 1px;
+                background: ${active ? '#c9a227' : 'rgba(0,0,0,0.3)'};
+                color: ${active ? '#1a1a2e' : '#999'};
+                margin-right: 4px;
+            `;
 
-            // Show skill summaries: person must HAVE the skill AND it must be discovered
-            // Discovered = either personally via QR scan (localStorage) OR globally via Master Controls (Firebase)
+            let html = `
+                <div style="display: flex; flex-wrap: wrap; margin-bottom: 0; border-bottom: 2px solid #c9a227;">
+                    <button onclick="switchDiscoveryTab('clues')" id="dtab-clues" style="${tabStyle(true)}">Clues</button>
+                    <button onclick="switchDiscoveryTab('story')" id="dtab-story" style="${tabStyle(false)}">Story</button>
+                    <button onclick="switchDiscoveryTab('expert')" id="dtab-expert" style="${tabStyle(false)}">Expert Notes</button>
+                    <button onclick="switchDiscoveryTab('memories')" id="dtab-memories" style="${tabStyle(false)}">Memories</button>
+                </div>
+            `;
+
+            // ── CLUES ──────────────────────────────────────────────────
+            const clueItems = [];
+            Object.entries(revelationsDatabase).forEach(([actKey, act]) => {
+                act.items.filter(i => i.type === 'clue' && userSession.activeItems.includes(i.id))
+                    .forEach(i => clueItems.push({ item: i, actLabel: act.label }));
+            });
+
+            let clueHtml = clueItems.length === 0
+                ? '<div style="text-align:center; padding:40px; color:#999; font-style:italic;">No clues discovered yet.</div>'
+                : '';
+            let lastAct = '';
+            clueItems.forEach(({ item, actLabel }) => {
+                if (actLabel !== lastAct) {
+                    clueHtml += `<div style="font-family:'Playfair Display',serif; font-size:13px; color:#8b8b8b; text-transform:uppercase; letter-spacing:3px; margin: 20px 0 8px;">${actLabel}</div>`;
+                    lastAct = actLabel;
+                }
+                clueHtml += buildDiscoveryCard(item, '#c9a227');
+            });
+
+            // ── STORY ──────────────────────────────────────────────────
+            const storyItems = [];
+            Object.entries(revelationsDatabase).forEach(([actKey, act]) => {
+                act.items.filter(i => i.type === 'story' && userSession.activeItems.includes(i.id))
+                    .forEach(i => storyItems.push({ item: i, actLabel: act.label }));
+            });
+
+            let storyHtml = storyItems.length === 0
+                ? '<div style="text-align:center; padding:40px; color:#999; font-style:italic;">No story beats unlocked yet.</div>'
+                : '';
+            lastAct = '';
+            storyItems.forEach(({ item, actLabel }) => {
+                if (actLabel !== lastAct) {
+                    storyHtml += `<div style="font-family:'Playfair Display',serif; font-size:13px; color:#8b8b8b; text-transform:uppercase; letter-spacing:3px; margin: 20px 0 8px;">${actLabel}</div>`;
+                    lastAct = actLabel;
+                }
+                storyHtml += buildDiscoveryCard(item, '#8b7355');
+            });
+
+            // ── EXPERT NOTES ───────────────────────────────────────────
             const mySkills = getMySkills();
             const personalDisc = getPersonalDiscoveries();
-            if (mySkills.length > 0) {
-                mySkills.forEach(skillName => {
-                    const skillData = skillsDatabase[skillName];
-                    if (!skillData || skillName === 'Bartender') return;
-                    const discoveredKey = skillName.toLowerCase() + 'Discovered';
-                    const isGlobalDiscovered = userSession.discoveredSkills.includes(discoveredKey);
-                    const isPersonalDiscovered = personalDisc.includes(discoveredKey);
-                    if (isGlobalDiscovered || isPersonalDiscovered) {
-                        html += `
-                            <div style="background: rgba(201, 162, 39, 0.1); border-left: 3px solid #c9a227; padding: 20px; margin-bottom: 15px; border-radius: 3px;">
-                                <div style="font-family: 'Playfair Display', Georgia, serif; font-size: 20px; color: #c9a227; margin-bottom: 10px;">\u2726 ${skillData.title}</div>
-                                <div style="font-size: 16px; line-height: 1.6; color: #e8e8e8; margin-bottom: 12px;">${skillData.summary}</div>
-                                ${(isPersonalDiscovered && skillData.expert) ? '<button onclick="showSkillContent(\'' + skillName + '\', skillsDatabase[\'' + skillName + '\'])" style="background: transparent; color: #c9a227; border: 1px solid #c9a227; padding: 6px 16px; cursor: pointer; font-family: \'Playfair Display\', Georgia, serif; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; transition: all 0.3s;" onmouseover="this.style.background=\'#c9a227\';this.style.color=\'#1a1a2e\'" onmouseout="this.style.background=\'transparent\';this.style.color=\'#c9a227\'">View Full Analysis</button>' : ''}
+            let expertHtml = '';
+
+            mySkills.forEach(skillName => {
+                const skillData = skillsDatabase[skillName];
+                if (!skillData) return;
+                const discoveredKey = skillName.toLowerCase() + 'Discovered';
+                const isGlobalDiscovered = userSession.discoveredSkills.includes(discoveredKey);
+                const isPersonalDiscovered = personalDisc.includes(discoveredKey);
+                if (!isGlobalDiscovered && !isPersonalDiscovered) return;
+
+                if (skillName === 'Bartender') {
+                    expertHtml += `
+                        <div style="background:rgba(0,0,0,0.3); border-left:3px solid #8b7355; margin-bottom:8px; border-radius:3px; overflow:hidden;">
+                            <div style="padding:14px 18px;">
+                                <div style="font-family:'Playfair Display',serif; font-size:19px; color:#c9a227; margin-bottom:8px;">✦ ${skillData.title}</div>
+                                <div style="font-size:17px; line-height:1.7; color:#cccccc;">${skillData.summary}</div>
                             </div>
-                        `;
+                        </div>`;
+                } else {
+                    expertHtml += `
+                        <div style="background:rgba(0,0,0,0.3); border-left:3px solid #c9a227; margin-bottom:8px; border-radius:3px; overflow:hidden;">
+                            <div onclick="toggleDiscoveryCard('expert-${skillName}')" style="padding:14px 18px; display:flex; justify-content:space-between; align-items:center; cursor:pointer;">
+                                <div style="font-family:'Playfair Display',serif; font-size:19px; color:#c9a227;">✦ ${skillData.title}</div>
+                                <div id="arrow-expert-${skillName}" style="font-size:20px; color:#c9a227; margin-left:12px; flex-shrink:0;">▸</div>
+                            </div>
+                            <div id="detail-expert-${skillName}" style="display:none; padding:0 18px 16px 18px; border-top:1px solid rgba(201,162,39,0.15);">
+                                <div style="font-size:17px; line-height:1.7; color:#cccccc; padding-top:14px;">${skillData.summary}</div>
+                                ${(isPersonalDiscovered && skillData.expert) ? `<button onclick="showSkillContent('${skillName}', skillsDatabase['${skillName}'])" style="margin-top:12px; background:transparent; color:#c9a227; border:1px solid #c9a227; padding:8px 18px; cursor:pointer; font-family:'Playfair Display',serif; font-size:13px; letter-spacing:2px; text-transform:uppercase;">View Full Analysis</button>` : ''}
+                            </div>
+                        </div>`;
+                }
+            });
+
+            if (expertHtml === '') expertHtml = '<div style="text-align:center; padding:40px; color:#999; font-style:italic;">No expert notes yet. Scan a QR code with your skill to unlock them.</div>';
+
+            // ── MEMORIES ───────────────────────────────────────────────
+            const charKey = userSession.character || userSession.username;
+            const charData = characterDatabase[charKey];
+            const shown = getShownMemories();
+            let memoriesHtml = '';
+
+            if (charData && charData.memories) {
+                charData.memories.forEach(m => {
+                    if (m.unlockedBy && shown.includes(m.unlockedBy)) {
+                        memoriesHtml += `
+                            <div style="background:rgba(0,0,0,0.3); border-left:3px solid #6a5a8a; margin-bottom:8px; border-radius:3px; padding:16px 18px;">
+                                <div style="font-size:17px; line-height:1.7; color:#cccccc; font-style:italic;">"${m.text}"</div>
+                            </div>`;
                     }
                 });
             }
+            if (memoriesHtml === '') memoriesHtml = '<div style="text-align:center; padding:40px; color:#999; font-style:italic;">No memories unlocked yet.</div>';
 
-            // Always show Bartender recipes if user has that skill
-            if (getMySkills().includes('Bartender')) {
-                const bartender = skillsDatabase['Bartender'];
-                if (bartender) {
-                    html += `
-                        <div style="background: rgba(201, 162, 39, 0.1); border-left: 3px solid #8b7355; padding: 20px; margin-bottom: 15px; border-radius: 3px;">
-                            <div style="font-family: 'Playfair Display', Georgia, serif; font-size: 20px; color: #c9a227; margin-bottom: 10px;">\u2726 ${bartender.title}</div>
-                            <div style="font-size: 16px; line-height: 1.6; color: #e8e8e8;">${bartender.summary}</div>
-                        </div>
-                    `;
-                }
-            }
+            html += `
+                <div id="dpanel-clues"   style="padding-top:16px;">${clueHtml}</div>
+                <div id="dpanel-story"   style="padding-top:16px; display:none;">${storyHtml}</div>
+                <div id="dpanel-expert"  style="padding-top:16px; display:none;">${expertHtml}</div>
+                <div id="dpanel-memories" style="padding-top:16px; display:none;">${memoriesHtml}</div>
+            `;
 
-            if (html === '') {
-                html = '<div style="text-align: center; padding: 40px; color: #999; font-style: italic;">No discoveries yet. The investigation is just beginning...</div>';
-            }
-
+            if (html === '') html = '<div style="text-align:center; padding:40px; color:#999; font-style:italic;">No discoveries yet.</div>';
             document.getElementById('discoveriesContent').innerHTML = html;
+        }
+
+        function buildDiscoveryCard(item, borderColor) {
+            return `
+                <div style="background:rgba(0,0,0,0.3); border-left:3px solid ${borderColor}; margin-bottom:8px; border-radius:3px; overflow:hidden;">
+                    <div onclick="toggleDiscoveryCard('${item.id}')" style="padding:14px 18px; display:flex; justify-content:space-between; align-items:center; cursor:pointer;">
+                        <div style="font-family:'Playfair Display',serif; font-size:19px; color:#c9a227;">✦ ${item.title}</div>
+                        <div id="arrow-${item.id}" style="font-size:20px; color:#c9a227; margin-left:12px; flex-shrink:0;">▸</div>
+                    </div>
+                    <div id="detail-${item.id}" style="display:none; padding:0 18px 16px 18px; border-top:1px solid rgba(201,162,39,0.15);">
+                        <div style="font-size:17px; line-height:1.7; color:#cccccc; padding-top:14px;">${item.summary}</div>
+                        ${item.detail ? `<div style="font-size:16px; line-height:1.7; color:#999; margin-top:10px;">${item.detail}</div>` : ''}
+                    </div>
+                </div>`;
+        }
+
+        function switchDiscoveryTab(tab) {
+            ['clues','story','expert','memories'].forEach(t => {
+                const panel = document.getElementById('dpanel-' + t);
+                const btn = document.getElementById('dtab-' + t);
+                if (!panel || !btn) return;
+                const active = t === tab;
+                panel.style.display = active ? 'block' : 'none';
+                btn.style.background = active ? '#c9a227' : 'rgba(0,0,0,0.3)';
+                btn.style.color = active ? '#1a1a2e' : '#999';
+            });
         }
 
         function loadMasterClues() {
