@@ -1717,6 +1717,14 @@
             const arrow = document.getElementById('arrow-' + id);
             if (!detail) return;
             const isOpen = detail.style.display !== 'none';
+            // Close all other open cards first
+            document.querySelectorAll('[id^="detail-"]').forEach(el => {
+                if (el.id !== 'detail-' + id) {
+                    el.style.display = 'none';
+                    const a = document.getElementById(el.id.replace('detail-', 'arrow-'));
+                    if (a) a.textContent = '▸';
+                }
+            });
             detail.style.display = isOpen ? 'none' : 'block';
             if (arrow) arrow.textContent = isOpen ? '▸' : '▾';
         }
@@ -1731,25 +1739,25 @@
                 Object.entries(revelationsDatabase).forEach(([actKey, act]) => {
                     const activeInAct = act.items.filter(item => userSession.activeItems.includes(item.id));
                     if (activeInAct.length > 0) {
-                        html += `<div style="font-family: 'Playfair Display', Georgia, serif; font-size: 13px; color: #8b8b8b; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 10px; margin-top: 25px;">${act.label}</div>`;
+                        html += `<div style="font-family: 'Playfair Display', Georgia, serif; font-size: 15px; color: #8b8b8b; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 10px; margin-top: 25px;">${act.label}</div>`;
                         activeInAct.forEach(item => {
                             const borderColor = item.type === 'story' ? '#8b7355' : '#c9a227';
                             const badge = item.type === 'story'
-                                ? '<span style="font-size: 9px; background: #8b7355; color: white; padding: 2px 6px; border-radius: 2px; margin-left: 8px; vertical-align: middle; letter-spacing: 1px;">STORY</span>'
-                                : '<span style="font-size: 9px; background: #c9a227; color: #1a1a2e; padding: 2px 6px; border-radius: 2px; margin-left: 8px; vertical-align: middle; letter-spacing: 1px;">CLUE</span>';
+                                ? '<span style="font-size: 10px; background: #8b7355; color: white; padding: 2px 6px; border-radius: 2px; margin-left: 8px; vertical-align: middle; letter-spacing: 1px;">STORY</span>'
+                                : '<span style="font-size: 10px; background: #c9a227; color: #1a1a2e; padding: 2px 6px; border-radius: 2px; margin-left: 8px; vertical-align: middle; letter-spacing: 1px;">CLUE</span>';
                             const hasDetail = item.detail && item.detail.length > 0;
                             html += `
                                 <div style="background: rgba(0,0,0,0.3); border-left: 3px solid ${borderColor}; margin-bottom: 8px; border-radius: 3px; overflow: hidden;">
                                     <div onclick="toggleDiscoveryCard('${item.id}')"
-                                         style="padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
-                                        <div style="font-family: 'Playfair Display', Georgia, serif; font-size: 16px; color: #c9a227;">
+                                         style="padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+                                        <div style="font-family: 'Playfair Display', Georgia, serif; font-size: 19px; color: #c9a227;">
                                             ✦ ${item.title}${badge}
                                         </div>
-                                        <div id="arrow-${item.id}" style="font-size: 16px; color: #c9a227; margin-left: 12px; flex-shrink: 0;">▸</div>
+                                        <div id="arrow-${item.id}" style="font-size: 20px; color: #c9a227; margin-left: 12px; flex-shrink: 0;">▸</div>
                                     </div>
-                                    <div id="detail-${item.id}" style="display: none; padding: 0 16px 14px 16px; border-top: 1px solid rgba(201,162,39,0.15);">
-                                        <div style="font-size: 14px; line-height: 1.6; color: #cccccc; margin-bottom: 10px; padding-top: 12px;">${item.summary}</div>
-                                        ${item.detail ? `<div style="font-size: 13px; line-height: 1.7; color: #999999;">${item.detail}</div>` : ''}
+                                    <div id="detail-${item.id}" style="display: none; padding: 0 18px 16px 18px; border-top: 1px solid rgba(201,162,39,0.15);">
+                                        <div style="font-size: 17px; line-height: 1.7; color: #cccccc; padding-top: 14px;">${item.summary}</div>
+                                        ${item.detail ? `<div style="font-size: 16px; line-height: 1.7; color: #999999; margin-top: 10px;">${item.detail}</div>` : ''}
                                     </div>
                                 </div>
                             `;
