@@ -1797,18 +1797,32 @@
             html += '<button onclick="toggleItem(\'willsDeath\')" style="background: ' + (gameStarted ? '#e74c3c' : '#c9a227') + '; color: ' + (gameStarted ? 'white' : '#1a1a2e') + '; border: none; padding: 10px 24px; cursor: pointer; border-radius: 3px; font-size: 14px; font-weight: bold; white-space: nowrap; margin-left: 20px;">' + (gameStarted ? '✕ Hide' : '▶ Begin') + '</button>';
             html += '</div>';
 
-            // Revelations by act — 3-column grid
+            // ── PER-ACT GRID: revelations + DJ text + confession audio ──
+            const djTextsByAct = {
+                act1: { id: 'djCountyClerk', label: 'County Clerk Report',        preview: 'Original 1902 filing — Thoreson &amp; Hartley Toys' },
+                act2: { id: 'djCoroner',     label: "Coroner's Report",            preview: 'Preliminary autopsy — needs medical interpretation' },
+                act3: { id: 'djPinkerton',   label: 'Pinkerton Background Checks', preview: 'Two name changes flagged among party guests' }
+            };
+            const confessionByAct = {
+                act1: 'audio/confession_act1.mp3',
+                act2: 'audio/confession_act2.mp3'
+            };
+            html += '<audio id="confessionAudio" style="display:none;"></audio>';
             html += '<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px;">';
             Object.entries(revelationsDatabase).forEach(([actKey, act]) => {
-                html += `<div style="background: rgba(0,0,0,0.2); border-radius: 5px; padding: 16px; border-top: 2px solid rgba(201,162,39,0.4);">`;
+                const dj = djTextsByAct[actKey];
+                const confSrc = confessionByAct[actKey];
+                const djSent = dj && userSession.activeItems.includes(dj.id);
+
+                html += `<div style="background: rgba(0,0,0,0.2); border-radius: 5px; padding: 16px; border-top: 2px solid rgba(201,162,39,0.4); display:flex; flex-direction:column;">`;
                 html += `<div style="font-family: 'Playfair Display', Georgia, serif; font-size: 15px; color: #c9a227; text-transform: uppercase; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid rgba(201,162,39,0.2);">${act.label}</div>`;
-                
+
+                // Revelation toggles
                 act.items.forEach(item => {
                     const isActive = userSession.activeItems.includes(item.id);
                     const typeBadge = item.type === 'story'
                         ? '<span style="font-size: 9px; background: #8b7355; color: white; padding: 1px 5px; border-radius: 2px; margin-left: 6px; vertical-align: middle;">STORY</span>'
                         : '<span style="font-size: 9px; background: #c9a227; color: #1a1a2e; padding: 1px 5px; border-radius: 2px; margin-left: 6px; vertical-align: middle;">CLUE</span>';
-
                     html += `
                         <div style="padding: 10px; background: rgba(0,0,0,0.3); margin-bottom: 8px; border-radius: 3px; ${isActive ? 'border-left: 3px solid #4caf50;' : 'border-left: 3px solid transparent;'}">
                             <div style="font-size: 13px; color: ${isActive ? '#c9a227' : '#aaa'}; margin-bottom: 8px; line-height: 1.3;">${item.title}${typeBadge}</div>
@@ -1818,42 +1832,30 @@
                         </div>
                     `;
                 });
+
+                // Spacer to push footer items down
+                html += `<div style="flex:1;"></div>`;
+
+                // DJ text button
+                if (dj) {
+                    html += `<div style="margin-top:12px; padding:10px; background:rgba(0,0,0,0.3); border-radius:3px; border-left:3px solid ${djSent ? '#4caf50' : '#3a8fd4'}; ${djSent ? 'opacity:0.6;' : ''}">`;
+                    html += `<div style="font-size:12px; color:#c9a227; margin-bottom:3px;">📱 ${dj.label}</div>`;
+                    html += `<div style="font-size:11px; color:#999; font-style:italic; margin-bottom:8px;">${dj.preview}</div>`;
+                    html += `<button onclick="fireDJText('${dj.id}')" ${djSent ? 'disabled' : ''} style="width:100%; background:${djSent ? '#555' : '#3a8fd4'}; color:white; border:none; padding:6px 0; cursor:${djSent ? 'default' : 'pointer'}; border-radius:3px; font-size:12px; letter-spacing:1px;">${djSent ? '✓ Sent' : 'Send to DJ'}</button>`;
+                    html += `</div>`;
+                }
+
+                // Confession audio button
+                if (confSrc) {
+                    html += `<div style="margin-top:10px;">`;
+                    html += `<button onclick="playConfession('${actKey}')" style="width:100%; padding:9px 0; cursor:pointer; border-radius:3px; font-family:'Playfair Display',serif; font-size:12px; letter-spacing:1px; text-transform:uppercase; border:1px solid #c9a227; background:rgba(201,162,39,0.15); color:#c9a227;">🎙 Play Confession</button>`;
+                    html += `</div>`;
+                }
+
                 html += `</div>`;
             });
             html += '</div>';
 
-
-            // ── DJ TEXTS ─────────────────────────────────────────────
-            const djTexts = [
-                { id: 'djCountyClerk', label: 'County Clerk Report',        preview: 'Original 1902 filing — Thoreson &amp; Hartley Toys', act: 'Act 1' },
-                { id: 'djCoroner',     label: "Coroner's Report",            preview: 'Preliminary autopsy in — needs medical interpretation',  act: 'Act 2' },
-                { id: 'djPinkerton',   label: 'Pinkerton Background Checks', preview: 'Two name changes flagged among party guests',             act: 'Act 3' }
-            ];
-            html += '<div style="margin-top:30px; border-top:2px solid rgba(201,162,39,0.3); padding-top:20px;">';
-            html += '<div style="font-family:\'Playfair Display\',Georgia,serif; font-size:20px; color:#c9a227; margin-bottom:5px;">📱 Send Text to DJ</div>';
-            html += '<p style="color:#8b8b8b; margin-bottom:15px; font-size:13px;">Fires a private text popup on DJ\'s phone only. He sees it — nobody else does. He shares with the room when ready.</p>';
-            djTexts.forEach(function(txt) {
-                var sent = userSession.activeItems.includes(txt.id);
-                html += '<div style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:rgba(0,0,0,0.3); margin-bottom:8px; border-radius:3px; border-left:3px solid ' + (sent ? '#4caf50' : '#3a8fd4') + '; ' + (sent ? 'opacity:0.6;' : '') + '">';
-                html += '<div style="flex:1;">';
-                html += '<div style="font-size:14px; color:#c9a227; margin-bottom:3px;"><span style="font-size:10px; background:#3a8fd4; color:white; padding:2px 6px; border-radius:2px; margin-right:8px;">' + txt.act + '</span>' + txt.label + '</div>';
-                html += '<div style="font-size:12px; color:#999; font-style:italic;">' + txt.preview + '</div>';
-                html += '</div>';
-                html += '<button onclick="fireDJText(\'' + txt.id + '\')" ' + (sent ? 'disabled' : '') + ' style="background:' + (sent ? '#555' : '#3a8fd4') + '; color:white; border:none; padding:8px 16px; cursor:' + (sent ? 'default' : 'pointer') + '; border-radius:3px; white-space:nowrap; margin-left:15px; font-size:13px;">' + (sent ? '\u2713 Sent' : 'Send Text') + '</button>';
-                html += '</div>';
-            });
-            html += '</div>';
-
-            html += '</div>';
-
-            // ── CONFESSION AUDIO ──────────────────────────────────────
-            html += '<div style="margin-top:30px; border-top:2px solid rgba(201,162,39,0.3); padding-top:20px;">';
-            html += '<div style="font-family:\'Playfair Display\',Georgia,serif; font-size:20px; color:#c9a227; margin-bottom:5px;">🎙 Confession Recording</div>';
-            html += '<p style="color:#8b8b8b; margin-bottom:15px; font-size:13px;">Play William\'s recorded confession for the room. Clara introduces each playback.</p>';
-            html += '<div style="display:flex; gap:12px; flex-wrap:wrap;">';
-            html += '<button onclick="playConfession(\'act1\')" style="padding:10px 24px; cursor:pointer; border-radius:3px; font-family:\'Playfair Display\',serif; font-size:13px; letter-spacing:2px; text-transform:uppercase; border:1px solid #c9a227; background:rgba(201,162,39,0.15); color:#c9a227;">▶ Act 1</button>';
-            html += '</div>';
-            html += '<audio id="confessionAudio" style="display:none;"></audio>';
             html += '</div>';
 
             // START GAME / RESET button
@@ -1939,7 +1941,7 @@
         }
 
         function playConfession(act) {
-            const files = { act1: 'audio/confession_act1.mp3' };
+            const files = { act1: 'audio/confession_act1.mp3', act2: 'audio/confession_act2.mp3' };
             const audio = document.getElementById('confessionAudio');
             if (!audio) return;
             if (!audio.paused && audio.src.includes(files[act])) {
