@@ -1787,6 +1787,16 @@
             html += '<div style="font-family: \'Playfair Display\', Georgia, serif; font-size: 24px; color: #c9a227; margin-bottom: 10px;">Master Controls</div>';
             html += '<p style="color: #8b8b8b; margin-bottom: 25px; font-size: 14px;">Toggle items to push them to all guests\' Discoveries page in real time.</p>';
 
+            // Game Start button
+            var gameStarted = userSession.activeItems.includes('willsDeath');
+            html += '<div style="margin-bottom: 24px; padding: 16px; background: rgba(0,0,0,0.3); border-radius: 5px; border: 2px solid ' + (gameStarted ? '#4caf50' : '#c9a227') + '; display: flex; justify-content: space-between; align-items: center;">';
+            html += '<div>';
+            html += '<div style="font-family: \'Playfair Display\', Georgia, serif; font-size: 18px; color: #c9a227; margin-bottom: 4px;">🕯 Start the Game</div>';
+            html += '<div style="font-size: 13px; color: #999;">Reveals Will\'s death to all guests and opens the investigation.</div>';
+            html += '</div>';
+            html += '<button onclick="toggleItem(\'willsDeath\')" style="background: ' + (gameStarted ? '#e74c3c' : '#c9a227') + '; color: ' + (gameStarted ? 'white' : '#1a1a2e') + '; border: none; padding: 10px 24px; cursor: pointer; border-radius: 3px; font-size: 14px; font-weight: bold; white-space: nowrap; margin-left: 20px;">' + (gameStarted ? '✕ Hide' : '▶ Begin') + '</button>';
+            html += '</div>';
+
             // Revelations by act — 3-column grid
             html += '<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px;">';
             Object.entries(revelationsDatabase).forEach(([actKey, act]) => {
