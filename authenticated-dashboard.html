@@ -1846,7 +1846,15 @@
 
             html += '</div>';
 
-
+            // ── CONFESSION AUDIO ──────────────────────────────────────
+            html += '<div style="margin-top:30px; border-top:2px solid rgba(201,162,39,0.3); padding-top:20px;">';
+            html += '<div style="font-family:\'Playfair Display\',Georgia,serif; font-size:20px; color:#c9a227; margin-bottom:5px;">🎙 Confession Recording</div>';
+            html += '<p style="color:#8b8b8b; margin-bottom:15px; font-size:13px;">Play William\'s recorded confession for the room. Clara introduces each playback.</p>';
+            html += '<div style="display:flex; gap:12px; flex-wrap:wrap;">';
+            html += '<button onclick="playConfession(\'act1\')" style="padding:10px 24px; cursor:pointer; border-radius:3px; font-family:\'Playfair Display\',serif; font-size:13px; letter-spacing:2px; text-transform:uppercase; border:1px solid #c9a227; background:rgba(201,162,39,0.15); color:#c9a227;">▶ Act 1</button>';
+            html += '</div>';
+            html += '<audio id="confessionAudio" style="display:none;"></audio>';
+            html += '</div>';
 
             // START GAME / RESET button
             // Test Mode toggle
@@ -1928,6 +1936,19 @@
                 btn.style.background = on ? '#c9a227' : 'transparent';
                 btn.style.color = on ? '#1a1a2e' : '#c9a227';
             });
+        }
+
+        function playConfession(act) {
+            const files = { act1: 'audio/confession_act1.mp3' };
+            const audio = document.getElementById('confessionAudio');
+            if (!audio) return;
+            if (!audio.paused && audio.src.includes(files[act])) {
+                audio.pause();
+                audio.currentTime = 0;
+                return;
+            }
+            audio.src = files[act];
+            audio.play();
         }
 
         function toggleTestMode() {
