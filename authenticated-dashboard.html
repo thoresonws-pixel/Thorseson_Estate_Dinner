@@ -1739,18 +1739,18 @@
                                 : '<span style="font-size: 9px; background: #c9a227; color: #1a1a2e; padding: 2px 6px; border-radius: 2px; margin-left: 8px; vertical-align: middle; letter-spacing: 1px;">CLUE</span>';
                             const hasDetail = item.detail && item.detail.length > 0;
                             html += `
-                                <div style="background: rgba(0,0,0,0.3); border-left: 3px solid ${borderColor}; margin-bottom: 10px; border-radius: 3px; overflow: hidden;">
-                                    <div onclick="${hasDetail ? `toggleDiscoveryCard('${item.id}')` : ''}"
-                                         style="padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; cursor: ${hasDetail ? 'pointer' : 'default'};">
-                                        <div style="flex: 1;">
-                                            <div style="font-family: 'Playfair Display', Georgia, serif; font-size: 17px; color: #c9a227; margin-bottom: 6px;">
-                                                ✦ ${item.title}${badge}
-                                            </div>
-                                            <div style="font-size: 14px; line-height: 1.6; color: #cccccc;">${item.summary}</div>
+                                <div style="background: rgba(0,0,0,0.3); border-left: 3px solid ${borderColor}; margin-bottom: 8px; border-radius: 3px; overflow: hidden;">
+                                    <div onclick="toggleDiscoveryCard('${item.id}')"
+                                         style="padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+                                        <div style="font-family: 'Playfair Display', Georgia, serif; font-size: 16px; color: #c9a227;">
+                                            ✦ ${item.title}${badge}
                                         </div>
-                                        ${hasDetail ? `<div id="arrow-${item.id}" style="font-size: 18px; color: #c9a227; margin-left: 16px; flex-shrink: 0;">▸</div>` : ''}
+                                        <div id="arrow-${item.id}" style="font-size: 16px; color: #c9a227; margin-left: 12px; flex-shrink: 0;">▸</div>
                                     </div>
-                                    ${hasDetail ? `<div id="detail-${item.id}" style="display: none; padding: 0 20px 16px 20px; font-size: 14px; line-height: 1.7; color: #aaaaaa; border-top: 1px solid rgba(201,162,39,0.15);">${item.detail}</div>` : ''}
+                                    <div id="detail-${item.id}" style="display: none; padding: 0 16px 14px 16px; border-top: 1px solid rgba(201,162,39,0.15);">
+                                        <div style="font-size: 14px; line-height: 1.6; color: #cccccc; margin-bottom: 10px; padding-top: 12px;">${item.summary}</div>
+                                        ${item.detail ? `<div style="font-size: 13px; line-height: 1.7; color: #999999;">${item.detail}</div>` : ''}
+                                    </div>
                                 </div>
                             `;
                         });
