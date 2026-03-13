@@ -1857,14 +1857,13 @@
                     const btnBg = isActive ? '#c0392b' : '#2d7a2d';
                     html += `
                         <button onclick="toggleItem('${item.id}')" style="width:100%; background:${btnBg}; color:white; border:none; padding:10px 12px; cursor:pointer; border-radius:3px; margin-bottom:8px; text-align:left; line-height:1.4;">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
                                 <span style="font-family:'Playfair Display',serif; font-size:14px; font-weight:bold;">${item.title}</span>
                                 <span style="display:flex; align-items:center; gap:6px; flex-shrink:0; margin-left:8px;">
                                     <span style="font-size:9px; background:${badgeBg}; color:${badgeColor}; padding:2px 5px; border-radius:2px;">${badgeLabel}</span>
                                     <span style="font-size:12px; opacity:0.8;">${isActive ? '✕ Hide' : '✓ Reveal'}</span>
                                 </span>
                             </div>
-                            <div style="font-size:12px; opacity:0.85; line-height:1.4;">${item.summary}</div>
                         </button>
                     `;
                 });
