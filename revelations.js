@@ -20,6 +20,13 @@ const revelationsDatabase = {
                 detail: null
             },
             {
+                id: "letterhead",
+                type: "clue",
+                title: "Company Letterhead — Thoreson & Hartley Toys",
+                summary: "A piece of company letterhead bearing the name Thoreson & Hartley Toys. The current company is called Thoreson Toys — no mention of Hartley anywhere.",
+                detail: null
+            },
+            {
                 id: "bradfordLetter",
                 type: "clue",
                 title: "Bradford Patent Letter",
@@ -94,6 +101,13 @@ const revelationsDatabase = {
                 type: "clue",
                 title: "Birth Certificate — Taylor Hartley",
                 summary: "Dallas County birth certificate. Name: Taylor Hartley. Date of birth: March 5, 1911. Mother: Margaret Hartley. Father: listed as unknown. Registered March 11, 1911. County Clerk: Edgar T. Calloway.",
+                detail: null
+            },
+            {
+                id: "margaretDeath",
+                type: "clue",
+                title: "Newspaper — Margaret Hartley Obituary",
+                summary: "A brief obituary from a Fort Worth newspaper, dated 1913. Margaret Hartley, formerly of Dallas, passed away leaving behind two children. No cause of death listed. No mention of surviving family beyond the children.",
                 detail: null
             },
             {
