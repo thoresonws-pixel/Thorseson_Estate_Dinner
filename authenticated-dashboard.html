@@ -1875,6 +1875,12 @@
             html += '<button onclick="toggleTestMode()" id="testModeBtn" style="padding:10px 24px; cursor:pointer; border-radius:3px; font-family:\'Playfair Display\',serif; font-size:13px; letter-spacing:2px; text-transform:uppercase; border:1px solid #c9a227; background:transparent; color:#c9a227; margin-right:10px;">Checking...</button>';
             html += '</div>';
 
+            html += '<div style="margin-top:30px; padding-top:25px; border-top:1px solid #3a3a2a;">';
+            html += '<div style="font-family:\'Playfair Display\',serif; font-size:15px; letter-spacing:2px; text-transform:uppercase; color:#c9a227; margin-bottom:8px;">\ud83d\udd04 Force Reload All Devices</div>';
+            html += '<div style="font-size:13px; color:#8b8b8b; margin-bottom:15px;">After pushing a code update to GitHub (wait ~3 min for deploy), press this to instantly reload every connected device to the latest version.</div>';
+            html += '<button onclick="forceReloadAll()" style="padding:10px 24px; cursor:pointer; border-radius:3px; font-family:\'Playfair Display\',serif; font-size:13px; letter-spacing:2px; text-transform:uppercase; border:1px solid #c9a227; background:transparent; color:#c9a227;">Force Reload All</button>';
+            html += '</div>';
+
             html += '<div style="margin-top:40px; padding-top:25px; border-top:3px solid #e74c3c;">';
             html += '<div style="font-family:\'Playfair Display\',serif; font-size:16px; letter-spacing:3px; text-transform:uppercase; color:#e74c3c; margin-bottom:12px;">\u26A0 GAME RESET</div>';
             html += '<div style="font-size:13px; color:#8b8b8b; margin-bottom:15px;">Clears ALL revelations, skill discoveries, and popup history across all connected devices. Use before the event starts to ensure a clean slate.</div>';
@@ -1951,6 +1957,28 @@
                     updateTestModeBtn();
                     console.log('testMode set to', !current);
                 });
+            });
+        }
+
+        function forceReloadAll() {
+            if (!confirm('This will reload all connected devices to the latest version. Continue?')) return;
+            var newVersion = Date.now();
+            database.ref('appVersion').set(newVersion).then(function() {
+                console.log('Force reload triggered:', newVersion);
+            });
+        }
+
+        function watchAppVersion() {
+            if (!database || !userSession) return;
+            var myLoadTime = Date.now();
+            database.ref('appVersion').on('value', function(snap) {
+                var v = snap.val();
+                // Only reload if version was set AFTER this session loaded
+                // and we're not the master (master just set it, no need to reload)
+                if (v && v > myLoadTime && userSession.username !== 'Scott') {
+                    console.log('New app version detected, reloading...');
+                    setTimeout(function() { window.location.reload(true); }, 1500);
+                }
             });
         }
 
@@ -2546,6 +2574,7 @@
 
         registerServiceWorker();
         requestNotificationPermission();
+        watchAppVersion();
     </script>
 </body>
 </html>
