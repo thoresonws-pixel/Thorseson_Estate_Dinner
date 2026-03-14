@@ -980,6 +980,7 @@
             <li><a href="#character" onclick="return navigateAuth('#character')">Character</a></li>
             <li><a href="#guests" onclick="return navigateAuth('#guests')">Guests</a></li>
             <li><a href="#discoveries" onclick="return navigateAuth('#discoveries')">Discoveries</a></li>
+            <li><a href="#photos" onclick="return navigateAuth('#photos')">Photos</a></li>
             <li id="scanNav" style="display:none;"><a href="#" onclick="openScanner(); return false;">Scan</a></li>
             <li id="masterNav" style="display:none;"><a href="#masterclues" onclick="return navigateAuth('#masterclues')">Master Controls</a></li>
             <li><a href="#" onclick="logout(); return false;">Logout</a></li>
@@ -1207,6 +1208,37 @@
         <div id="masterCluesContent"></div>
     </section>
 
+    <!-- PHOTOS SECTION -->
+    <section id="photos" style="display: none;">
+        <h2 class="section-title">Photo Wall</h2>
+        <p class="section-subtitle">An evening at the Thoreson Estate</p>
+
+        <!-- Upload button -->
+        <div style="text-align:center; margin-bottom:30px;">
+            <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none;" onchange="handlePhotoUpload(event)">
+            <button onclick="document.getElementById('photoInput').click()" id="photoBtn"
+                style="background:#c9a227; color:#1a1a2e; border:none; padding:14px 36px; cursor:pointer;
+                       font-family:'Playfair Display',Georgia,serif; font-size:16px; letter-spacing:3px;
+                       text-transform:uppercase; border-radius:3px;">
+                📷 Take a Photo
+            </button>
+            <div id="uploadStatus" style="margin-top:12px; font-size:14px; color:#8b8b8b; font-style:italic;"></div>
+        </div>
+
+        <!-- Photo grid -->
+        <div id="photoGrid" style="
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            width: 100%;
+            max-width: 1000px;
+        ">
+            <div style="text-align:center; color:#555; font-style:italic; grid-column:1/-1; padding:40px;">
+                No photos yet. Be the first to capture the evening.
+            </div>
+        </div>
+    </section>
+
     <!-- QR Scanner Modal -->
     <div class="scanner-overlay" id="scannerOverlay">
         <div class="scanner-header">Scan Evidence</div>
@@ -1230,6 +1262,7 @@
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-messaging-compat.js"></script>
 
     <!-- Character Data -->
@@ -2609,6 +2642,7 @@
             if (section) {
                 section.style.display = 'block';
                 window.scrollTo(0, 0);
+                if (sectionId === 'photos') loadPhotoWall();
             }
             // Reset dropdown
             const dropdown = document.getElementById('pageSelect');
@@ -2629,9 +2663,113 @@
             if (section) {
                 section.style.display = 'block';
                 window.scrollTo(0, 0);
+                if (pageId.substring(1) === 'photos') loadPhotoWall();
             }
             // Reset dropdown
             document.getElementById('pageSelect').value = '';
+        }
+
+        // ── PHOTO WALL ────────────────────────────────────────────────
+
+        function handlePhotoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const status = document.getElementById('uploadStatus');
+            const btn = document.getElementById('photoBtn');
+            btn.disabled = true;
+            btn.textContent = 'Uploading...';
+            status.textContent = 'Processing...';
+
+            const player = userSession.username;
+            const ts = Date.now();
+            const ext = file.name.split('.').pop() || 'jpg';
+
+            // Compress for wall display
+            compressImage(file, 800, 0.7, function(compressed) {
+                const storage = firebase.storage();
+
+                // Upload compressed version
+                const wallRef = storage.ref(`photos/wall/${ts}_${player}.jpg`);
+                wallRef.put(compressed).then(() => {
+                    wallRef.getDownloadURL().then(wallUrl => {
+
+                        // Upload full resolution
+                        const fullRef = storage.ref(`photos/full/${ts}_${player}.${ext}`);
+                        fullRef.put(file).then(() => {
+                            fullRef.getDownloadURL().then(fullUrl => {
+
+                                // Save metadata to database
+                                firebase.database().ref('photos').push({
+                                    player,
+                                    wallUrl,
+                                    fullUrl,
+                                    time: ts
+                                });
+
+                                status.textContent = 'Photo added to the wall!';
+                                btn.disabled = false;
+                                btn.textContent = '📷 Take a Photo';
+                                // Reset file input
+                                document.getElementById('photoInput').value = '';
+                                setTimeout(() => { status.textContent = ''; }, 3000);
+                            });
+                        });
+                    });
+                }).catch(err => {
+                    status.textContent = 'Upload failed. Try again.';
+                    btn.disabled = false;
+                    btn.textContent = '📷 Take a Photo';
+                    console.error(err);
+                });
+            });
+        }
+
+        function compressImage(file, maxWidth, quality, callback) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let w = img.width, h = img.height;
+                    if (w > maxWidth) { h = h * maxWidth / w; w = maxWidth; }
+                    canvas.width = w; canvas.height = h;
+                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                    canvas.toBlob(callback, 'image/jpeg', quality);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function loadPhotoWall() {
+            const grid = document.getElementById('photoGrid');
+            if (!grid || !firebase.database) return;
+
+            firebase.database().ref('photos').orderByChild('time').on('value', snap => {
+                const data = snap.val();
+                if (!data) {
+                    grid.innerHTML = '<div style="text-align:center; color:#555; font-style:italic; grid-column:1/-1; padding:40px;">No photos yet. Be the first to capture the evening.</div>';
+                    return;
+                }
+                // Newest first
+                const photos = Object.values(data).sort((a,b) => b.time - a.time);
+                grid.innerHTML = photos.map(p => `
+                    <div style="background:rgba(0,0,0,0.4); border:1px solid rgba(201,162,39,0.2); border-radius:4px; overflow:hidden;">
+                        <div style="position:relative;">
+                            <img src="${p.wallUrl}" style="width:100%; display:block; aspect-ratio:4/3; object-fit:cover;" loading="lazy">
+                        </div>
+                        <div style="padding:10px 12px; display:flex; justify-content:space-between; align-items:center;">
+                            <div style="font-family:'Playfair Display',serif; font-size:13px; color:#8b7355;">
+                                ${p.player} · ${new Date(p.time).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}
+                            </div>
+                            <a href="${p.fullUrl}" download target="_blank"
+                               style="font-size:12px; color:#c9a227; text-decoration:none; letter-spacing:1px; border:1px solid rgba(201,162,39,0.4); padding:4px 10px; border-radius:2px;">
+                                ↓ Full
+                            </a>
+                        </div>
+                    </div>
+                `).join('');
+            });
         }
 
         function logout() {
