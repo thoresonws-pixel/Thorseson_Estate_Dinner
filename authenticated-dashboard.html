@@ -2684,12 +2684,6 @@
             const ts = Date.now();
             const ext = file.name.split('.').pop() || 'jpg';
 
-            compressImage(file, 800, 0.7, function(compressed) {
-                const storage = firebase.storage();
-                const wallRef = storage.ref(`photos/wall/${ts}_${player}.jpg`);
-                status.textContent = 'Uploading...';
-
-            // Skip compression for now — upload directly
             const storage = firebase.storage();
             const wallRef = storage.ref(`photos/wall/${ts}_${player}.jpg`);
 
@@ -2706,48 +2700,15 @@
                 },
                 () => {
                     uploadTask.snapshot.ref.getDownloadURL().then(wallUrl => {
-                        firebase.database().ref('photos').push({
-                            player, wallUrl, fullUrl: wallUrl, time: ts
-                        });
-                        status.textContent = 'Photo added!';
-                        btn.disabled = false;
-                        btn.textContent = '📷 Take a Photo';
-                        document.getElementById('photoInput').value = '';
-                        setTimeout(() => { status.textContent = ''; }, 3000);
-                    });
-                }
-            );
-
-            if (false) { // compression disabled temporarily
-            compressImage(file, 800, 0.7, function(compressed) {
-                    snapshot => {
-                        const pct = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-                        status.textContent = `Uploading... ${pct}%`;
-                    },
-                    err => {
-                        status.textContent = 'Upload failed: ' + err.code;
-                        btn.disabled = false;
-                        btn.textContent = '📷 Take a Photo';
-                        console.error('Storage error:', err);
-                    },
-                    () => {
-                        uploadTask.snapshot.ref.getDownloadURL().then(wallUrl => {
-
-                        // Save to DB immediately with wall URL — show on wall now
                         const photoKey = firebase.database().ref('photos').push({
-                            player,
-                            wallUrl,
-                            fullUrl: null,
-                            time: ts
+                            player, wallUrl, fullUrl: wallUrl, time: ts
                         }).key;
-
                         status.textContent = 'Photo added!';
                         btn.disabled = false;
                         btn.textContent = '📷 Take a Photo';
                         document.getElementById('photoInput').value = '';
                         setTimeout(() => { status.textContent = ''; }, 3000);
-
-                        // Full res uploads in background — updates record when done
+                        // Full res in background
                         const fullRef = storage.ref(`photos/full/${ts}_${player}.${ext}`);
                         fullRef.put(file).then(() => {
                             fullRef.getDownloadURL().then(fullUrl => {
@@ -2755,12 +2716,11 @@
                             });
                         });
                     });
-                    }
-                );
-            });
+                }
+            );
         }
 
-        function compressImage(file, maxWidth, quality, callback) {
+                function compressImage(file, maxWidth, quality, callback) {
             const reader = new FileReader();
             reader.onload = function(e) {
                 const img = new Image();
