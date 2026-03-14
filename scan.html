@@ -127,11 +127,10 @@
       const charKey = session.character || player;
 
       // Log the scan
+      const propId = new URLSearchParams(window.location.search).get('id') || 'unknown';
       const scanRef = db.ref('scans/' + player);
       scanRef.transaction(current => (current || 0) + 1);
-
-      // Also push a timestamped entry
-      db.ref('scanLog').push({ player, charKey, time: Date.now() });
+      db.ref('scanLog').push({ player, charKey, propId, time: Date.now() });
 
       document.getElementById('status').textContent = 'Logged for ' + player;
     } else {
