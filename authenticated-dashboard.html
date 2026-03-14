@@ -2492,14 +2492,34 @@
 
             // Generic prop scan — URL format
             if (decodedText.includes('scan.html')) {
-                // Log the scan to Firebase
                 try {
                     const propId = new URL(decodedText).searchParams.get('id') || 'unknown';
                     const player = userSession.username;
                     database.ref('scans/' + player).transaction(c => (c || 0) + 1);
                     database.ref('scanLog').push({ player, propId, time: Date.now() });
                 } catch(e) {}
-                showSkillDenied('✦ Clue Found', 'You\'ve found a clue. Bring this to the group — it may be important.');
+                var modal = document.getElementById('skillModalContent');
+                modal.innerHTML = `
+                    <div style="text-align:center; padding:10px 0;">
+                        <svg viewBox="0 0 680 860" xmlns="http://www.w3.org/2000/svg" style="width:160px; margin:0 auto 16px; display:block;">
+                            <style>.ct{font-family:'Playfair Display',Georgia,serif;fill:#c9a227}.ctd{font-family:'Playfair Display',Georgia,serif;fill:#1a1205}</style>
+                            <path d="M 190,90 L 490,90 L 490,470 Q 490,575 340,660 Q 190,575 190,470 Z" fill="#1a1205" stroke="#c9a227" stroke-width="3"/>
+                            <path d="M 208,108 L 472,108 L 472,468 Q 472,562 340,638 Q 208,562 208,468 Z" fill="none" stroke="#c9a227" stroke-width="1.2" stroke-dasharray="4,3"/>
+                            <polygon points="375,155 295,330 345,318 308,478 420,280 362,295 400,155" fill="#c9a227"/>
+                            <circle cx="210" cy="108" r="4.5" fill="#c9a227"/>
+                            <circle cx="470" cy="108" r="4.5" fill="#c9a227"/>
+                            <rect x="160" y="42" width="360" height="48" rx="3" fill="#c9a227"/>
+                            <text x="340" y="75" text-anchor="middle" class="ctd" font-size="22" font-weight="700" letter-spacing="5">THORESON</text>
+                            <path d="M 185,668 Q 340,715 495,668 L 478,702 Q 340,748 202,702 Z" fill="#c9a227"/>
+                            <path d="M 185,668 L 202,702 L 182,720 Q 145,700 185,668 Z" fill="#a8871f"/>
+                            <path d="M 495,668 L 478,702 L 498,720 Q 535,700 495,668 Z" fill="#a8871f"/>
+                            <text x="340" y="702" text-anchor="middle" class="ctd" font-size="13" font-weight="700" letter-spacing="2">THORESON FAMILY ESTATE</text>
+                        </svg>
+                        <div style="font-family:'Playfair Display',serif; font-size:22px; color:#c9a227; margin-bottom:8px;">✦ Clue Found</div>
+                        <div style="font-size:15px; color:#aaaaaa; letter-spacing:1px;">Bring this to the group.</div>
+                    </div>
+                    <button class="skill-modal-close" onclick="closeSkillModal()">Dismiss</button>`;
+                document.getElementById('skillModalOverlay').classList.add('active');
                 return;
             }
 
