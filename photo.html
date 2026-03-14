@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thoreson Estate — Photograph</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0d0b08;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+
+  .frame-outer {
+    border: 3px solid #8b6914;
+    padding: 10px;
+    background: #1a1508;
+    max-width: 520px;
+    width: 100%;
+    box-shadow: 0 0 40px rgba(0,0,0,0.8);
+  }
+
+  .frame-inner {
+    border: 1px solid #5a4209;
+    padding: 8px;
+    position: relative;
+  }
+
+  /* Corner ornaments */
+  .frame-inner::before,
+  .frame-inner::after {
+    content: '✦';
+    position: absolute;
+    color: #8b6914;
+    font-size: 14px;
+  }
+  .frame-inner::before { top: -2px; left: 2px; }
+  .frame-inner::after  { top: -2px; right: 2px; }
+
+  .corner-bl, .corner-br {
+    position: absolute;
+    color: #8b6914;
+    font-size: 14px;
+    bottom: -2px;
+  }
+  .corner-bl { left: 2px; }
+  .corner-br { right: 2px; }
+
+  .photo-wrap {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .photo-wrap img {
+    width: 100%;
+    display: block;
+    filter: sepia(30%) contrast(95%) brightness(90%);
+  }
+
+  /* Vignette overlay */
+  .photo-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.45) 100%);
+    pointer-events: none;
+  }
+
+  .caption {
+    text-align: center;
+    padding: 12px 8px 6px;
+    color: #8b6914;
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    border-top: 1px solid #3a2a06;
+    margin-top: 8px;
+  }
+
+  .caption-sub {
+    text-align: center;
+    color: #4a3a10;
+    font-size: 11px;
+    letter-spacing: 2px;
+    padding-bottom: 4px;
+    font-style: italic;
+  }
+
+  .ornament {
+    text-align: center;
+    color: #5a4209;
+    font-size: 16px;
+    letter-spacing: 8px;
+    padding: 6px 0 2px;
+  }
+</style>
+</head>
+<body>
+
+<div class="frame-outer">
+  <div class="frame-inner">
+    <span class="corner-bl">✦</span>
+    <span class="corner-br">✦</span>
+    <div class="photo-wrap">
+      <img id="photo" src="" alt="Photograph">
+    </div>
+    <div class="ornament">— ✦ —</div>
+    <div class="caption">Thoreson Family Estate</div>
+    <div class="caption-sub">Dallas, Texas · 1935</div>
+  </div>
+</div>
+
+<script>
+  const photos = {
+    'e1': 'photos/easter1.jpeg',
+    'e2': 'photos/easter2.jpeg',
+    'e3': 'photos/easter3.jpeg',
+  };
+  const id = new URLSearchParams(window.location.search).get('id');
+  const src = photos[id];
+  if (src) {
+    document.getElementById('photo').src = src;
+  } else {
+    document.getElementById('photo').style.display = 'none';
+  }
+</script>
+</body>
+</html>
