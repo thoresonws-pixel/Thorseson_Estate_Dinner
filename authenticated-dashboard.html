@@ -2687,9 +2687,23 @@
             compressImage(file, 800, 0.7, function(compressed) {
                 const storage = firebase.storage();
                 const wallRef = storage.ref(`photos/wall/${ts}_${player}.jpg`);
+                status.textContent = 'Uploading... (this may take a moment)';
 
-                wallRef.put(compressed).then(() => {
-                    wallRef.getDownloadURL().then(wallUrl => {
+                const uploadTask = wallRef.put(compressed);
+
+                uploadTask.on('state_changed',
+                    snapshot => {
+                        const pct = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                        status.textContent = `Uploading... ${pct}%`;
+                    },
+                    err => {
+                        status.textContent = 'Upload failed: ' + err.code;
+                        btn.disabled = false;
+                        btn.textContent = '📷 Take a Photo';
+                        console.error('Storage error:', err);
+                    },
+                    () => {
+                        uploadTask.snapshot.ref.getDownloadURL().then(wallUrl => {
 
                         // Save to DB immediately with wall URL — show on wall now
                         const photoKey = firebase.database().ref('photos').push({
@@ -2713,12 +2727,8 @@
                             });
                         });
                     });
-                }).catch(err => {
-                    status.textContent = 'Upload failed. Try again.';
-                    btn.disabled = false;
-                    btn.textContent = '📷 Take a Photo';
-                    console.error(err);
-                });
+                    }
+                );
             });
         }
 
