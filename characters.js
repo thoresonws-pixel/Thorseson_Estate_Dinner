@@ -558,6 +558,26 @@ const characterDatabase = {
             { name: "Eleanor Thoreson", relation: "Vivienne's aunt" }
         ],
         items: []
+    },
+
+    // ============================================================
+    // PRESTON — Henry "Preston" Caldwell
+    // ============================================================
+    "Preston": {
+        name: "Henry 'Preston' Caldwell",
+        publicDesc: "A late arrival to the evening. Affable, unhurried, and not entirely sure what he's walked into.",
+        skills: [],
+        backstory: "You are thirty years old and you are very good at showing up somewhere and making it seem like you were always supposed to be there. It is, in your estimation, one of the most underrated skills a person can have.\n\nYou know Scott through a mutual friend — you've shared a table at two or three events over the years, enough to exchange numbers, not enough to know anything serious about his family. When the invitation came you figured it was a dinner party. You wore a decent jacket. You did not expect this.\n\nYou are not a suspect. You are not hiding anything. You genuinely just got here late because you had trouble finding parking and then couldn't find the front door. You are taking all of this remarkably in stride.\n\nYou are the kind of person who, when dropped into a strange situation, starts asking questions — not out of anxiety, but out of genuine curiosity. You find people interesting. You're good at listening. You have a tendency to end up knowing more about a room than anyone expected.\n\nYou grew up in Dallas, work in commercial real estate, and have a golden retriever named Biscuit. None of this is relevant to the investigation. You are aware of that. You're still happy to tell people about Biscuit if it comes up.",
+        memories: [
+            { text: "Scott mentioned his father once, offhandedly, at a charity event last fall. Said something like 'my father always says a man's reputation is his only real asset.' It stuck with you. Feels a little different now.", unlockedBy: "stolenCompany" }
+        ],
+        canShare: [
+            { text: "I genuinely just got here. I know Scott, I know nobody else, and I have absolutely no idea what's going on. Which, honestly, makes me a pretty good neutral party.", unlockedBy: null }
+        ],
+        relationships: [
+            { name: "Scott Thoreson Jr.", relation: "Mutual friend — you know each other casually" }
+        ],
+        items: []
     }
 
 };
