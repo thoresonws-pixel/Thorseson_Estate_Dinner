@@ -2488,8 +2488,20 @@
         }
 
         function onScanSuccess(decodedText) {
-            // Stop scanning immediately
             closeScanner();
+
+            // Generic prop scan — URL format
+            if (decodedText.includes('scan.html')) {
+                // Log the scan to Firebase
+                try {
+                    const propId = new URL(decodedText).searchParams.get('id') || 'unknown';
+                    const player = userSession.username;
+                    database.ref('scans/' + player).transaction(c => (c || 0) + 1);
+                    database.ref('scanLog').push({ player, propId, time: Date.now() });
+                } catch(e) {}
+                showSkillDenied('✦ Clue Found', 'You\'ve found a clue. Bring this to the group — it may be important.');
+                return;
+            }
 
             // Parse QR code — expected format: THORESON:SkillName
             if (!decodedText.startsWith('THORESON:')) {
