@@ -1468,7 +1468,28 @@
 
         function loadFirebaseData() {
             if (!database || !userSession) return;
-            
+
+            // Leaderboard — master only, live updates
+            if (userSession.role === 'master') {
+                database.ref('scans').on('value', snapshot => {
+                    const data = snapshot.val() || {};
+                    const el = document.getElementById('leaderboardContent');
+                    if (!el) return;
+                    const sorted = Object.entries(data).sort((a,b) => b[1]-a[1]);
+                    if (sorted.length === 0) {
+                        el.innerHTML = '<div style="color:#666; font-style:italic;">No scans yet.</div>';
+                        return;
+                    }
+                    const medals = ['🥇','🥈','🥉'];
+                    el.innerHTML = sorted.map(([player, count], i) => `
+                        <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:rgba(0,0,0,0.3); margin-bottom:6px; border-radius:3px; border-left:3px solid ${i===0?'#c9a227':i===1?'#aaaaaa':i===2?'#cd7f32':'#444'};">
+                            <span style="font-family:'Playfair Display',serif; color:#c9a227;">${medals[i]||'✦'} ${player}</span>
+                            <span style="color:#e8e8e8; font-size:16px; font-weight:bold;">${count}</span>
+                        </div>`
+                    ).join('');
+                });
+            }
+
             database.ref('activeItems').once('value').then(snapshot => {
                 userSession.activeItems = snapshot.val() || [];
                 localStorage.setItem('userSession', JSON.stringify(userSession));
@@ -2045,6 +2066,13 @@
             });
             html += '</div>';
 
+            html += '</div>';
+
+            // ── CLUE SCAN LEADERBOARD ─────────────────────────────────
+            html += '<div style="margin-top:30px; border-top:2px solid rgba(201,162,39,0.3); padding-top:20px;">';
+            html += '<div style="font-family:\'Playfair Display\',Georgia,serif; font-size:20px; color:#c9a227; margin-bottom:5px;">🔎 Clue Scan Leaderboard</div>';
+            html += '<p style="color:#8b8b8b; margin-bottom:15px; font-size:13px;">Updates in real time as guests scan QR codes.</p>';
+            html += '<div id="leaderboardContent" style="font-size:14px; color:#999; font-style:italic;">Loading...</div>';
             html += '</div>';
 
             // START GAME / RESET button
