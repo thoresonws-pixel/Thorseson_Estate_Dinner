@@ -39,8 +39,8 @@ const characterDatabase = {
         relationships: [
             { name: "William Thoreson Sr.", relation: "Your father (deceased)" },
             { name: "Eleanor Thoreson", relation: "Your mother" },
-            { name: "Frederick 'Brian' Thoreson", relation: "Your younger brother" },
-            { name: "Charlotte 'Clara' Waverly", relation: "Your wife" },
+            { name: "Frederick Thoreson", relation: "Your younger brother" },
+            { name: "Charlotte Waverly", relation: "Your wife" },
             { name: "Miranda Longfellow", relation: "Your trusted legal assistant (10 years)" }
         ],
         items: []
@@ -50,7 +50,7 @@ const characterDatabase = {
     // BRIAN T — Frederick "Brian" Thoreson
     // ============================================================
     "BrianT": {
-        name: "Frederick 'Brian' Thoreson",
+        name: "Frederick Thoreson",
         publicDesc: "Younger son of William Thoreson Sr. The easygoing one. Here for the food and the drinks.",
         skills: [],
         backstory: "You are Scott's younger brother, and you have spent most of your life being compared to him unfavorably, which stopped bothering you sometime around age twenty-two.\n\nScott got the grades, the law degree, the responsible reputation, and the family's legal affairs. You got out of the way and built something quieter. You work in sales — industrial equipment, nothing glamorous — and you are genuinely good at it. You travel a lot. You eat well. You are not unhappy.\n\nYou were not close with your father. Not estranged exactly, just distant in the way that happens when a man is more interested in his legacy than his children. You showed up tonight because your mother asked you to and because free food is free food. You did not expect this.\n\nYou are not unintelligent. People make that mistake about you because you don't perform seriousness the way Scott does. You notice things. You just usually decide they're not worth the trouble of saying out loud. Tonight might be an exception.\n\nYou genuinely do not know anything about a Robert Hartley or a T.H. or forged documents or any of it. Your father kept his business life locked up tight, and you never tried the door. That's the truth and you'll say it to anyone who asks.",
@@ -66,7 +66,7 @@ const characterDatabase = {
         relationships: [
             { name: "William Thoreson Sr.", relation: "Your dad (deceased)" },
             { name: "Scott Thoreson Jr.", relation: "Your older brother" },
-            { name: "Charlotte 'Clara' Waverly", relation: "Your sister-in-law" },
+            { name: "Charlotte Waverly", relation: "Your sister-in-law" },
             { name: "Miranda Longfellow", relation: "Scott's assistant. She's always around." }
         ],
         items: []
@@ -76,7 +76,7 @@ const characterDatabase = {
     // CLARA — Clara Thoreson
     // ============================================================
     "Clara": {
-        name: "Charlotte 'Clara' Waverly",
+        name: "Charlotte Waverly",
         publicDesc: "Scott's wife. Warm, practical, and the one keeping things running tonight.",
         skills: ["Bartender"],
         backstory: "You grew up in Fort Worth — your father ran a dry goods store and your mother kept the books, which is where you learned that the people who actually run things are rarely the ones with their names on the door. You met Scott at a mutual friend's dinner party in 1927 and married him two years later. You are practical, composed, and quietly sharp. You handle the social obligations of being a Thoreson wife with efficiency rather than enthusiasm. You like Scott. You love your life. You just don't need it to be dramatic.\n\nYou have always been the kind of person other people lean on without quite realizing they're doing it. At family gatherings you are the one who remembers where the extra chairs are, who is getting along with whom, and when someone has had enough to drink. You do not find this burdensome. You find it clarifying. A room is a system, and you have always been good at understanding systems.\n\nYou trained briefly as a nurse before you married, and you still carry that instinct — the calm that comes from having seen people at their worst and knowing that most situations are survivable. You think clearly under pressure. You do not panic. You are possibly the most useful person in this room right now, and almost no one has thought to ask you anything yet.\n\nWill was never unkind to you, but you always sensed he was sizing you up — checking whether Scott had married well. Eleanor has been warmer. You've come to genuinely care for her.\n\nTonight you're the one making sure glasses stay full and nobody goes to pieces in the hallway. Someone has to.\n\nYou are good at stillness. It is something you learned young — when you have no power, stillness is the closest thing to it. You watch. You wait. You let other people fill the silence. Over ten years inside this household you have become fluent in the Thoreson family's rhythms, their particular silences, the things they say when they think no one consequential is listening. You have been consequential the entire time. They just didn't know it.",
@@ -88,7 +88,7 @@ const characterDatabase = {
         relationships: [
             { name: "Scott Thoreson Jr.", relation: "Your husband" },
             { name: "William Thoreson Sr.", relation: "Your father-in-law (deceased)" },
-            { name: "Frederick 'Brian' Thoreson", relation: "Your brother-in-law" },
+            { name: "Frederick Thoreson", relation: "Your brother-in-law" },
             { name: "Eleanor Thoreson", relation: "Your mother-in-law" }
         ],
         items: []
@@ -193,7 +193,7 @@ const characterDatabase = {
         relationships: [
             { name: "Dylan Winslow", relation: "Your boyfriend — you brought him tonight" },
             { name: "Scott Thoreson Jr.", relation: "Your cousin" },
-            { name: "Frederick 'Brian' Thoreson", relation: "Your cousin" },
+            { name: "Frederick Thoreson", relation: "Your cousin" },
             { name: "William Thoreson Sr.", relation: "Your uncle (deceased)" },
             { name: "Eleanor Thoreson", relation: "Your aunt" }
         ],
@@ -219,7 +219,7 @@ const characterDatabase = {
         ],
         relationships: [
             { name: "Scott Thoreson Jr.", relation: "Your cousin" },
-            { name: "Frederick 'Brian' Thoreson", relation: "Your cousin" },
+            { name: "Frederick Thoreson", relation: "Your cousin" },
             { name: "William Thoreson Sr.", relation: "Your uncle (deceased)" },
             { name: "Eleanor Thoreson", relation: "Your aunt" }
         ],
@@ -340,7 +340,7 @@ const characterDatabase = {
             { name: "Eleanor Thoreson", relation: "Your closest friend" },
             { name: "William Thoreson Sr.", relation: "Dear friend of thirty years (deceased)" },
             { name: "Scott Thoreson Jr.", relation: "Watched him grow up" },
-            { name: "Frederick 'Brian' Thoreson", relation: "Watched him grow up" },
+            { name: "Frederick Thoreson", relation: "Watched him grow up" },
             { name: "Elizabeth Monroe", relation: "Fellow long-time family friend" }
         ],
         items: []
@@ -554,7 +554,7 @@ const characterDatabase = {
         relationships: [
             { name: "Vivienne Ashford", relation: "Your girlfriend — you're here for her" },
             { name: "Scott Thoreson Jr.", relation: "Vivienne's cousin — met him once" },
-            { name: "Frederick 'Brian' Thoreson", relation: "Vivienne's cousin" },
+            { name: "Frederick Thoreson", relation: "Vivienne's cousin" },
             { name: "Eleanor Thoreson", relation: "Vivienne's aunt" }
         ],
         items: []
@@ -564,7 +564,7 @@ const characterDatabase = {
     // PRESTON — Henry "Preston" Caldwell
     // ============================================================
     "Preston": {
-        name: "Henry 'Preston' Caldwell",
+        name: "Henry Caldwell",
         publicDesc: "A late arrival to the evening. Affable, unhurried, and not entirely sure what he's walked into.",
         skills: [],
         backstory: "You are thirty years old and you are very good at showing up somewhere and making it seem like you were always supposed to be there. It is, in your estimation, one of the most underrated skills a person can have.\n\nYou know Scott through a mutual friend — you've shared a table at two or three events over the years, enough to exchange numbers, not enough to know anything serious about his family. When the invitation came you figured it was a dinner party. You wore a decent jacket. You did not expect this.\n\nYou are not a suspect. You are not hiding anything. You genuinely just got here late because you had trouble finding parking and then couldn't find the front door. You are taking all of this remarkably in stride.\n\nYou are the kind of person who, when dropped into a strange situation, starts asking questions — not out of anxiety, but out of genuine curiosity. You find people interesting. You're good at listening. You have a tendency to end up knowing more about a room than anyone expected.\n\nYou grew up in Dallas, work in commercial real estate, and have a golden retriever named Biscuit. None of this is relevant to the investigation. You are aware of that. You're still happy to tell people about Biscuit if it comes up.",
