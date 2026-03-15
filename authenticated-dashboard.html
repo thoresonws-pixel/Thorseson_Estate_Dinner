@@ -2787,8 +2787,9 @@
                     grid.innerHTML = '<div style="text-align:center; color:#555; font-style:italic; grid-column:1/-1; padding:40px;">No photos yet. Be the first to capture the evening.</div>';
                     return;
                 }
-                // Newest first
                 const photos = Object.values(data).sort((a,b) => b.time - a.time);
+                const fullUrls = photos.filter(p => p.fullUrl).map(p => p.fullUrl);
+
                 grid.innerHTML = photos.map(p => `
                     <div style="background:rgba(0,0,0,0.4); border:1px solid rgba(201,162,39,0.2); border-radius:4px; overflow:hidden;">
                         <div style="position:relative;">
@@ -2805,6 +2806,28 @@
                         </div>
                     </div>
                 `).join('');
+
+                // Download All button
+                const existing = document.getElementById('downloadAllBtn');
+                if (existing) existing.remove();
+                if (fullUrls.length > 0) {
+                    const btn = document.createElement('button');
+                    btn.id = 'downloadAllBtn';
+                    btn.textContent = `↓ Download All ${fullUrls.length} Photos`;
+                    btn.style.cssText = 'display:block; margin:30px auto 0; padding:14px 36px; background:transparent; color:#c9a227; border:1px solid #c9a227; cursor:pointer; font-family:\'Playfair Display\',Georgia,serif; font-size:15px; letter-spacing:2px; text-transform:uppercase; border-radius:3px;';
+                    btn.onclick = function() {
+                        fullUrls.forEach((url, i) => {
+                            setTimeout(() => {
+                                const a = document.createElement('a');
+                                a.href = url;
+                                a.download = `thoreson_estate_${i+1}.jpg`;
+                                a.target = '_blank';
+                                a.click();
+                            }, i * 800);
+                        });
+                    };
+                    grid.parentNode.appendChild(btn);
+                }
             });
         }
 
