@@ -2241,6 +2241,13 @@
                 database.ref('memoryReset').set(Date.now());
                 database.ref('scans').remove();
                 database.ref('scanLog').remove();
+                database.ref('photos').remove();
+                // Also clear Storage photos
+                try {
+                    const storage = firebase.storage();
+                    storage.ref('photos/wall').listAll().then(res => res.items.forEach(item => item.delete()));
+                    storage.ref('photos/full').listAll().then(res => res.items.forEach(item => item.delete()));
+                } catch(e) {}
             }
             
             // Broadcast to same-device tabs
