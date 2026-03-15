@@ -1223,6 +1223,10 @@
                 📷 Take a Photo
             </button>
             <div id="uploadStatus" style="margin-top:12px; font-size:14px; color:#8b8b8b; font-style:italic;"></div>
+            <div id="uploadBar" style="display:none; margin-top:10px; width:100%; max-width:400px; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden;">
+                <div id="uploadBarFill" style="height:100%; width:0%; background:#c9a227; border-radius:3px; transition:width 0.3s ease;"></div>
+            </div>
+            <div style="margin-top:8px; font-size:12px; color:#555; font-style:italic;">Keep this screen open until the upload completes.</div>
         </div>
 
         <!-- Photo grid -->
@@ -2683,53 +2687,76 @@
             if (!file) return;
             const status = document.getElementById('uploadStatus');
             const btn = document.getElementById('photoBtn');
+            const bar = document.getElementById('uploadBar');
+            const barFill = document.getElementById('uploadBarFill');
             btn.disabled = true;
             btn.textContent = 'Uploading...';
+            bar.style.display = 'block';
+            barFill.style.width = '0%';
             status.textContent = 'Processing...';
 
             const player = userSession.username;
             const ts = Date.now();
             const ext = file.name.split('.').pop() || 'jpg';
 
-            // Compress for wall display
             compressImage(file, 1200, 0.85, function(compressed) {
                 const storage = firebase.storage();
+
+                // Step 1: upload compressed wall version (fast)
                 const wallRef = storage.ref(`photos/wall/${ts}_${player}.jpg`);
+                wallRef.put(compressed).then(() => {
+                    wallRef.getDownloadURL().then(wallUrl => {
+                        barFill.style.width = '40%';
+                        status.textContent = 'Saving full resolution...';
 
-                const uploadTask = wallRef.put(compressed);
-                uploadTask.on('state_changed',
-                    snapshot => {
-                        const pct = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-                        status.textContent = `Uploading... ${pct}%`;
-                    },
-                    err => {
-                        status.textContent = 'Error: ' + err.code;
-                        btn.disabled = false;
-                        btn.textContent = '📷 Take a Photo';
-                    },
-                    () => {
-                        uploadTask.snapshot.ref.getDownloadURL().then(wallUrl => {
-                            // Save to DB immediately — photo appears on wall now
-                            const photoKey = firebase.database().ref('photos').push({
-                                player, wallUrl, fullUrl: null, time: ts
-                            }).key;
+                        // Step 2: upload full res (this is what we wait for)
+                        const fullRef = storage.ref(`photos/full/${ts}_${player}.${ext}`);
+                        const fullTask = fullRef.put(file);
 
-                            status.textContent = 'Photo added!';
-                            btn.disabled = false;
-                            btn.textContent = '📷 Take a Photo';
-                            document.getElementById('photoInput').value = '';
-                            setTimeout(() => { status.textContent = ''; }, 3000);
-
-                            // Full res uploads in background
-                            const fullRef = storage.ref(`photos/full/${ts}_${player}.${ext}`);
-                            fullRef.put(file).then(() => {
-                                fullRef.getDownloadURL().then(fullUrl => {
-                                    firebase.database().ref(`photos/${photoKey}/fullUrl`).set(fullUrl);
+                        fullTask.on('state_changed',
+                            snapshot => {
+                                const pct = 40 + Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 60);
+                                barFill.style.width = pct + '%';
+                                status.textContent = `Saving full resolution... ${pct}%`;
+                            },
+                            err => {
+                                status.textContent = 'Full res failed: ' + err.code + ' — wall version saved.';
+                                // Still add to wall with compressed only
+                                firebase.database().ref('photos').push({
+                                    player, wallUrl, fullUrl: null, time: ts
                                 });
-                            });
-                        });
-                    }
-                );
+                                btn.disabled = false;
+                                btn.textContent = '📷 Take a Photo';
+                                bar.style.display = 'none';
+                                document.getElementById('photoInput').value = '';
+                            },
+                            () => {
+                                fullTask.snapshot.ref.getDownloadURL().then(fullUrl => {
+                                    barFill.style.width = '100%';
+                                    // Only now add to wall — both versions saved
+                                    firebase.database().ref('photos').push({
+                                        player, wallUrl, fullUrl, time: ts
+                                    });
+                                    status.textContent = '✓ Photo saved!';
+                                    btn.disabled = false;
+                                    btn.textContent = '📷 Take a Photo';
+                                    document.getElementById('photoInput').value = '';
+                                    setTimeout(() => {
+                                        status.textContent = '';
+                                        bar.style.display = 'none';
+                                        barFill.style.width = '0%';
+                                    }, 2000);
+                                });
+                            }
+                        );
+                    });
+                }).catch(err => {
+                    status.textContent = 'Upload failed: ' + err.code;
+                    btn.disabled = false;
+                    btn.textContent = '📷 Take a Photo';
+                    bar.style.display = 'none';
+                    document.getElementById('photoInput').value = '';
+                });
             });
         }
 
