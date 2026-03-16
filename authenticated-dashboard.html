@@ -2577,7 +2577,7 @@
                 return;
             }
 
-            // Poster QR — add to photo wall and open poster
+            // Poster QR — show popup, add to photo wall
             if (decodedText.includes('photo.html')) {
                 try {
                     const id = new URL(decodedText).searchParams.get('id');
@@ -2593,12 +2593,20 @@
                         const fullUrl = 'https://thoresonws-pixel.github.io/Thoreson_Estate_Dinner/' + posterUrl;
                         firebase.database().ref('photos').orderByChild('wallUrl').equalTo(fullUrl).once('value', snap => {
                             if (!snap.exists()) {
-                                firebase.database().ref('photos').push({ player, wallUrl: fullUrl, fullUrl, time: Date.now() });
+                                firebase.database().ref('photos').push({ player, wallUrl: fullUrl, fullUrl, time: Date.now(), isPoster: true });
                             }
                         });
+                        // Show popup with the poster image
+                        var modal = document.getElementById('skillModalContent');
+                        modal.innerHTML = `
+                            <div style="text-align:center; padding:10px 0;">
+                                <img src="${fullUrl}" style="max-width:100%; max-height:70vh; display:block; margin:0 auto 14px; border:2px solid #c9a227;">
+                                <div style="font-size:13px; color:#8b7355; letter-spacing:1px;">Added to the photo wall.</div>
+                            </div>
+                            <button class="skill-modal-close" onclick="closeSkillModal()">Dismiss</button>`;
+                        document.getElementById('skillModalOverlay').classList.add('active');
                     }
                 } catch(e) {}
-                window.open(decodedText, '_blank');
                 return;
             }
 
@@ -2831,8 +2839,8 @@
 
                 grid.innerHTML = photos.map(p => `
                     <div style="background:rgba(0,0,0,0.4); border:1px solid rgba(201,162,39,0.2); border-radius:4px; overflow:hidden;">
-                        <div style="position:relative;">
-                            <img src="${p.wallUrl}" style="width:100%; display:block; aspect-ratio:4/3; object-fit:cover;" loading="lazy">
+                        <div style="position:relative; background:#000;">
+                            <img src="${p.wallUrl}" style="width:100%; display:block; max-height:400px; object-fit:contain;" loading="lazy">
                         </div>
                         <div style="padding:10px 12px; display:flex; justify-content:space-between; align-items:center;">
                             <div style="font-family:'Playfair Display',serif; font-size:13px; color:#8b7355;">
