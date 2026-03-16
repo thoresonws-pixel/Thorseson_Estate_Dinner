@@ -2577,7 +2577,23 @@
                 return;
             }
 
-            // Poster QR — show popup, add to photo wall
+            // Netsuke side quest
+            if (decodedText.includes('netsuke.html')) {
+                const player = userSession.username;
+                database.ref('scans/' + player).transaction(c => (c || 0) + 1);
+                database.ref('scanLog').push({ player, propId: 'netsuke', time: Date.now() });
+                var modal = document.getElementById('skillModalContent');
+                modal.innerHTML = `
+                    <div style="text-align:center; padding:10px 0;">
+                        <div style="font-family:'Playfair Display',serif; font-size:11px; letter-spacing:4px; text-transform:uppercase; color:#8b6914; margin-bottom:12px;">Side Quest Unlocked</div>
+                        <div style="font-family:'Playfair Display',serif; font-size:24px; color:#c9a227; margin-bottom:10px;">The Netsuke Case</div>
+                        <div style="font-size:15px; color:#aaaaaa; line-height:1.7; margin-bottom:16px;">Rupert Thoreson's prized collection of Japanese Netsuke is locked in its case — and the key has gone missing. He's pretending it doesn't bother him. It very clearly does.</div>
+                        <a href="${decodedText}" target="_blank" style="display:inline-block; padding:10px 28px; border:1px solid #c9a227; color:#c9a227; text-decoration:none; font-family:'Playfair Display',serif; font-size:13px; letter-spacing:2px; text-transform:uppercase;">Read the Full Quest</a>
+                    </div>
+                    <button class="skill-modal-close" onclick="closeSkillModal()" style="margin-top:16px;">Dismiss</button>`;
+                document.getElementById('skillModalOverlay').classList.add('active');
+                return;
+            }
             if (decodedText.includes('photo.html')) {
                 try {
                     const id = new URL(decodedText).searchParams.get('id');
