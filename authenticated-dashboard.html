@@ -2395,11 +2395,11 @@
                 markMemoryShown(triggersToMark);
 
                 // Auto-unlock skills triggered by revelations (no QR needed)
-                var autoSkillUnlocks = { 'coroner': 'Botany' };
+                var autoSkillUnlocks = { 'wolfsbane': 'Botany' };
                 triggersToMark.forEach(function(triggerId) {
                     if (autoSkillUnlocks[triggerId]) {
                         var skillName = autoSkillUnlocks[triggerId];
-                        if ((charData.skills || []).indexOf(skillName) !== -1) {
+                        if ((charData.skills || []).concat(charData.hiddenSkills || []).indexOf(skillName) !== -1) {
                             var discoveryKey = skillName.toLowerCase() + 'Discovered';
                             if (!userSession.discoveredSkills.includes(discoveryKey)) {
                                 database.ref('discoveredSkills').once('value', function(snap) {
@@ -2423,7 +2423,7 @@
             // Auto-trigger skills based on revelations
             // Maps: revelation ID → skill name that should auto-fire (like a QR scan)
             var skillAutoTriggers = {
-                'poisoning': 'Botany'
+                'wolfsbane': 'Botany'
                 // Add more here as needed, e.g.: 'someRevelation': 'SomeSkill'
             };
 

@@ -37,7 +37,7 @@ const revelationsDatabase = {
                 id: "forgedDocs",
                 type: "clue",
                 title: "Company Transfer Document",
-                summary: "A transfer document dated March 14, 1910 signing Robert Hartley's full ownership over to William Thoreson. Notarized by one James P. Whitmore. Requires a Legal expert to examine.",
+                summary: "A transfer document dated March 14, 1910 signing Robert Hartley's full ownership over to William Thoreson. Notarized by one James Crawford. Requires a Legal expert to examine.",
                 detail: null
             },
             {
@@ -66,7 +66,7 @@ const revelationsDatabase = {
                 id: "stolenCompany",
                 type: "story",
                 title: "The Stolen Company",
-                summary: "The transfer document has been examined. The signature is forged — Robert Hartley never signed it. The notary James P. Whitmore does not appear in Dallas County records.",
+                summary: "The transfer document has been examined. The signature is forged — Robert Hartley never signed it. The notary James Crawford does not appear in Dallas County records.",
                 detail: null
             },
         ]
@@ -79,7 +79,7 @@ const revelationsDatabase = {
                 id: "ledger",
                 type: "clue",
                 title: "Financial Ledger",
-                summary: "Company financial ledger going back to 1911. Contains a recurring monthly entry of $50 listed as 'Standing Order — Priv. Acct 9941' — appearing every month for over 24 years. Requires an Accounting expert to examine.",
+                summary: "Company financial ledger going back to 1911. Contains a recurring monthly entry of $50 listed as 'Monthly Disbursement — T.H.' — appearing every month for over 24 years. Requires an Accounting expert to examine.",
                 detail: null
             },
             {

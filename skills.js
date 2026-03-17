@@ -85,7 +85,7 @@ const skillsDatabase = {
             <p>I called in a favor at Pinkerton and had them run background checks on every person at this dinner tonight. Most of them came back exactly as expected — no surprises, no flags. But two names came back with anomalies.</p>
             
             <div class="reveal-highlight">
-                <strong>Walter Lippman</strong> — the journalist — has a legal name change on file. His birth name is <strong>Taylor Hartley</strong>. Born September 12, 1911. Mother: Margaret Hartley. He changed his name in 1929 at age 18. We already knew about Taylor from the ledger and the trust fund — but now we know he's been sitting at this table the whole time.
+                <strong>Walter Lippman</strong> — the journalist — has a legal name change on file. His birth name is <strong>Taylor Hartley</strong>. Born March 5, 1911. Mother: Margaret Hartley. He changed his name in 1929 at age 18. We already knew about Taylor from the ledger and the trust fund — but now we know he's been sitting at this table the whole time.
             </div>
             
             <p>That's interesting on its own. But here's where it gets serious.</p>
@@ -229,35 +229,21 @@ const skillsDatabase = {
         header: "Editorial Review — Dallas Herald, March 22, 1910",
         summary: "This article has problems. The investigation was closed in under 24 hours despite a <strong>suspicious business transfer the day before</strong>. The sourcing is thin and Thoreson's quote sounds rehearsed. Someone with influence shaped this story.",
         expert: `
-            <p><em>Content coming soon — editorial analysis of the Hartley death article.</em></p>
-        `
-    },
-
-    "Botany": {
-        title: "Coroner's Report — Botanical Analysis",
-        password: "open",
-        lockedTitle: "Coroner's Report",
-        lockedSubtitle: "This report requires botanical expertise to interpret",
-        errorMsg: "Incorrect password. Find someone with botanical expertise.",
-        badge: "Botanical Analysis",
-        header: "Field Analysis — Aconitum Species Identification",
-        summary: "The toxin is <strong>Aconitine</strong>, derived from <em>Aconitum napellus</em> — Wolfsbane. It does not grow in Texas. It does not grow anywhere in North America. <strong>Someone traveled to obtain this.</strong>",
-        expert: `
-            <p>I recognize this immediately. Aconitum napellus — Wolfsbane, or Monkshood. I have been studying this genus for thirty years and I have never encountered it outside of controlled specimens and pressed samples. It does not grow in Texas. It does not grow anywhere in the Americas.</p>
-
-            <div class="reveal-danger">
-                Aconitine is among the most potent plant alkaloids known to botany. A single gram of concentrated root extract is sufficient to kill an adult. The roots are the most toxic part — but the flowers, the stems, the leaves — all of it is lethal with sufficient exposure. There is no antidote. There is no margin for error in the dosage. Whoever used this knew exactly what they were handling.
-            </div>
-
-            <p>In the wild, Aconitum napellus grows in the mountainous regions of central Europe — the Swiss Alps, the Austrian Tirol, the Northern Italian ranges. The flowers are a distinctive deep violet-blue, almost iridescent in the right light. They bloom in summer. They look beautiful. They will kill you if you're not careful even handling them with bare hands.</p>
+            <p>I've read a lot of newspaper copy in my career. This article is wrong in ways that only a journalist would notice.</p>
 
             <div class="reveal-highlight">
-                This plant was not purchased from a pharmacy or apothecary. It cannot be ordered by mail. It cannot be synthesized in a kitchen. It had to be collected — deliberately, in the field, from a specific region of Europe — and transported back to Texas. This was planned months in advance. Someone went to the Alps and came home with murder in their luggage.
+                First — the timeline. Robert Hartley was found dead on March 15th, 1910. The investigation was opened and closed by March 22nd. That's seven days to investigate the death of a prominent businessman with an active partnership dispute. No coroner's inquest mentioned. No witness testimony cited. No follow-up promised. That is not thorough reporting — that is a story someone wanted finished.
             </div>
 
-            <p>The timing matters as well. If Will Thoreson ingested aconitine this evening, it was almost certainly introduced to his food or drink earlier tonight. Aconitine is water-soluble and essentially tasteless in small concentrations — it would be undetectable in a cocktail or a sauce. The initial symptom is a faint tingling or numbness in the lips and throat, which most people would dismiss. By the time the cardiac symptoms present, it is far too late.</p>
+            <p>Second — the sourcing. The only named source in this article is William Thoreson himself. His quote reads like it was prepared in advance: measured, sympathetic, careful. There's no quote from the police investigator, no comment from Hartley's family, no statement from anyone at the company. A real reporter would have talked to at least three people. This reporter talked to one — the man who stood to benefit most from Hartley's death.</p>
 
-            <p>This is not an impulsive crime. This is a botanical crime. Whoever did this has knowledge, patience, and a very specific travel history. Find someone who has been to the Alps recently. Find the wolfsbane. You will find your killer.</p>
+            <div class="reveal-danger">
+                Third — and this is the part that should trouble everyone in this room — the article makes no mention of the ownership transfer document filed the day before Robert died. March 14th: Robert's entire stake in the company is signed over to Thoreson. March 15th: Robert is dead. Any competent journalist would have connected those two facts. This one didn't. Either they weren't told, or they were told not to ask.
+            </div>
+
+            <p>Finally — the framing. The headline says "Thoreson Cleared." Not "Hartley Death Ruled Suicide." Not "Investigation Closed." The story is framed around Thoreson's innocence, not around what happened to Robert Hartley. That tells you who this article was written for.</p>
+
+            <p><strong>Someone with influence shaped this coverage. The question is whether it was Thoreson himself or someone acting on his behalf.</strong></p>
         `
     }
 };
