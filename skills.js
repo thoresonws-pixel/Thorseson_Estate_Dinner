@@ -191,6 +191,34 @@ const skillsDatabase = {
         expert: null
     },
 
+    "Botany": {
+        title: "Botanical Analysis — Wolfsbane",
+        password: "open",
+        lockedTitle: "Plant Specimen",
+        lockedSubtitle: "This requires botanical expertise to identify",
+        errorMsg: "Incorrect password.",
+        badge: "Botanical Analysis",
+        header: "Field Notes — Aconitum (Wolfsbane / Monkshood)",
+        summary: "The poison is <strong>Aconitine</strong>, derived from <strong>Wolfsbane</strong> — <em>Aconitum napellus</em>. This plant does not grow in Texas or anywhere in North America. It is native to the Alpine regions of Europe. Whoever used this poison <strong>traveled to obtain it deliberately</strong>.",
+        expert: `
+            <div class="reveal-danger">
+                Genus: <strong>Aconitum</strong> — Family Ranunculaceae. Common names: Wolfsbane, Monkshood, Devil's Helmet. Every part of this plant is lethally toxic. The roots contain the highest concentration of aconitine, but the flowers, leaves, and stems are equally dangerous if handled carelessly or ingested.
+            </div>
+
+            <p>I have known this plant since childhood. My grandmother kept a botanical encyclopedia and made me memorize the most dangerous specimens before I was allowed in the garden unsupervised. Aconitum was at the top of the list — she called it the queen of poisons, a name it has carried since antiquity. The ancient Romans used it for executions. Medieval assassins favored it. It has been killing people, accidentally and deliberately, for two thousand years.</p>
+
+            <p>The active compound, <strong>aconitine</strong>, works by binding irreversibly to sodium channels in nerve and cardiac tissue. It does not announce itself. The initial symptoms — numbness at the lips and tongue, a metallic taste, mild warmth — are easily mistaken for indigestion or anxiety. Within thirty minutes to an hour, the numbness spreads. The victim's hands and face begin to feel detached. Breathing becomes labored. The heart, which relies on those same sodium channels to regulate its rhythm, begins to fail. Death typically follows within two to six hours of ingestion, and it looks, to the untrained eye, like a heart attack.</p>
+
+            <div class="reveal-highlight">
+                This is not a plant you stumble upon in a Dallas garden. <strong>Aconitum does not grow in Texas. It does not grow anywhere in North America.</strong> It is native to mountain meadows at high elevation — the Swiss Alps, the Austrian highlands, the Pyrenees. The flowers are distinctive: deep violet-blue, hooded, unmistakably beautiful. A person would have to travel to those regions, recognize the plant, harvest it deliberately, and transport the extract home. This was not opportunistic. This required planning months in advance.
+            </div>
+
+            <p>The method of administration almost certainly involved the extract dissolved into food or drink — something with a strong enough flavor to mask the initial bitterness. A cocktail. A rich sauce. Something with sweetness or acid. The victim would have noticed nothing unusual until the symptoms were already well underway.</p>
+
+            <p>One final note: aconitine is notoriously difficult to detect in a standard post-mortem examination. Without a toxicologist specifically looking for alkaloid poisoning, this death would have been recorded as cardiac failure. Whoever chose this poison knew that. This was chosen by someone with patience, knowledge, and access to Alpine Europe.</p>
+        `
+    },
+
     "Journalism": {
         title: "Newspaper Article — Hartley Death",
         password: "open",

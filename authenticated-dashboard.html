@@ -1909,7 +1909,9 @@
                 const isGlobalDiscovered = userSession.discoveredSkills.includes(discoveredKey);
                 const isPersonalDiscovered = personalDisc.includes(discoveredKey);
                 // Bartender recipes always visible — no scan needed
-                if (!isGlobalDiscovered && !isPersonalDiscovered && skillName !== 'Bartender') return;
+                // Botany auto-unlocks when wolfsbane revelation is active
+                const botanyAutoUnlocked = skillName === 'Botany' && userSession.activeItems && userSession.activeItems.includes('wolfsbane');
+                if (!isGlobalDiscovered && !isPersonalDiscovered && skillName !== 'Bartender' && !botanyAutoUnlocked) return;
 
                 if (skillName === 'Bartender') {
                     expertHtml += `
