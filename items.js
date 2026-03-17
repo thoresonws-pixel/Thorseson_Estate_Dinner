@@ -40,6 +40,12 @@ const itemDatabase = [
     act: 1,
   },
   {
+    id: "calendar",
+    label: "Office Calendar",
+    category: "clue",
+    act: 1,
+  },
+  {
     id: "incorporation",
     label: "Company Incorporation Filing",
     category: "clue",
