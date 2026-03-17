@@ -2363,6 +2363,27 @@
 
             if (memories.length > 0) {
                 markMemoryShown(triggersToMark);
+
+                // Auto-unlock skills triggered by revelations (no QR needed)
+                var autoSkillUnlocks = { 'coroner': 'Botany' };
+                triggersToMark.forEach(function(triggerId) {
+                    if (autoSkillUnlocks[triggerId]) {
+                        var skillName = autoSkillUnlocks[triggerId];
+                        if ((charData.skills || []).indexOf(skillName) !== -1) {
+                            var discoveryKey = skillName.toLowerCase() + 'Discovered';
+                            if (!userSession.discoveredSkills.includes(discoveryKey)) {
+                                database.ref('discoveredSkills').once('value', function(snap) {
+                                    var current = snap.val() || [];
+                                    if (!current.includes(discoveryKey)) {
+                                        current.push(discoveryKey);
+                                        database.ref('discoveredSkills').set(current);
+                                    }
+                                });
+                            }
+                        }
+                    }
+                });
+
                 memoryQueue = memoryQueue.concat(memories);
                 if (!document.querySelector('.memory-popup-overlay')) {
                     showNextMemory();
