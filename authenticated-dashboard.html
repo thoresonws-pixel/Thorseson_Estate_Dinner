@@ -2355,7 +2355,7 @@
             if (charData.memories) {
                 charData.memories.forEach(function(item) {
                     if (item.unlockedBy && newlyAdded.indexOf(item.unlockedBy) !== -1) {
-                        memories.push({ text: item.text, type: 'knowledge', triggerId: item.unlockedBy });
+                        memories.push({ text: item.text, type: 'knowledge', triggerId: item.unlockedBy, tier: item.tier || 2 });
                         if (triggersToMark.indexOf(item.unlockedBy) === -1) triggersToMark.push(item.unlockedBy);
                     }
                 });
@@ -2480,15 +2480,17 @@
                             : '') +
                     '</div>';
             } else {
-                var typeLabel = memory.type === 'canShare'
-                    ? 'You may share this with others'
-                    : 'Something you now recall';
+                var isTier1 = memory.tier === 1;
+                var typeLabel = isTier1
+                    ? '⚠ Share this with the group immediately'
+                    : (memory.type === 'canShare' ? 'You may share this with others' : 'Something you now recall');
 
                 overlay.innerHTML =
-                    '<div class="memory-popup-box">' +
-                        '<div class="memory-popup-header">A Memory Surfaces\u2026</div>' +
+                    '<div class="memory-popup-box" style="' + (isTier1 ? 'border-color:#e74c3c; box-shadow:0 0 0 2px #e74c3c, 0 15px 40px rgba(0,0,0,0.5);' : '') + '">' +
+                        (isTier1 ? '<div style="background:#e74c3c; color:white; font-size:12px; letter-spacing:3px; text-transform:uppercase; padding:8px 16px; margin:-20px -20px 16px -20px; text-align:center;">⚠ Important — Share With The Group</div>' : '') +
+                        '<div class="memory-popup-header">' + (isTier1 ? 'A Critical Memory\u2026' : 'A Memory Surfaces\u2026') + '</div>' +
                         '<div class="memory-popup-text">\u201C' + memory.text + '\u201D</div>' +
-                        '<div class="memory-popup-type">' + typeLabel + '</div>' +
+                        '<div class="memory-popup-type" style="' + (isTier1 ? 'color:#e74c3c;' : '') + '">' + typeLabel + '</div>' +
                         '<button class="memory-popup-dismiss" onclick="dismissMemory()">' +
                             (remaining > 0 ? 'Next' : 'Dismiss') +
                         '</button>' +
