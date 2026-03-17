@@ -58,6 +58,12 @@ const itemDatabase = [
     act: 2,
   },
   {
+    id: "last_will",
+    label: "Last Will & Testament",
+    category: "clue",
+    act: 2,
+  },
+  {
     id: "european_deal",
     label: "Business Documents",
     category: "clue",
@@ -72,12 +78,6 @@ const itemDatabase = [
   {
     id: "pinkerton_report",
     label: "Investigative Report",
-    category: "clue",
-    act: 3,
-  },
-  {
-    id: "trust_documents",
-    label: "Trust Fund Documents",
     category: "clue",
     act: 3,
   },
