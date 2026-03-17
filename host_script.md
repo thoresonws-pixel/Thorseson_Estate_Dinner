@@ -87,7 +87,7 @@
 
 ---
 
-# ARRIVAL (6:00 PM)
+# ARRIVAL (5:30 PM)
 
 ## Your Role
 - Greet guests at the door IN CHARACTER
@@ -1031,7 +1031,7 @@ SPEECH â€” PRACTICE THIS
 
 | Time | Event |
 |------|-------|
-| **6:00** | Guests arrive, cocktails, mingling |
+| **5:30** | Guests arrive, cocktails, mingling |
 | **6:30** | Act 1 Opening â€” Death announced |
 | **6:35** | Act 1 Investigation â€” Business dealings |
 | **7:15** | Act 2 Transition â€” Share clues, Video 1, company theft revealed |
