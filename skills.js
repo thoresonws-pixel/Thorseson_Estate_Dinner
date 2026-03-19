@@ -135,7 +135,7 @@ const skillsDatabase = {
         errorMsg: "Incorrect password. Find someone with banking experience.",
         badge: "Banking Analysis",
         header: "Thoreson Toys — Capital Account Review, 1934",
-        summary: "An $8,000 wire transfer was sent to Kessler & Braun European Distributors in Hamburg for an overseas expansion deal. The company dissolved within six weeks — total loss. Two outside investors who had put money into Thoreson Toys have been demanding a meeting with Will for months.",
+        summary: "An $8,000 wire transfer was sent to Kessler & Braun European Distributors in Hamburg for an overseas expansion deal. The company dissolved within six weeks — total loss. Two outside investors had money in Thoreson Toys when it happened.",
         expert: `
             <p>I've been looking over the Thoreson Toys bank statements. Most of this is what you'd expect — weekly sales deposits, payroll, vendor payments. The company's been running steady for years. But a few things caught my eye.</p>
             
@@ -148,7 +148,7 @@ const skillsDatabase = {
             <p>Six weeks later, Kessler & Braun's account was dissolved. There's a write-down on the books for the full $8,000 — total loss. No recovered funds, nothing coming back. Just gone.</p>
             
             <div class="reveal-danger">
-                Now here's where it gets interesting. After the loss hit the books, both of those investors started sending demand letters. Then meeting requests. Then <em>more</em> meeting requests. Then one of them got their attorney involved. Months of correspondence, and Will kept pushing them off. Somebody lost real money because of Will's decision, and they've been trying to get answers for months.
+                Now here's where it gets interesting. After the loss hit the books, both of those investor accounts went quiet. No additional deposits. No withdrawals. Just silence. Somebody lost real money because of Will's decision, and Will never made it right. He just kept running the company as if nothing happened.
             </div>
             
             <p><strong>The question is — who are these two investors, and are they here tonight?</strong></p>
