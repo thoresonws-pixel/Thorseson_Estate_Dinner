@@ -58,13 +58,13 @@ const skillsDatabase = {
                 "William,<br><br>
                 You always kept your secrets locked away. Just like that safe in your study closet. I know you have a heart in there somewhere. Even though you showed no heart when you sent me away.<br><br>
                 I wonder — does the combination reveal how you truly felt?<br><br>
-                His daughter was fourteen years old when Robert died. She needed someone. You could have been there for her. You chose not to be.<br><br>
-                She grew up with nothing — no money, no name, no father. And you built your empire on the ruins of her family.<br><br>
+                Our son deserved a father. You gave him money and a name on a trust document and nothing else. He will grow up not knowing who he is because you decided your reputation mattered more than his life.<br><br>
+                I have given everything to keep him safe. You have given nothing but silence and a monthly check.<br><br>
                 I have kept your secret all these years. But secrets have a way of rising to the surface, William. Especially yours.<br><br>
                 — Margaret"
             </div>
 
-            <p>Margaret is furious — and grief-stricken. She confronts Will directly over what happened to Robert's daughter after his death. Will had the means to help her and did nothing.</p>
+            <p>Margaret is furious — and grief-stricken. She confronts Will directly over their child — a son he funded privately but refused to acknowledge. Will chose secrecy over fatherhood.</p>
             
             <div class="reveal-highlight">
                 Margaret references a <strong>safe in the study closet</strong>. She hints that the combination is emotionally significant to Will — something sentimental. Something he couldn't bring himself to forget.
