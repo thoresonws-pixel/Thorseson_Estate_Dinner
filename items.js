@@ -82,12 +82,6 @@ const itemDatabase = [
     act: 2,
   },
   {
-    id: "european_deal",
-    label: "Business Documents",
-    category: "clue",
-    act: 1,
-  },
-  {
     id: "travel_journal",
     label: "Personal Travel Journal",
     category: "clue",

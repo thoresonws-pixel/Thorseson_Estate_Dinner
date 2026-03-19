@@ -41,17 +41,10 @@ const revelationsDatabase = {
                 detail: null
             },
             {
-                id: "europeanDeal",
-                type: "clue",
-                title: "The Failed European Deal",
-                summary: "Internal correspondence and wire transfer records showing Will sent $8,000 to Kessler & Braun European Distributors in Hamburg earlier this year. The company dissolved within weeks of receiving the funds.",
-                detail: null
-            },
-            {
                 id: "bankStatement",
                 type: "clue",
-                title: "Bank Statement — Private Account",
-                summary: "A 1934 bank statement for a private account. Shows twelve monthly $50 entries labeled 'Standing Order — Priv. Acct 9941.' The receiving account is held at First National Bank of Fort Worth under the name T. Hartley.",
+                title: "Bank Statement — Thoreson Toys Capital Account",
+                summary: "A 1934 bank statement for the Thoreson Toys company account. Shows two investor deposits totaling $5,500 in January, followed by an $8,000 wire transfer to Kessler & Braun European Distributors in Hamburg in March. The account dropped from $22,000 to $14,000 overnight. Requires Banking expertise to fully analyze.",
                 detail: null
             },
             {
