@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GM Reference — Thoreson Estate</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d0b08; color: #e8e8e8; font-family: Georgia, serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+  h1 { font-family: 'Playfair Display', serif; color: #c9a227; font-size: 24px; text-align: center; margin-bottom: 8px; }
+  .subtitle { text-align: center; color: #666; font-size: 13px; margin-bottom: 30px; letter-spacing: 2px; }
+  h2 { font-family: 'Playfair Display', serif; color: #c9a227; font-size: 18px; margin: 30px 0 15px; padding-bottom: 8px; border-bottom: 1px solid rgba(201,162,39,0.3); }
+  h3 { color: #c9a227; font-size: 15px; margin: 20px 0 8px; }
+  .section { background: rgba(255,255,255,0.03); border: 1px solid rgba(201,162,39,0.15); border-radius: 5px; margin-bottom: 10px; }
+  .section-header { padding: 12px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+  .section-header:hover { background: rgba(201,162,39,0.05); }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 15px; color: #c9a227; }
+  .section-badge { font-size: 11px; color: #666; letter-spacing: 1px; }
+  .section-content { display: none; padding: 0 16px 16px; font-size: 14px; line-height: 1.7; color: #ccc; }
+  .section-content.open { display: block; }
+  .memory { background: rgba(201,162,39,0.06); border-left: 3px solid #c9a227; padding: 10px 14px; margin: 8px 0; font-size: 13px; line-height: 1.6; }
+  .memory-trigger { font-size: 11px; color: #8b6914; letter-spacing: 1px; margin-bottom: 4px; }
+  .tier1 { border-left-color: #e74c3c; }
+  .tier1 .memory-trigger { color: #e74c3c; }
+  .knowledge { background: rgba(139,105,20,0.1); border-left: 3px solid #8b6914; padding: 10px 14px; margin: 8px 0; font-size: 13px; line-height: 1.6; }
+  .expert { background: rgba(0,0,0,0.3); padding: 14px; margin: 8px 0; border-radius: 3px; font-size: 13px; line-height: 1.7; }
+  .expert strong { color: #c9a227; }
+  .nav-links { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; justify-content: center; }
+  .nav-links a { color: #c9a227; font-size: 12px; text-decoration: none; border: 1px solid rgba(201,162,39,0.3); padding: 4px 10px; border-radius: 3px; }
+  .nav-links a:hover { background: rgba(201,162,39,0.1); }
+  .reveal-highlight { background: rgba(201,162,39,0.08); border-left: 3px solid #c9a227; padding: 12px; margin: 10px 0; }
+  .reveal-danger { background: rgba(231,76,60,0.08); border-left: 3px solid #e74c3c; padding: 12px; margin: 10px 0; }
+</style>
+</head>
+<body>
+
+<h1>🕯 GM Emergency Reference</h1>
+<div class="subtitle">TAP ANY SECTION TO EXPAND</div>
+
+<div class="nav-links">
+  <a href="#skills">Skills</a>
+  <a href="#memories">Memories</a>
+  <a href="#revelations">Revelations</a>
+  <a href="#codes">Login Codes</a>
+</div>
+
+<div id="content">Loading...</div>
+
+<script src="characters.js"></script>
+<script src="skills.js"></script>
+<script src="revelations.js"></script>
+<script>
+function toggle(el) {
+  var content = el.nextElementSibling;
+  content.classList.toggle('open');
+}
+
+var html = '';
+
+// ── SKILL EXPERT CONTENT ──
+html += '<h2 id="skills">Skill Expert Content</h2>';
+html += '<p style="font-size:13px; color:#666; margin-bottom:15px;">Tap to view the full expert analysis. Read aloud or show to player if QR fails.</p>';
+
+Object.entries(skillsDatabase).forEach(function([name, data]) {
+  if (name === 'Bartender') return;
+  var who = {
+    'Accounting': 'Teddy (Dylan)', 'Legal': 'Miranda (Leanna)', 'Journalism': 'Walter (Marc) / Sophie (Maisy)',
+    'French': 'Vivienne (Hannah)', 'Medical': 'Patricia (Casey)', 'Banking': 'Charles (Jeff) / James (Bradey)',
+    'Botany': 'Dorothy (Michelle) — AUTO-TRIGGERS'
+  }[name] || '';
+  html += '<div class="section">';
+  html += '<div class="section-header" onclick="toggle(this)"><span class="section-title">' + data.badge + '</span><span class="section-badge">' + who + '</span></div>';
+  html += '<div class="section-content">';
+  html += '<div style="font-size:12px; color:#c9a227; margin-bottom:8px;">SUMMARY (everyone sees):</div>';
+  html += '<div style="margin-bottom:12px;">' + data.summary + '</div>';
+  if (data.expert) {
+    html += '<div style="font-size:12px; color:#c9a227; margin-bottom:8px;">EXPERT ANALYSIS (read aloud):</div>';
+    html += '<div class="expert">' + data.expert + '</div>';
+  }
+  html += '</div></div>';
+});
+
+// ── CHARACTER MEMORIES ──
+html += '<h2 id="memories">Character Memories & Knowledge</h2>';
+html += '<p style="font-size:13px; color:#666; margin-bottom:15px;">If a memory popup doesn\'t fire, find the player and read them this content.</p>';
+
+Object.entries(characterDatabase).forEach(function([key, data]) {
+  if (key === 'Scott') return;
+  var totalItems = (data.memories || []).filter(function(m){ return m.unlockedBy; }).length + 
+                   (data.knowledge || []).filter(function(k){ return k.unlockedBy; }).length;
+  if (totalItems === 0) return;
+  
+  html += '<div class="section">';
+  html += '<div class="section-header" onclick="toggle(this)"><span class="section-title">' + data.name + '</span><span class="section-badge">' + key + ' · ' + totalItems + ' items</span></div>';
+  html += '<div class="section-content">';
+  
+  if (data.knowledge) {
+    data.knowledge.forEach(function(k) {
+      if (!k.unlockedBy) return;
+      html += '<div class="knowledge"><div class="memory-trigger">KNOWLEDGE · triggers on: ' + k.unlockedBy + '</div>' + k.text + '</div>';
+    });
+  }
+  
+  if (data.memories) {
+    data.memories.forEach(function(m) {
+      if (!m.unlockedBy) return;
+      var tier = m.tier || 2;
+      var cls = tier === 1 ? 'memory tier1' : 'memory';
+      html += '<div class="' + cls + '"><div class="memory-trigger">' + (tier === 1 ? '🔴 TIER 1 URGENT' : 'TIER 2') + ' · triggers on: ' + m.unlockedBy + '</div>' + m.text.replace(/\\n/g, '<br>') + '</div>';
+    });
+  }
+  
+  html += '</div></div>';
+});
+
+// ── REVELATIONS ──
+html += '<h2 id="revelations">Revelation Summaries</h2>';
+html += '<p style="font-size:13px; color:#666; margin-bottom:15px;">What everyone sees in their Discoveries tab when you toggle each revelation.</p>';
+
+Object.entries(revelationsDatabase).forEach(function([actKey, act]) {
+  html += '<h3>' + act.label + '</h3>';
+  act.items.forEach(function(item) {
+    var badge = item.type === 'story' ? 'STORY' : 'CLUE';
+    html += '<div class="section">';
+    html += '<div class="section-header" onclick="toggle(this)"><span class="section-title">' + item.title + '</span><span class="section-badge">' + badge + ' · ' + item.id + '</span></div>';
+    html += '<div class="section-content">' + (item.summary || '').replace(/\\n/g, '<br>') + '</div>';
+    html += '</div>';
+  });
+});
+
+// ── LOGIN CODES ──
+html += '<h2 id="codes">Login Codes</h2>';
+var codes = {
+  'Scott': '61493', 'BrianT': '42851', 'Clara': '56374', 'Leanna': '31429',
+  'Marc': '68915', 'Maisy': '25837', 'Hannah': '84126', 'DJ': '91564',
+  'Peter': '17382', 'Arash': '73649', 'Becky': '45928', 'BrianS': '52847',
+  'Katie': '29175', 'Michelle': '63841', 'Jeff': '34759', 'Casey': '85214',
+  'Krystal': '72938', 'Lindsey': '41876', 'Bradey': '96523', 'Alexander': '51783',
+  'Jesse': '28764', 'Dylan': '16583', 'Preston': '39517', 'Greeter': '77291'
+};
+html += '<div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:13px;">';
+Object.entries(codes).forEach(function([name, code]) {
+  var charName = characterDatabase[name] ? characterDatabase[name].name : name;
+  html += '<div style="padding:6px 10px; background:rgba(255,255,255,0.03); border-radius:3px;">';
+  html += '<span style="color:#c9a227;">' + name + '</span> <span style="color:#666;">' + code + '</span>';
+  html += '</div>';
+});
+html += '</div>';
+
+document.getElementById('content').innerHTML = html;
+</script>
+
+</body>
+</html>
