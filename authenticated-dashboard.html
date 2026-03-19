@@ -2147,6 +2147,30 @@
             html += '<div id="leaderboardContent" style="font-size:14px; color:#999; font-style:italic;">Loading...</div>';
             html += '</div>';
 
+            // BRADFORD CHASE SCRIPT
+            html += '<div style="margin-top:30px; padding:20px; border:1px solid #8b6914; background:rgba(201,162,39,0.05);">';
+            html += '<div style="font-family:\'Playfair Display\',serif; font-size:15px; letter-spacing:2px; text-transform:uppercase; color:#c9a227; margin-bottom:8px;">🚔 Bradford Chase Updates</div>';
+            html += '<div style="font-size:13px; color:#8b8b8b; margin-bottom:15px;">Announce these in character throughout the night. Tap to expand, read aloud, then collapse.</div>';
+
+            var chaseUpdates = [
+                { timing: "COCKTAIL HOUR", text: "Ladies and gentlemen — I\\'ve just received word from the sheriff\\'s office. Thomas Bradford, who was expected this evening, has fled Dallas County. His home was found empty this afternoon. Deputies are in pursuit. A wanted notice has been posted. I\\'m told he should be considered... well, let\\'s say \\'uncooperative.\\'" },
+                { timing: "MID ACT 1", text: "Update from the sheriff — Bradford\\'s automobile was spotted heading south on Route 77 at considerable speed. He ran two stop signs in Waxahachie. Officers are in pursuit. I\\'m sure this has nothing to do with the patent letter he sent three weeks ago." },
+                { timing: "LATE ACT 1", text: "I\\'m told Bradford\\'s car ran out of fuel near Corsicana. He was last seen on foot, heading into a cotton field. The deputy described him as \\'surprisingly fast for a man of his build.\\'" },
+                { timing: "ACT 2", text: "Bradford update — he was briefly apprehended hiding in a barn outside Ennis. He escaped custody when the deputy went inside for coffee. The sheriff has requested additional resources. And, apparently, faster deputies." },
+                { timing: "ACT 3", text: "Final update on our friend Mr. Bradford — he was spotted boarding a southbound freight train near Waco, disguised as... and I am reading this directly... a feed salesman. The five-hundred-dollar reward remains available. The sheriff\\'s department asks that if you see a nervous man in a bad hat asking questions about grain prices, please contact the authorities." }
+            ];
+
+            chaseUpdates.forEach(function(update, i) {
+                html += '<div style="margin:8px 0; border:1px solid rgba(201,162,39,0.2); border-radius:3px;">';
+                html += '<div onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display===\'none\'?\'block\':\'none\'" style="padding:10px 14px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;">';
+                html += '<span style="font-size:13px; color:#c9a227;">' + update.timing + '</span>';
+                html += '<span style="font-size:11px; color:#666;">tap to read</span>';
+                html += '</div>';
+                html += '<div style="display:none; padding:8px 14px 14px; font-size:14px; line-height:1.7; color:#d4c090; font-style:italic; border-top:1px solid rgba(201,162,39,0.1);">"' + update.text + '"</div>';
+                html += '</div>';
+            });
+            html += '</div>';
+
             // START GAME / RESET button
             // Test Mode toggle
             html += '<div style="margin-top:30px; padding:20px; border:1px solid #c9a227; background:rgba(201,162,39,0.05);">';
