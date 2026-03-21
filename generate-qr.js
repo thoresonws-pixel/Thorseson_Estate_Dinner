@@ -17,14 +17,13 @@ const qrScripts = `<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/
 const cards = itemDatabase.map(item => {
   const cfg = categoryConfig[item.category] || { label: item.category, color: '#1a1a1a', textColor: '#aaa', border: '#333' };
   const url = `${BASE_URL}?item=${item.id}`;
-  const actLabel = item.act ? `Act ${item.act}` : 'All Night';
+  const actLabel = '';
   return `
     <div class="qr-card" style="border-color:${cfg.border}">
       <div class="qr-top" style="background:${cfg.color}">
         <div class="qr-badge" style="color:${cfg.textColor}">${cfg.label.toUpperCase()}</div>
         <div class="qr-number">${item._number}<span> / ${itemDatabase.filter(i=>i.category===item.category).length}</span></div>
         <div class="qr-label">${item.label}</div>
-        <div class="qr-act">${actLabel}</div>
       </div>
       <div class="qr-code" id="qr-${item.id}"></div>
       <div class="qr-url">${item.id}</div>
