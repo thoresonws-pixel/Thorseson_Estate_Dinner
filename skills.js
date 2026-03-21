@@ -57,7 +57,7 @@ const skillsDatabase = {
             <div class="letter-text">
                 "June 4th, 1914<br><br>
                 William,<br><br>
-                You always kept your secrets locked away. Just like that safe in your study closet. I know you have a heart in there somewhere. Even though you showed no heart when you sent me away.<br><br>
+                You always kept your secrets locked away. Just like that safe in your hallway closet. I know you have a heart in there somewhere. Even though you showed no heart when you sent me away.<br><br>
                 I wonder — does the combination reveal how you truly felt? Our son turned three this past March and you were not there. You locked his birthday behind steel and numbers because you could not bring yourself to forget it, and you could not bring yourself to claim it.<br><br>
                 Our son deserved a father. You gave him money and a name on a trust document and nothing else. He will grow up not knowing who he is because you decided your reputation mattered more than his life.<br><br>
                 I have given everything to keep him safe. You have given nothing but silence and a monthly check.<br><br>
@@ -68,7 +68,7 @@ const skillsDatabase = {
             <p>Margaret is furious — and grief-stricken. She confronts Will directly over their child — a son he funded privately but refused to acknowledge. Will chose secrecy over fatherhood.</p>
             
             <div class="reveal-highlight">
-                Margaret references a <strong>safe in the study closet</strong>. The letter is dated June 1914. She says their son <strong>turned three this past March</strong>. Three years old in March 1914 means the child was born in <strong>March 1911</strong>. The combination is his birthday — we just need the exact day.
+                Margaret references a <strong>safe in the hallway closet</strong>. The letter is dated June 1914. She says their son <strong>turned three this past March</strong>. Three years old in March 1914 means the child was born in <strong>March 1911</strong>. The combination is his birthday — we just need the exact day.
             </div>
         `
     },
