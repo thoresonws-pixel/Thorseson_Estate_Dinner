@@ -40,6 +40,77 @@ const cards = itemDatabase.map(item => {
     <\/script>`;
 }).join('\n');
 
+// Skill QR codes
+const skillQRs = [
+  { id: 'Accounting', doc: 'Financial Ledger' },
+  { id: 'Legal', doc: 'Forged Transfer' },
+  { id: 'Journalism', doc: 'Dallas Herald' },
+  { id: 'French', doc: 'French Letter' },
+  { id: 'Medical', doc: 'Autopsy Report' },
+  { id: 'Banking', doc: 'Bank Statement' },
+];
+const skillCards = skillQRs.map((s, i) => `
+  <div class="qr-card" style="border-color:#6a3a3a">
+    <div class="qr-top" style="background:#3a1a1a">
+      <div class="qr-badge" style="color:#c88a6a">SKILL</div>
+      <div class="qr-number">${i+1}<span> / ${skillQRs.length}</span></div>
+      <div class="qr-label">${s.doc}</div>
+      <div class="qr-act">Print ON document</div>
+    </div>
+    <div class="qr-code" id="qr-skill-${s.id}"></div>
+    <div class="qr-url">THORESON:${s.id}</div>
+  </div>
+  <script>
+    new QRCode(document.getElementById('qr-skill-${s.id}'), {
+      text: 'THORESON:${s.id}',
+      width: 160, height: 160,
+      colorDark: '#1a1208',
+      colorLight: '#fffdf5',
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  <\/script>`).join('\n');
+
+// Easter eggs, posters, bathroom, netsuke
+const PHOTO_URL = 'https://thoresonws-pixel.github.io/Thoreson_Estate_Dinner/photo.html';
+const NETSUKE_URL = 'https://thoresonws-pixel.github.io/Thoreson_Estate_Dinner/netsuke.html';
+const extraQRs = [
+  { id: 'extra-e1', label: 'Easter Egg 1', url: `${PHOTO_URL}?id=e1` },
+  { id: 'extra-e2', label: 'Easter Egg 2', url: `${PHOTO_URL}?id=e2` },
+  { id: 'extra-e3', label: 'Easter Egg 3', url: `${PHOTO_URL}?id=e3` },
+  { id: 'extra-e4', label: 'Easter Egg 4', url: `${PHOTO_URL}?id=e4` },
+  { id: 'extra-e5', label: 'Easter Egg 5', url: `${PHOTO_URL}?id=e5` },
+  { id: 'extra-wedding', label: 'Wedding Album', url: `${PHOTO_URL}?id=wedding` },
+  { id: 'extra-p1', label: 'Wanted — Aaron', url: `${PHOTO_URL}?id=p1` },
+  { id: 'extra-p2', label: 'Missing — Sarah', url: `${PHOTO_URL}?id=p2` },
+  { id: 'extra-p3', label: 'Missing — Laurie', url: `${PHOTO_URL}?id=p3` },
+  { id: 'extra-p4', label: 'Missing — Robin', url: `${PHOTO_URL}?id=p4` },
+  { id: 'extra-p5', label: 'Wanted — Bradford', url: `${PHOTO_URL}?id=p5` },
+  { id: 'extra-bathroom', label: 'Bathroom Cat', url: `${PHOTO_URL}?id=bathroom` },
+  { id: 'extra-netsuke', label: 'Netsuke Quest', url: NETSUKE_URL },
+];
+const extraCards = extraQRs.map((e, i) => `
+  <div class="qr-card" style="border-color:#3a3a1a">
+    <div class="qr-top" style="background:#2a2a10">
+      <div class="qr-badge" style="color:#c8c86a">PHOTO / SPECIAL</div>
+      <div class="qr-number">${i+1}<span> / ${extraQRs.length}</span></div>
+      <div class="qr-label">${e.label}</div>
+      <div class="qr-act">Hide around venue</div>
+    </div>
+    <div class="qr-code" id="qr-${e.id}"></div>
+    <div class="qr-url">${e.label}</div>
+  </div>
+  <script>
+    new QRCode(document.getElementById('qr-${e.id}'), {
+      text: '${e.url}',
+      width: 160, height: 160,
+      colorDark: '#1a1208',
+      colorLight: '#fffdf5',
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  <\/script>`).join('\n');
+
+const totalCount = itemDatabase.length + skillQRs.length + extraQRs.length;
+
 const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -138,14 +209,23 @@ const html = `<!DOCTYPE html>
 </head>
 <body>
   <h1>The Thoreson Estate</h1>
-  <div class="subtitle">Dallas, Texas &nbsp;·&nbsp; March 21, 1935 &nbsp;·&nbsp; Game Items &nbsp;·&nbsp; ${itemDatabase.length} Total</div>
+  <div class="subtitle">Dallas, Texas &nbsp;·&nbsp; March 21, 1935 &nbsp;·&nbsp; All QR Codes &nbsp;·&nbsp; ${totalCount} Total</div>
+  <div style="text-align:center; font-size:14px; color:#5a4a2a; margin-bottom:24px; font-style:italic;">Item Clues</div>
   <div class="grid">
     ${cards}
+  </div>
+  <div style="text-align:center; font-size:14px; color:#5a4a2a; margin:32px 0 24px; font-style:italic;">Skill QR Codes (print on documents)</div>
+  <div class="grid">
+    ${skillCards}
+  </div>
+  <div style="text-align:center; font-size:14px; color:#5a4a2a; margin:32px 0 24px; font-style:italic;">Photos, Posters &amp; Special</div>
+  <div class="grid">
+    ${extraCards}
   </div>
 </body>
 </html>`;
 
 const fs = require('fs');
 fs.writeFileSync('qr-codes.html', html);
-console.log(`✓ Generated qr-codes.html — ${itemDatabase.length} items`);
+console.log(`✓ Generated qr-codes.html — ${totalCount} total QR codes (${itemDatabase.length} items, ${skillQRs.length} skills, ${extraQRs.length} photos/special)`);
 console.log('  Open in a browser and print (or save as PDF)');
