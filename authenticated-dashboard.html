@@ -1275,6 +1275,7 @@
     <script src="characters.js"></script>
     <script src="skills.js"></script>
     <script src="revelations.js"></script>
+    <script src="items.js"></script>
 
     <script>
         // Toggle contact fields based on attendance selection
@@ -2631,14 +2632,22 @@
             }
 
             // Generic prop scan — URL format
-            if (decodedText.includes('scan.html')) {
+            if (decodedText.includes('scan.html') || decodedText.includes('clue.html')) {
                 try {
-                    const propId = new URL(decodedText).searchParams.get('id') || 'unknown';
+                    const params = new URL(decodedText).searchParams;
+                    const propId = params.get('id') || params.get('item') || 'unknown';
                     const player = userSession.username;
                     database.ref('scans/' + player).transaction(c => (c || 0) + 1);
                     database.ref('scanLog').push({ player, propId, time: Date.now() });
                 } catch(e) {}
                 var modal = document.getElementById('skillModalContent');
+                var itemLabel = '';
+                try {
+                    var params = new URL(decodedText).searchParams;
+                    var itemId = params.get('id') || params.get('item') || '';
+                    var found = (typeof itemDatabase !== 'undefined') && itemDatabase.find(function(i) { return i.id === itemId; });
+                    if (found) itemLabel = found.label;
+                } catch(e2) {}
                 modal.innerHTML = `
                     <div style="text-align:center; padding:10px 0;">
                         <svg viewBox="0 0 680 860" xmlns="http://www.w3.org/2000/svg" style="width:160px; margin:0 auto 16px; display:block;">
@@ -2656,6 +2665,7 @@
                             <text x="340" y="702" text-anchor="middle" class="ctd" font-size="13" font-weight="700" letter-spacing="2">THORESON FAMILY ESTATE</text>
                         </svg>
                         <div style="font-family:'Playfair Display',serif; font-size:22px; color:#c9a227; margin-bottom:8px;">✦ Clue Found</div>
+                        <div style="font-size:17px; color:#d4c090; letter-spacing:1px; margin-bottom:8px; font-family:'Playfair Display',serif;">${itemLabel || ''}</div>
                         <div style="font-size:15px; color:#aaaaaa; letter-spacing:1px;">Bring this to the group.</div>
                     </div>
                     <button class="skill-modal-close" onclick="closeSkillModal()">Dismiss</button>`;
