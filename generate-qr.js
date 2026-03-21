@@ -22,10 +22,8 @@ const cards = itemDatabase.map(item => {
     <div class="qr-card" style="border-color:${cfg.border}">
       <div class="qr-top" style="background:${cfg.color}">
         <div class="qr-number">${cfg.label} ${item._number}</div>
-        <div class="qr-label">${item.label}</div>
       </div>
       <div class="qr-code" id="qr-${item.id}"></div>
-      <div class="qr-url">${item.id}</div>
     </div>
     <script>
       new QRCode(document.getElementById('qr-${item.id}'), {
@@ -51,11 +49,8 @@ const skillCards = skillQRs.map((s, i) => `
   <div class="qr-card" style="border-color:#6a3a3a">
     <div class="qr-top" style="background:#3a1a1a">
       <div class="qr-number">Skill ${i+1}</div>
-      <div class="qr-label">${s.doc}</div>
-      <div class="qr-act">Print ON document</div>
     </div>
     <div class="qr-code" id="qr-skill-${s.id}"></div>
-    <div class="qr-url">THORESON:${s.id}</div>
   </div>
   <script>
     new QRCode(document.getElementById('qr-skill-${s.id}'), {
@@ -89,11 +84,8 @@ const extraCards = extraQRs.map((e, i) => `
   <div class="qr-card" style="border-color:#3a3a1a">
     <div class="qr-top" style="background:#2a2a10">
       <div class="qr-number">Special ${i+1}</div>
-      <div class="qr-label">${e.label}</div>
-      <div class="qr-act">Hide around venue</div>
     </div>
     <div class="qr-code" id="qr-${e.id}"></div>
-    <div class="qr-url">${e.label}</div>
   </div>
   <script>
     new QRCode(document.getElementById('qr-${e.id}'), {
