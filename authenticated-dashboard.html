@@ -3018,27 +3018,6 @@
                     });
                 }
 
-                // Download All button
-                const existing = document.getElementById('downloadAllBtn');
-                if (existing) existing.remove();
-                if (fullUrls.length > 0) {
-                    const btn = document.createElement('button');
-                    btn.id = 'downloadAllBtn';
-                    btn.textContent = `↓ Download All ${fullUrls.length} Photos`;
-                    btn.style.cssText = 'display:block; margin:30px auto 0; padding:14px 36px; background:transparent; color:#c9a227; border:1px solid #c9a227; cursor:pointer; font-family:\'Playfair Display\',Georgia,serif; font-size:15px; letter-spacing:2px; text-transform:uppercase; border-radius:3px;';
-                    btn.onclick = function() {
-                        fullUrls.forEach((url, i) => {
-                            setTimeout(() => {
-                                const a = document.createElement('a');
-                                a.href = url;
-                                a.download = `thoreson_estate_${i+1}.jpg`;
-                                a.target = '_blank';
-                                a.click();
-                            }, i * 800);
-                        });
-                    };
-                    grid.parentNode.appendChild(btn);
-                }
             });
         }
 
