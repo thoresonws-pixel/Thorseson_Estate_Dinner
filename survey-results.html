@@ -125,11 +125,52 @@
 
     html += '<hr class="divider">';
 
+    // Multi-select breakdowns
+    var multiFields = [
+      { key: 'nextLevel', label: 'What Would Take It to the Next Level', options: [
+        { val: 'detective-board', label: 'Detective board on TV' },
+        { val: 'live-actors', label: 'Live actors' },
+        { val: 'native-app', label: 'Real app' },
+        { val: 'costumes-provided', label: 'Costumes provided' },
+        { val: 'themed-music-lighting', label: 'Period music & lighting' },
+        { val: 'themed-dinner', label: 'Themed dinner course' },
+        { val: 'seasonal-themes', label: 'Seasonal variations' },
+        { val: 'longer-game', label: 'Longer game' },
+      ]},
+      { key: 'venueFormat', label: 'Preferred Venue Format', options: [
+        { val: 'come-to-you', label: 'Come to your home' },
+        { val: 'airbnb-estate', label: 'Rented mansion / Airbnb' },
+        { val: 'permanent-venue', label: 'Dedicated venue' },
+        { val: 'corporate', label: 'Corporate at your office' },
+      ]},
+    ];
+
+    multiFields.forEach(function(f) {
+      html += '<div class="breakdown"><div class="bd-title">' + f.label + '</div>';
+      var total = responses.length;
+      f.options.forEach(function(opt) {
+        var count = responses.filter(function(r) {
+          return r[f.key] && Array.isArray(r[f.key]) && r[f.key].indexOf(opt.val) !== -1;
+        }).length;
+        var pct = total > 0 ? (count / total * 100).toFixed(0) : 0;
+        html += '<div class="bd-row">';
+        html += '<div class="bd-label">' + opt.label + '</div>';
+        html += '<div class="bd-bar-bg"><div class="bd-bar" style="width:' + pct + '%"></div></div>';
+        html += '<div class="bd-count">' + count + '</div>';
+        html += '</div>';
+      });
+      html += '</div>';
+    });
+
+    html += '<hr class="divider">';
+
     // Free text responses
     var textFields = [
       { key: 'favorite', label: 'Favorite Moments' },
       { key: 'confusing', label: 'What Was Confusing' },
       { key: 'improve', label: 'What Would You Improve' },
+      { key: 'nextLevelOther', label: 'Next Level — Other Ideas' },
+      { key: 'venueOther', label: 'Venue — Other Ideas' },
       { key: 'anything', label: 'Other Comments' },
     ];
 

@@ -33,6 +33,7 @@
   }
   .opt:hover { border-color: #c9a227; color: #c9a227; }
   .opt.selected { background: rgba(201,162,39,0.15); border-color: #c9a227; color: #c9a227; }
+  .multi-opt { display: block; width: 100%; text-align: left; margin-bottom: 0; }
 
   /* Text areas */
   textarea {
@@ -260,6 +261,36 @@
     <textarea id="improve" placeholder="More clues, less clues, different food, longer cocktail hour, anything..."></textarea>
   </div>
 
+  <hr class="divider">
+
+  <div class="question">
+    <div class="q-label">What would take this experience to the next level?</div>
+    <div class="q-sublabel">Select all that excite you</div>
+    <div class="options multi" id="nextLevel">
+      <div class="opt multi-opt" data-val="detective-board">Clues appear on a TV like a detective board with red string connecting evidence</div>
+      <div class="opt multi-opt" data-val="live-actors">Live actors playing characters alongside the guests</div>
+      <div class="opt multi-opt" data-val="native-app">A real app instead of a website</div>
+      <div class="opt multi-opt" data-val="costumes-provided">Period costumes provided for guests</div>
+      <div class="opt multi-opt" data-val="themed-music-lighting">Period-appropriate music and moody lighting</div>
+      <div class="opt multi-opt" data-val="themed-dinner">Fully themed dinner course paired to the story</div>
+      <div class="opt multi-opt" data-val="seasonal-themes">Seasonal variations — Valentine's, Halloween, NYE editions</div>
+      <div class="opt multi-opt" data-val="longer-game">Longer game with more acts and deeper clues</div>
+    </div>
+    <textarea id="nextLevelOther" placeholder="Your own idea..." style="margin-top:10px;"></textarea>
+  </div>
+
+  <div class="question">
+    <div class="q-label">If we offered this as a business, which format appeals to you most?</div>
+    <div class="q-sublabel">Select all that interest you</div>
+    <div class="options multi" id="venueFormat">
+      <div class="opt multi-opt" data-val="come-to-you">We come to your home and run the full experience for your group</div>
+      <div class="opt multi-opt" data-val="airbnb-estate">We rent a mansion / Airbnb for the night — you show up and play</div>
+      <div class="opt multi-opt" data-val="permanent-venue">A dedicated venue you visit — like an escape room but a full evening</div>
+      <div class="opt multi-opt" data-val="corporate">Corporate team-building event at your office</div>
+    </div>
+    <textarea id="venueOther" placeholder="Other idea or preference..." style="margin-top:10px;"></textarea>
+  </div>
+
   <div class="question">
     <div class="q-label">Anything else you want to tell us?</div>
     <textarea id="anything" placeholder="Compliments, complaints, theories about who really did it..."></textarea>
@@ -301,8 +332,8 @@
     });
   });
 
-  // Option buttons
-  document.querySelectorAll('.options').forEach(function(group) {
+  // Option buttons — single select
+  document.querySelectorAll('.options:not(.multi)').forEach(function(group) {
     group.querySelectorAll('.opt').forEach(function(opt) {
       opt.addEventListener('click', function() {
         group.querySelectorAll('.opt').forEach(function(o) { o.classList.remove('selected'); });
@@ -311,9 +342,23 @@
     });
   });
 
+  // Option buttons — multi select (toggle)
+  document.querySelectorAll('.options.multi').forEach(function(group) {
+    group.querySelectorAll('.opt').forEach(function(opt) {
+      opt.addEventListener('click', function() {
+        opt.classList.toggle('selected');
+      });
+    });
+  });
+
   function getSelected(id) {
     var el = document.querySelector('#' + id + ' .opt.selected');
     return el ? el.dataset.val : '';
+  }
+
+  function getMultiSelected(id) {
+    var els = document.querySelectorAll('#' + id + ' .opt.selected');
+    return Array.prototype.map.call(els, function(el) { return el.dataset.val; });
   }
 
   function submitSurvey() {
@@ -339,6 +384,10 @@
       recommend: getSelected('recommend'),
       price: getSelected('price'),
       improve: document.getElementById('improve').value,
+      nextLevel: getMultiSelected('nextLevel'),
+      nextLevelOther: document.getElementById('nextLevelOther').value,
+      venueFormat: getMultiSelected('venueFormat'),
+      venueOther: document.getElementById('venueOther').value,
       anything: document.getElementById('anything').value,
       time: Date.now()
     };
