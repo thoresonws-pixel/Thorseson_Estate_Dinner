@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thoreson Estate — Photos</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d0b08; color: #e8e8e8; font-family: 'Playfair Display', Georgia, serif; min-height: 100vh; }
+  .header { text-align: center; padding: 40px 20px 20px; }
+  .header h1 { font-size: 28px; color: #c9a227; letter-spacing: 4px; margin-bottom: 6px; }
+  .header p { font-size: 13px; color: #666; letter-spacing: 2px; }
+  .count { text-align: center; font-size: 15px; color: #8b7355; margin: 10px 0 20px; }
+  .download-bar { text-align: center; padding: 10px 20px 30px; }
+  .download-btn {
+    display: inline-block; padding: 14px 36px; border: 1px solid #c9a227;
+    background: transparent; color: #c9a227; font-family: 'Playfair Display', serif;
+    font-size: 15px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
+    border-radius: 3px; transition: all 0.2s;
+  }
+  .download-btn:hover { background: rgba(201,162,39,0.1); }
+  .download-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .progress { font-size: 13px; color: #8b7355; margin-top: 10px; display: none; }
+  .grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 12px; padding: 0 20px 40px; max-width: 1200px; margin: 0 auto;
+  }
+  .photo-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(201,162,39,0.15);
+    border-radius: 4px; overflow: hidden;
+  }
+  .photo-card img { width: 100%; display: block; max-height: 300px; object-fit: contain; background: #000; }
+  .photo-info { padding: 8px 12px; font-size: 12px; color: #8b7355; display: flex; justify-content: space-between; }
+  .caption { padding: 6px 12px; font-size: 14px; color: #c9a227; font-style: italic; }
+  .loading { text-align: center; padding: 60px; color: #666; font-style: italic; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>The Thoreson Estate</h1>
+  <p>MARCH 21, 1935 — PHOTOGRAPHS</p>
+</div>
+<div class="count" id="count">Loading...</div>
+<div class="download-bar">
+  <button class="download-btn" id="downloadBtn" onclick="downloadAll()" disabled>↓ Download All as ZIP</button>
+  <div class="progress" id="progress"></div>
+</div>
+<div class="grid" id="grid">
+  <div class="loading">Loading photographs...</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+<script>
+  firebase.initializeApp({
+    databaseURL: "https://thoreson-estate-default-rtdb.firebaseio.com"
+  });
+
+  var allPhotos = [];
+
+  firebase.database().ref('photos').orderByChild('time').once('value', function(snap) {
+    var data = snap.val();
+    if (!data) {
+      document.getElementById('grid').innerHTML = '<div class="loading">No photos found.</div>';
+      document.getElementById('count').textContent = '0 photos';
+      return;
+    }
+
+    allPhotos = Object.values(data).sort(function(a, b) { return a.time - b.time; });
+    document.getElementById('count').textContent = allPhotos.length + ' photographs from the evening';
+    document.getElementById('downloadBtn').disabled = false;
+
+    var grid = document.getElementById('grid');
+    grid.innerHTML = allPhotos.map(function(p, i) {
+      var url = p.fullUrl || p.wallUrl;
+      var time = new Date(p.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      var caption = p.caption ? '<div class="caption">' + p.caption + '</div>' : '';
+      return '<div class="photo-card">' +
+        '<img src="' + url + '" loading="lazy">' +
+        caption +
+        '<div class="photo-info"><span>' + p.player + '</span><span>' + time + '</span></div>' +
+        '</div>';
+    }).join('');
+  });
+
+  async function downloadAll() {
+    var btn = document.getElementById('downloadBtn');
+    var prog = document.getElementById('progress');
+    btn.disabled = true;
+    btn.textContent = 'Preparing...';
+    prog.style.display = 'block';
+
+    var zip = new JSZip();
+    var folder = zip.folder('thoreson_estate_photos');
+    var total = allPhotos.length;
+    var done = 0;
+
+    for (var i = 0; i < allPhotos.length; i++) {
+      var url = allPhotos[i].fullUrl || allPhotos[i].wallUrl;
+      var player = allPhotos[i].player || 'unknown';
+      var ext = url.match(/\.(jpe?g|png|gif)/i) ? url.match(/\.(jpe?g|png|gif)/i)[0] : '.jpg';
+      var filename = (i + 1).toString().padStart(2, '0') + '_' + player + ext;
+
+      prog.textContent = 'Downloading ' + (i + 1) + ' of ' + total + '...';
+
+      try {
+        var response = await fetch(url);
+        var blob = await response.blob();
+        folder.file(filename, blob);
+        done++;
+      } catch (e) {
+        console.error('Failed to download:', url, e);
+      }
+    }
+
+    prog.textContent = 'Creating ZIP file...';
+
+    zip.generateAsync({ type: 'blob' }).then(function(content) {
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(content);
+      a.download = 'thoreson_estate_photos.zip';
+      a.click();
+      URL.revokeObjectURL(a.href);
+
+      btn.textContent = '✓ Downloaded ' + done + ' photos';
+      prog.textContent = '';
+      prog.style.display = 'none';
+
+      setTimeout(function() {
+        btn.textContent = '↓ Download All as ZIP';
+        btn.disabled = false;
+      }, 3000);
+    });
+  }
+</script>
+
+</body>
+</html>
