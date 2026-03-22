@@ -34,10 +34,22 @@
 ## PRODUCTION
 6. *(costumes, lighting, music, dinner pairing — pending survey results)*
 
+## PLATFORM
+8. **Party system & accounts** — The foundation for running multiple events. Flow:
+   - GM creates a party → unique party code generated (e.g. "THORESON-2847")
+   - Players visit site, enter party code, create account (name, email)
+   - GM selects a story from a library of available mysteries
+   - Character selection opens — players see public descriptions (not backstories), pick their character first-come-first-serve. GM can lock or reassign.
+   - Game night: everyone logs in with their account, all data scoped to party code
+   - Post-game: photos, survey, results all tied to that party code
+   - Eliminates memorized 5-digit login codes
+9. **Story template system** — Boilerplate structure so new mysteries can be created without rebuilding the app. A story template defines: characters, backstories, skills, items, revelations, memories, acts, clue connections. The engine reads the template and runs the game. Thoreson Estate becomes "story #1" in a library.
+10. **GM dashboard per party** — Master Controls scoped to a party code. Multiple GMs could run different parties on the same night with different stories.
+
 ## BUSINESS
-7. **Commercial launch plan** — venue model, pricing, staffing (see session 2 transcript)
-8. **Brochure** — Estate Experience ($115/pp), Private Affair ($135/pp), Corporate ($2,500 flat)
-9. **Survey results analysis** — review all feedback, extract pricing data and venue preferences
+11. **Commercial launch plan** — venue model, pricing, staffing (see session 2 transcript)
+12. **Brochure** — Estate Experience ($115/pp), Private Affair ($135/pp), Corporate ($2,500 flat)
+13. **Survey results analysis** — review all feedback, extract pricing data and venue preferences
 
 ## BUGS / FIXES FROM GAME NIGHT
 10. *(add items from debrief)*
