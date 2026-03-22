@@ -23,6 +23,13 @@
    - **Team structure** — groups of 3-4 with mixed skills, must collaborate to unlock clues.
    - **Pace clock on TV** — visible countdown per act creates urgency and rhythm.
    - The combination of gated acts + detective board + gather rounds would solve most of this.
+7. **Rework memory/clue delivery** — Players read every memory, skill analysis, and clue text verbatim from their phones. Killed immersion. Fixes:
+   - **Bullet points not paragraphs** — give 2-3 key facts, not a script. Force players to paraphrase.
+   - **"Share in your own words"** — explicit instruction at the end of every memory popup.
+   - **Timed popups** — memory visible for 45-60 seconds then fades. Can't stand there reading.
+   - **One-line triggers** — "You recognize that handwriting" not a full analysis. Player explains from backstory knowledge.
+   - **GM announcement** — "When your phone buzzes, read it to yourself, then tell the group what your character remembers. Don't read from your phone — it's 1935."
+   - Skill expert analyses may need to stay longer/readable since they're technical — but personal memories should be internalized and shared naturally.
 
 ## PRODUCTION
 6. *(costumes, lighting, music, dinner pairing — pending survey results)*
