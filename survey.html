@@ -88,14 +88,102 @@
 
   <div class="question">
     <div class="q-label">Overall, how would you rate the evening?</div>
-    <div class="stars" id="stars">
+    <div class="stars" data-id="overall">
       <span class="star" data-val="1">★</span>
       <span class="star" data-val="2">★</span>
       <span class="star" data-val="3">★</span>
       <span class="star" data-val="4">★</span>
       <span class="star" data-val="5">★</span>
     </div>
-    <div class="star-label" id="starLabel"></div>
+    <div class="star-label"></div>
+  </div>
+
+  <div class="question">
+    <div class="q-label">How engaging was the story?</div>
+    <div class="stars" data-id="story">
+      <span class="star" data-val="1">★</span>
+      <span class="star" data-val="2">★</span>
+      <span class="star" data-val="3">★</span>
+      <span class="star" data-val="4">★</span>
+      <span class="star" data-val="5">★</span>
+    </div>
+    <div class="star-label"></div>
+  </div>
+
+  <div class="question">
+    <div class="q-label">How easy was the game to understand?</div>
+    <div class="q-sublabel">Rules, objectives, what you were supposed to do</div>
+    <div class="stars" data-id="clarity">
+      <span class="star" data-val="1">★</span>
+      <span class="star" data-val="2">★</span>
+      <span class="star" data-val="3">★</span>
+      <span class="star" data-val="4">★</span>
+      <span class="star" data-val="5">★</span>
+    </div>
+    <div class="star-label"></div>
+  </div>
+
+  <div class="question">
+    <div class="q-label">How easy was the app to use?</div>
+    <div class="q-sublabel">Login, scanning QR codes, reading clues on your phone</div>
+    <div class="stars" data-id="appEase">
+      <span class="star" data-val="1">★</span>
+      <span class="star" data-val="2">★</span>
+      <span class="star" data-val="3">★</span>
+      <span class="star" data-val="4">★</span>
+      <span class="star" data-val="5">★</span>
+    </div>
+    <div class="star-label"></div>
+  </div>
+
+  <div class="question">
+    <div class="q-label">How fun were the characters?</div>
+    <div class="q-sublabel">Your character, other people's characters, the role-playing</div>
+    <div class="stars" data-id="characters">
+      <span class="star" data-val="1">★</span>
+      <span class="star" data-val="2">★</span>
+      <span class="star" data-val="3">★</span>
+      <span class="star" data-val="4">★</span>
+      <span class="star" data-val="5">★</span>
+    </div>
+    <div class="star-label"></div>
+  </div>
+
+  <div class="question">
+    <div class="q-label">How funny / entertaining was the evening?</div>
+    <div class="stars" data-id="entertainment">
+      <span class="star" data-val="1">★</span>
+      <span class="star" data-val="2">★</span>
+      <span class="star" data-val="3">★</span>
+      <span class="star" data-val="4">★</span>
+      <span class="star" data-val="5">★</span>
+    </div>
+    <div class="star-label"></div>
+  </div>
+
+  <div class="question">
+    <div class="q-label">How immersive did it feel?</div>
+    <div class="q-sublabel">Did you feel like you were actually in 1935?</div>
+    <div class="stars" data-id="immersion">
+      <span class="star" data-val="1">★</span>
+      <span class="star" data-val="2">★</span>
+      <span class="star" data-val="3">★</span>
+      <span class="star" data-val="4">★</span>
+      <span class="star" data-val="5">★</span>
+    </div>
+    <div class="star-label"></div>
+  </div>
+
+  <div class="question">
+    <div class="q-label">How satisfying was the ending?</div>
+    <div class="stars" data-id="ending">
+      <span class="star" data-val="1">★</span>
+      <span class="star" data-val="2">★</span>
+      <span class="star" data-val="3">★</span>
+      <span class="star" data-val="4">★</span>
+      <span class="star" data-val="5">★</span>
+    </div>
+    <div class="star-label"></div>
   </div>
 
   <div class="question">
@@ -194,17 +282,22 @@
     databaseURL: "https://thoreson-estate-default-rtdb.firebaseio.com"
   });
 
-  var rating = 0;
+  var ratings = {};
 
-  // Star rating
-  document.querySelectorAll('.star').forEach(function(star) {
-    star.addEventListener('click', function() {
-      rating = parseInt(this.dataset.val);
-      document.querySelectorAll('.star').forEach(function(s) {
-        s.classList.toggle('active', parseInt(s.dataset.val) <= rating);
+  // Star ratings — support multiple groups
+  document.querySelectorAll('.stars').forEach(function(group) {
+    var id = group.dataset.id;
+    ratings[id] = 0;
+    group.querySelectorAll('.star').forEach(function(star) {
+      star.addEventListener('click', function() {
+        var val = parseInt(this.dataset.val);
+        ratings[id] = val;
+        group.querySelectorAll('.star').forEach(function(s) {
+          s.classList.toggle('active', parseInt(s.dataset.val) <= val);
+        });
+        var labels = ['', 'Poor', 'Fair', 'Good', 'Great', 'Incredible'];
+        group.nextElementSibling.textContent = labels[val];
       });
-      var labels = ['', 'Not great', 'It was okay', 'Good', 'Really good', 'Incredible'];
-      document.getElementById('starLabel').textContent = labels[rating];
     });
   });
 
@@ -230,7 +323,14 @@
 
     var response = {
       name: document.getElementById('name').value || 'Anonymous',
-      rating: rating,
+      rating_overall: ratings.overall || 0,
+      rating_story: ratings.story || 0,
+      rating_clarity: ratings.clarity || 0,
+      rating_appEase: ratings.appEase || 0,
+      rating_characters: ratings.characters || 0,
+      rating_entertainment: ratings.entertainment || 0,
+      rating_immersion: ratings.immersion || 0,
+      rating_ending: ratings.ending || 0,
       favorite: document.getElementById('favorite').value,
       confusing: document.getElementById('confusing').value,
       pacing: getSelected('pacing'),
