@@ -3,6 +3,7 @@
 ## HIGH PRIORITY
 1. **Cocktail hour side quests** — Icebreaker tasks, character scavenger hunt, relationship missions, gossip round. Players need to be in character BEFORE the murder happens. Nobody should be reading their backstory for the first time when Will dies.
 2. **Detective board on TV** — Cork board display on the big TV behind GM. As revelations are toggled from Master Controls, clues auto-pin as polaroid-style cards. Red string animates between connected evidence. Replaces the need for the investigator to manually track clues — DJ did a great job in character but struggled to write everything down. The TV becomes the room's shared brain.
+3. **Photo captions** — Let players add a comment/caption when they take a photo. Caption shows on the photo wall slideshow and in the photo gallery. One player was taking photos outside the app just so she could annotate them — the captions were some of the funniest moments of the night. This needs to be built into the camera flow.
 
 ## FEATURES
 3. **Detective board on phones** — Redesign Discoveries page to match the TV board aesthetic. Players can review clues on their own phone but the TV is the primary view.
