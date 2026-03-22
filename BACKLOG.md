@@ -16,6 +16,13 @@
 
 ## STORY / GAME DESIGN
 5. **Rework the confession delivery** — Three audio recordings was too repetitive. By Act 3 it felt tedious. Options: one full recording split into unlockable segments; shorter clips for Acts 2-3 with just the key reveals; mix formats (Act 1 audio, Act 2 written letter, Act 3 Pinkerton report); or let the investigator read Acts 2-3 aloud from the TV board. Variety keeps each act feeling fresh.
+6. **Pacing control** — 23 people going every direction finding clues at different times. The story lost cohesion. Solutions:
+   - **Gated acts** — Act 2 QR codes don't work until GM opens Act 2. "This evidence hasn't been discovered yet."
+   - **Group reveal moments** — each act ends with a "gather round." GM presents findings on TV detective board, THEN opens next act.
+   - **Fewer clues per act** — 5-6 key clues instead of many scattered ones. Quality over quantity.
+   - **Team structure** — groups of 3-4 with mixed skills, must collaborate to unlock clues.
+   - **Pace clock on TV** — visible countdown per act creates urgency and rhythm.
+   - The combination of gated acts + detective board + gather rounds would solve most of this.
 
 ## PRODUCTION
 6. *(costumes, lighting, music, dinner pairing — pending survey results)*
