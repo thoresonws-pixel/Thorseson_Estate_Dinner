@@ -1,0 +1,1632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#c9a227">
+    <title>Game Dashboard — Thor's Murder Mysteries</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Special+Elite&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --black:     #06040a;
+            --deep:      #0f0b14;
+            --surface:   #160f1e;
+            --panel:     #1e1528;
+            --card:      #241a32;
+            --border:    rgba(201,162,39,0.15);
+            --border-hl: rgba(201,162,39,0.45);
+            --crimson:   #8b1a1a;
+            --crimson-lt:#c0392b;
+            --gold:      #c9a227;
+            --gold-lt:   #e8c55a;
+            --gold-dk:   #8a6d14;
+            --green:     #27aa5b;
+            --green-dk:  #1a7a3f;
+            --amber:     #e8a020;
+            --fog:       #9a9080;
+            --mist:      #c4b8a4;
+            --white:     #f5f0e6;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            background: var(--black);
+            color: var(--white);
+            min-height: 100vh;
+        }
+
+        /* ── TOPBAR ───────────────────────────────────────────── */
+        .topbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 60px;
+            background: var(--deep);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            z-index: 200;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .back-btn {
+            font-family: 'Special Elite', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--fog);
+            background: none;
+            border: 1px solid rgba(154,144,128,0.3);
+            padding: 6px 14px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .back-btn:hover { color: var(--mist); border-color: var(--fog); }
+
+        .topbar-brand {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .status-pill {
+            font-family: 'Special Elite', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 5px 12px;
+            border-radius: 2px;
+        }
+        .status-lobby    { color: var(--gold);   background: rgba(201,162,39,0.12); border: 1px solid rgba(201,162,39,0.25); }
+        .status-active   { color: var(--green);  background: rgba(39,170,91,0.1);  border: 1px solid rgba(39,170,91,0.25); }
+        .status-complete { color: var(--fog);    background: rgba(154,144,128,0.1); border: 1px solid rgba(154,144,128,0.2); }
+
+        .btn-signout {
+            font-family: 'Special Elite', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--fog);
+            background: none;
+            border: 1px solid rgba(154,144,128,0.3);
+            padding: 6px 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-signout:hover { color: var(--mist); border-color: var(--fog); }
+
+        /* ── GAME HEADER ──────────────────────────────────────── */
+        .game-header {
+            margin-top: 60px;
+            background: var(--deep);
+            border-bottom: 2px solid var(--gold);
+            padding: 24px 40px 0;
+        }
+
+        .game-header-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 24px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .game-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 6px;
+        }
+
+        .game-meta {
+            font-family: 'Special Elite', monospace;
+            font-size: 12px;
+            letter-spacing: 1.5px;
+            color: var(--fog);
+        }
+        .game-meta span { color: var(--mist); }
+
+        .game-header-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+        }
+
+        .party-code {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 6px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* ── TABS ─────────────────────────────────────────────── */
+        .tab-bar {
+            display: flex;
+            gap: 0;
+            border-top: 1px solid var(--border);
+            margin-top: 4px;
+        }
+
+        .tab-btn {
+            font-family: 'Special Elite', monospace;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 14px 24px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: var(--fog);
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .tab-btn:hover { color: var(--mist); }
+        .tab-btn.active {
+            color: var(--gold);
+            border-bottom-color: var(--gold);
+        }
+
+        /* ── PAGE BODY ────────────────────────────────────────── */
+        .page-body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 36px 40px 80px;
+        }
+
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        /* ── SHARED COMPONENTS ────────────────────────────────── */
+        .section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 16px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 20px;
+            color: var(--white);
+            font-weight: 700;
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .panel-label {
+            font-family: 'Special Elite', monospace;
+            font-size: 10px;
+            letter-spacing: 2.5px;
+            color: var(--gold-dk);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        /* Buttons */
+        .btn-gold {
+            font-family: 'Special Elite', monospace;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--black);
+            background: var(--gold);
+            border: none;
+            padding: 10px 22px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-gold:hover { background: var(--gold-lt); }
+        .btn-gold:disabled { opacity: 0.45; cursor: not-allowed; }
+
+        .btn-ghost {
+            font-family: 'Special Elite', monospace;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--fog);
+            background: none;
+            border: 1px solid rgba(154,144,128,0.3);
+            padding: 9px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-ghost:hover { color: var(--mist); border-color: var(--fog); }
+
+        .btn-danger {
+            font-family: 'Special Elite', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--crimson-lt);
+            background: none;
+            border: 1px solid rgba(192,57,43,0.3);
+            padding: 7px 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-danger:hover { background: rgba(192,57,43,0.08); border-color: var(--crimson-lt); }
+
+        .btn-green {
+            font-family: 'Special Elite', monospace;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--black);
+            background: var(--green);
+            border: none;
+            padding: 10px 22px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-green:hover { background: #34c96a; }
+
+        /* Copy confirm */
+        .copy-confirm {
+            font-size: 13px;
+            color: var(--green);
+            opacity: 0;
+            transition: opacity 0.3s;
+            margin-left: 8px;
+        }
+        .copy-confirm.show { opacity: 1; }
+
+        /* ── PRE-GAME TAB ─────────────────────────────────────── */
+        .checklist { display: flex; flex-direction: column; gap: 12px; }
+
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 18px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-left: 4px solid transparent;
+        }
+        .check-item.ok     { border-left-color: var(--green); }
+        .check-item.warn   { border-left-color: var(--amber); }
+        .check-item.error  { border-left-color: var(--crimson-lt); }
+
+        .check-icon { font-size: 18px; flex-shrink: 0; width: 24px; text-align: center; }
+        .check-label {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 16px;
+            color: var(--white);
+            flex: 1;
+        }
+        .check-value {
+            font-family: 'Special Elite', monospace;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            color: var(--fog);
+        }
+        .check-action {
+            font-family: 'Special Elite', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--gold);
+            cursor: pointer;
+            background: none;
+            border: 1px solid rgba(201,162,39,0.3);
+            padding: 5px 12px;
+            transition: all 0.2s;
+        }
+        .check-action:hover { background: rgba(201,162,39,0.1); }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 14px;
+            margin-top: 28px;
+        }
+
+        .quick-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+        }
+        .quick-card:hover { border-color: var(--border-hl); transform: translateY(-2px); }
+        .quick-card-icon { font-size: 28px; margin-bottom: 10px; display: block; }
+        .quick-card-label {
+            font-family: 'Special Elite', monospace;
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: var(--mist);
+            text-transform: uppercase;
+        }
+
+        /* ── GAME HEALTH TAB ──────────────────────────────────── */
+        .health-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .health-stat {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 18px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .health-stat::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+        }
+        .health-stat.ok::before   { background: var(--green); }
+        .health-stat.warn::before { background: var(--amber); }
+        .health-stat.dead::before { background: var(--fog); }
+
+        .health-stat-value {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--gold);
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+        .health-stat-label {
+            font-family: 'Special Elite', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--fog);
+            text-transform: uppercase;
+        }
+
+        .act-progress {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 28px;
+        }
+
+        .act-bar {
+            flex: 1;
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 16px;
+            text-align: center;
+        }
+        .act-bar.current { border-color: var(--gold); background: rgba(201,162,39,0.08); }
+        .act-bar.done    { border-color: var(--green-dk); background: rgba(39,170,91,0.06); }
+
+        .act-bar-label {
+            font-family: 'Special Elite', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--fog);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .act-bar-count {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--white);
+        }
+        .act-bar-sub {
+            font-size: 12px;
+            color: var(--fog);
+            margin-top: 2px;
+        }
+
+        /* Player activity table */
+        .activity-table { width: 100%; border-collapse: collapse; }
+        .activity-table th {
+            font-family: 'Special Elite', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--gold-dk);
+            text-transform: uppercase;
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        .activity-table td {
+            padding: 12px 14px;
+            font-size: 15px;
+            color: var(--mist);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            vertical-align: middle;
+        }
+        .activity-table tr:last-child td { border-bottom: none; }
+        .activity-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+        .activity-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        .dot-active   { background: var(--green); }
+        .dot-idle     { background: var(--amber); }
+        .dot-offline  { background: var(--fog); }
+
+        .alert-strip {
+            background: rgba(139,26,26,0.12);
+            border: 1px solid rgba(139,26,26,0.3);
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .alert-strip.visible { display: block; }
+        .alert-strip-title {
+            font-family: 'Special Elite', monospace;
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: var(--crimson-lt);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .alert-item {
+            font-size: 14px;
+            color: #e08080;
+            margin-bottom: 4px;
+            padding-left: 12px;
+        }
+        .alert-item::before { content: '⚠ '; }
+
+        /* ── GUEST LIST TAB ───────────────────────────────────── */
+        .guest-table { width: 100%; border-collapse: collapse; }
+        .guest-table th {
+            font-family: 'Special Elite', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--gold-dk);
+            text-transform: uppercase;
+            padding: 10px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        .guest-table td {
+            padding: 14px 16px;
+            font-size: 15px;
+            color: var(--mist);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            vertical-align: middle;
+        }
+        .guest-table tr:last-child td { border-bottom: none; }
+
+        .guest-name { color: var(--white); font-weight: 600; }
+        .guest-email { font-size: 13px; color: var(--fog); }
+        .guest-score-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .score-track {
+            width: 80px;
+            height: 4px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .score-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold-dk), var(--gold));
+            border-radius: 2px;
+        }
+
+        .payment-toggle {
+            font-family: 'Special Elite', monospace;
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            cursor: pointer;
+            border-radius: 2px;
+            border: none;
+            transition: all 0.2s;
+        }
+        .payment-paid   { background: rgba(39,170,91,0.15); color: var(--green); }
+        .payment-unpaid { background: rgba(154,144,128,0.1); color: var(--fog); }
+
+        /* ── CHARACTERS TAB ───────────────────────────────────── */
+        .char-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 14px;
+        }
+
+        .char-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 18px 20px;
+            position: relative;
+        }
+        .char-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+        .char-name { font-family: 'Playfair Display', Georgia, serif; font-size: 17px; color: var(--white); font-weight: 700; }
+        .char-slug { font-family: 'Special Elite', monospace; font-size: 10px; color: var(--fog); letter-spacing: 1.5px; margin-top: 2px; }
+
+        .role-badge {
+            font-family: 'Special Elite', monospace;
+            font-size: 9px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+        .role-killer   { background: rgba(139,26,26,0.25); color: #e08080; border: 1px solid rgba(139,26,26,0.4); }
+        .role-heir     { background: rgba(201,162,39,0.15); color: var(--gold); border: 1px solid rgba(201,162,39,0.3); }
+        .role-pipeline { background: rgba(58,143,212,0.15); color: #7ab8e8; border: 1px solid rgba(58,143,212,0.3); }
+
+        .skill-badge {
+            font-family: 'Special Elite', monospace;
+            font-size: 9px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            background: rgba(39,170,91,0.12);
+            color: #7adba0;
+            border: 1px solid rgba(39,170,91,0.25);
+            border-radius: 2px;
+        }
+
+        .char-player { font-size: 13px; color: var(--fog); margin-top: 6px; }
+        .char-player span { color: var(--mist); }
+        .char-unassigned { font-size: 13px; color: rgba(154,144,128,0.5); font-style: italic; margin-top: 6px; }
+
+        /* ── RUN GAME TAB ─────────────────────────────────────── */
+        .act-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .act-col {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-top: 3px solid var(--gold-dk);
+            padding: 18px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .act-col-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 15px;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 4px;
+        }
+
+        .rev-btn {
+            width: 100%;
+            padding: 10px 12px;
+            border: none;
+            cursor: pointer;
+            border-radius: 2px;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+            line-height: 1.4;
+        }
+        .rev-btn.off { background: #2d7a2d; color: white; }
+        .rev-btn.on  { background: #8b1a1a; color: white; }
+
+        .rev-label { font-family: 'Playfair Display', Georgia, serif; font-size: 14px; font-weight: 700; }
+        .rev-meta  { display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-left: 8px; }
+        .rev-type  { font-size: 9px; padding: 2px 5px; border-radius: 2px; }
+        .type-story { background: #8b7355; color: white; }
+        .type-clue  { background: var(--gold); color: var(--black); }
+        .type-message { background: #3a8fd4; color: white; }
+        .type-audio { background: #6b4c9a; color: white; }
+
+        .send-btn {
+            width: 100%;
+            padding: 8px 0;
+            border: none;
+            cursor: pointer;
+            border-radius: 2px;
+            font-family: 'Special Elite', monospace;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.2s;
+            margin-top: 4px;
+        }
+        .send-btn.unsent { background: #3a8fd4; color: white; }
+        .send-btn.sent   { background: #444; color: #888; cursor: default; }
+
+        .audio-btn {
+            width: 100%;
+            padding: 9px 0;
+            cursor: pointer;
+            border-radius: 2px;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: 1px solid var(--gold);
+            background: rgba(201,162,39,0.1);
+            color: var(--gold);
+            transition: all 0.2s;
+            margin-top: 6px;
+        }
+        .audio-btn:hover { background: rgba(201,162,39,0.2); }
+
+        /* Leaderboard */
+        .leaderboard-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 14px;
+            background: rgba(0,0,0,0.3);
+            margin-bottom: 6px;
+            border-radius: 2px;
+        }
+        .lb-name { font-family: 'Playfair Display', Georgia, serif; color: var(--gold); }
+        .lb-count { color: var(--white); font-size: 16px; font-weight: bold; }
+
+        /* ── BIG SCREEN TAB ───────────────────────────────────── */
+        .screen-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .screen-option {
+            background: var(--card);
+            border: 2px solid var(--border);
+            padding: 28px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: block;
+        }
+        .screen-option:hover { border-color: var(--border-hl); transform: translateY(-3px); }
+        .screen-option.active-screen { border-color: var(--gold); background: rgba(201,162,39,0.07); }
+
+        .screen-icon { font-size: 36px; margin-bottom: 12px; display: block; }
+        .screen-label {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 18px;
+            color: var(--white);
+            margin-bottom: 6px;
+        }
+        .screen-desc { font-size: 14px; color: var(--fog); line-height: 1.5; }
+
+        /* ── LOADING ──────────────────────────────────────────── */
+        .loading-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 16px;
+            min-height: 60vh;
+            color: var(--fog);
+            font-style: italic;
+            font-size: 18px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner {
+            width: 28px; height: 28px;
+            border: 2px solid rgba(201,162,39,0.15);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px; right: 30px;
+            padding: 14px 22px;
+            font-family: 'Special Elite', monospace;
+            font-size: 12px;
+            letter-spacing: 1.5px;
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s;
+            pointer-events: none;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.success { background: var(--green-dk); border: 1px solid rgba(39,170,91,0.4); color: #a8f0c8; }
+        .toast.error   { background: var(--crimson);  border: 1px solid rgba(192,57,43,0.5); color: #f5c0c0; }
+
+        @media (max-width: 768px) {
+            .topbar { padding: 0 20px; }
+            .game-header { padding: 20px 20px 0; }
+            .page-body { padding: 24px 20px 60px; }
+            .tab-btn { padding: 12px 14px; font-size: 10px; }
+            .act-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── TOPBAR ──────────────────────────────────────────────── -->
+<div class="topbar">
+    <div class="topbar-left">
+        <a href="admin.html" class="back-btn">← Admin</a>
+        <div class="topbar-brand" id="topbarTitle">Game Dashboard</div>
+    </div>
+    <div class="topbar-right">
+        <div class="status-pill status-lobby" id="topbarStatus">Lobby</div>
+        <button class="btn-signout" onclick="handleSignOut()">Sign Out</button>
+    </div>
+</div>
+
+<!-- ── GAME HEADER ─────────────────────────────────────────── -->
+<div class="game-header" id="gameHeader" style="display:none;">
+    <div class="game-header-top">
+        <div>
+            <div class="game-title" id="headerTitle">—</div>
+            <div class="game-meta" id="headerMeta">—</div>
+        </div>
+        <div class="game-header-right">
+            <div class="party-code" id="headerCode">——</div>
+            <div class="header-actions">
+                <button class="btn-gold" onclick="copyInviteLink()">Copy Invite</button>
+                <span class="copy-confirm" id="inviteCopyConfirm">Copied!</span>
+                <button class="btn-ghost" onclick="openEditGame()">Edit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab('pregame', this)">Pre-Game</button>
+        <button class="tab-btn" onclick="switchTab('health', this)">Game Health</button>
+        <button class="tab-btn" onclick="switchTab('guests', this)">Guest List</button>
+        <button class="tab-btn" onclick="switchTab('characters', this)">Characters</button>
+        <button class="tab-btn" onclick="switchTab('run', this)">Run Game</button>
+        <button class="tab-btn" onclick="switchTab('screen', this)">Big Screen</button>
+    </div>
+</div>
+
+<!-- ── LOADING ──────────────────────────────────────────────── -->
+<div class="loading-screen" id="loadingScreen">
+    <div class="spinner"></div>
+    Loading game…
+</div>
+
+<!-- ── PAGE BODY ───────────────────────────────────────────── -->
+<div class="page-body" id="pageBody" style="display:none;">
+
+    <!-- ═══ PRE-GAME TAB ══════════════════════════════════════ -->
+    <div class="tab-panel active" id="tab-pregame">
+
+        <div class="section-head">
+            <div class="section-title">Pre-Game Checklist</div>
+            <button class="btn-ghost" onclick="refreshChecklist()">↻ Refresh</button>
+        </div>
+
+        <div class="checklist" id="checklist">
+            <div style="color:var(--fog);font-style:italic;">Loading checklist…</div>
+        </div>
+
+        <div style="margin-top:32px;">
+            <div class="section-title" style="margin-bottom:16px;">Quick Actions</div>
+            <div class="quick-actions">
+                <a onclick="switchTab('run', document.querySelector('[onclick*=\"run\"]'))" class="quick-card">
+                    <span class="quick-card-icon">🎭</span>
+                    <span class="quick-card-label">Run Game</span>
+                </a>
+                <a onclick="switchTab('characters', document.querySelector('[onclick*=\"characters\"]'))" class="quick-card">
+                    <span class="quick-card-icon">⚄</span>
+                    <span class="quick-card-label">Generate Roles</span>
+                </a>
+                <a onclick="switchTab('screen', document.querySelector('[onclick*=\"screen\"]'))" class="quick-card">
+                    <span class="quick-card-icon">📺</span>
+                    <span class="quick-card-label">Big Screen</span>
+                </a>
+                <a onclick="copyInviteLink()" class="quick-card">
+                    <span class="quick-card-icon">🔗</span>
+                    <span class="quick-card-label">Copy Invite Link</span>
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ═══ GAME HEALTH TAB ════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-health">
+
+        <div class="alert-strip" id="healthAlerts">
+            <div class="alert-strip-title">⚠ Attention Needed</div>
+            <div id="alertItems"></div>
+        </div>
+
+        <div class="health-grid" id="healthStats">
+            <div class="health-stat dead">
+                <div class="health-stat-value" id="hStatPlayers">—</div>
+                <div class="health-stat-label">Players Active</div>
+            </div>
+            <div class="health-stat dead">
+                <div class="health-stat-value" id="hStatRevealed">—</div>
+                <div class="health-stat-label">Revelations Live</div>
+            </div>
+            <div class="health-stat dead">
+                <div class="health-stat-value" id="hStatScans">—</div>
+                <div class="health-stat-label">Total Scans</div>
+            </div>
+            <div class="health-stat dead">
+                <div class="health-stat-value" id="hStatSkills">—</div>
+                <div class="health-stat-label">Skills Used</div>
+            </div>
+        </div>
+
+        <div class="section-head" style="margin-bottom:12px;">
+            <div class="section-title">Story Progress</div>
+        </div>
+        <div class="act-progress" id="actProgress">
+            <div class="act-bar"><div class="act-bar-label">Act 1</div><div class="act-bar-count" id="act1Progress">—</div><div class="act-bar-sub">revelations</div></div>
+            <div class="act-bar"><div class="act-bar-label">Act 2</div><div class="act-bar-count" id="act2Progress">—</div><div class="act-bar-sub">revelations</div></div>
+            <div class="act-bar"><div class="act-bar-label">Act 3</div><div class="act-bar-count" id="act3Progress">—</div><div class="act-bar-sub">revelations</div></div>
+        </div>
+
+        <div class="section-head" style="margin-bottom:12px;">
+            <div class="section-title">Player Activity</div>
+            <button class="btn-ghost" onclick="refreshHealth()">↻ Refresh</button>
+        </div>
+        <div class="panel" style="padding:0;">
+            <table class="activity-table">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Character</th>
+                        <th>Last Seen</th>
+                        <th>Scans</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="activityTable">
+                    <tr><td colspan="5" style="color:var(--fog);font-style:italic;text-align:center;padding:24px;">No activity data yet — game hasn't started.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- ═══ GUEST LIST TAB ═════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-guests">
+
+        <div class="section-head">
+            <div class="section-title">Guest List</div>
+            <div style="display:flex;gap:10px;">
+                <button class="btn-ghost" onclick="addTestPlayersGame()">+ Test Players</button>
+                <button class="btn-ghost" onclick="removeTestPlayersGame()">Remove Test Players</button>
+            </div>
+        </div>
+
+        <div class="panel" style="padding:0;">
+            <table class="guest-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Character</th>
+                        <th>Involvement</th>
+                        <th>Gender Pref</th>
+                        <th>Payment</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="guestTableBody">
+                    <tr><td colspan="7" style="color:var(--fog);font-style:italic;text-align:center;padding:24px;">No guests yet.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- ═══ CHARACTERS TAB ═════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-characters">
+
+        <div class="section-head">
+            <div class="section-title">Character Assignments</div>
+            <div style="display:flex;gap:10px;">
+                <button class="btn-gold" onclick="openGenerateRoles()">⚄ Generate Roles</button>
+            </div>
+        </div>
+
+        <div id="charGrid" class="char-grid">
+            <div style="color:var(--fog);font-style:italic;">Loading characters…</div>
+        </div>
+
+    </div>
+
+    <!-- ═══ RUN GAME TAB ═══════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-run">
+
+        <div class="section-head">
+            <div class="section-title">Revelation Controls</div>
+            <div style="display:flex;gap:10px;align-items:center;">
+                <div id="gameStartStatus" style="font-family:'Special Elite',monospace;font-size:11px;letter-spacing:2px;color:var(--fog);"></div>
+            </div>
+        </div>
+
+        <!-- Game start button -->
+        <div id="gameStartPanel" class="panel" style="display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:20px;">
+            <div>
+                <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--gold);margin-bottom:4px;">🕯 Start the Game</div>
+                <div style="font-size:14px;color:var(--fog);">Reveals Will's death to all players and opens the investigation.</div>
+            </div>
+            <button id="gameStartBtn" onclick="toggleRevelation('willsDeath')" class="btn-gold">▶ Begin</button>
+        </div>
+
+        <div class="act-grid" id="actGrid">
+            <div style="color:var(--fog);font-style:italic;">Loading revelations…</div>
+        </div>
+
+        <div class="section-head" style="margin-top:8px;">
+            <div class="section-title">🔎 Scan Leaderboard</div>
+        </div>
+        <div class="panel">
+            <div id="leaderboard" style="color:var(--fog);font-style:italic;">No scans yet.</div>
+        </div>
+
+    </div>
+
+    <!-- ═══ BIG SCREEN TAB ═════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-screen">
+
+        <div class="section-head">
+            <div class="section-title">Big Screen Controls</div>
+        </div>
+
+        <div class="screen-options">
+            <a href="slideshow.html" target="_blank" class="screen-option">
+                <span class="screen-icon">📷</span>
+                <div class="screen-label">Photo Slideshow</div>
+                <div class="screen-desc">Live photo wall — displays guest photos as they're taken throughout the evening.</div>
+            </a>
+            <div class="screen-option" style="opacity:0.4;cursor:default;">
+                <span class="screen-icon">🔍</span>
+                <div class="screen-label">Detective Board</div>
+                <div class="screen-desc">Live evidence board — clues pin automatically as revelations are revealed. Coming soon.</div>
+            </div>
+            <div class="screen-option" style="opacity:0.4;cursor:default;">
+                <span class="screen-icon">🎬</span>
+                <div class="screen-label">Video Playback</div>
+                <div class="screen-desc">Play video files to the room. Confession recordings, intro videos, and more. Coming soon.</div>
+            </div>
+            <div class="screen-option" style="opacity:0.4;cursor:default;">
+                <span class="screen-icon">🏆</span>
+                <div class="screen-label">Leaderboard Display</div>
+                <div class="screen-desc">Full-screen scan leaderboard for the room to see. Coming soon.</div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Audio for confession -->
+<audio id="confessionAudio" style="display:none;"></audio>
+
+<!-- Firebase + story scripts -->
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyApHrYubqWrR4m0ihdpq6Ym40jv4HTQ5i0",
+    authDomain: "thoreson-estate.firebaseapp.com",
+    databaseURL: "https://thoreson-estate-default-rtdb.firebaseio.com",
+    projectId: "thoreson-estate",
+    storageBucket: "thoreson-estate.firebasestorage.app",
+    messagingSenderId: "182924616892",
+    appId: "1:182924616892:web:8153e1c69895cee665dcb9"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db   = firebase.database();
+
+// ── STATE ─────────────────────────────────────────────────────
+let gameId       = null;
+let gameData     = null;
+let players      = {};
+let activeItems  = [];
+let scans        = {};
+let roleAssign   = {};
+let skillAssign  = {};
+let rolesConfig  = null;
+
+// ── AUTH ──────────────────────────────────────────────────────
+auth.onAuthStateChanged(async user => {
+    if (!user || user.isAnonymous || !user.email) {
+        window.location.href = 'admin.html'; return;
+    }
+    const roleSnap = await db.ref('users/' + user.uid + '/role').once('value');
+    if (roleSnap.val() !== 'admin') {
+        window.location.href = 'admin.html'; return;
+    }
+
+    // Get gameId from URL
+    const params = new URLSearchParams(window.location.search);
+    gameId = params.get('id');
+    if (!gameId) { window.location.href = 'admin.html'; return; }
+
+    await bootstrap();
+});
+
+async function bootstrap() {
+    // Load game data
+    const snap = await db.ref('games/' + gameId).once('value');
+    gameData = snap.val();
+    if (!gameData) { window.location.href = 'admin.html'; return; }
+
+    // Load story scripts
+    const storyId = gameData.storyId || 'thoreson_estate_dinner';
+    await loadStoryScripts(storyId);
+
+    // Load game state
+    const [playerSnap, stateSnap] = await Promise.all([
+        db.ref('games/' + gameId + '/players').once('value'),
+        db.ref('games/' + gameId + '/state').once('value')
+    ]);
+
+    players     = playerSnap.val() || {};
+    const state = stateSnap.val()  || {};
+    activeItems  = state.activeItems  || [];
+    scans        = state.scans        || {};
+    roleAssign   = state.characterRoles   || {};
+    skillAssign  = state.skillAssignments || {};
+
+    renderHeader();
+    renderChecklist();
+    renderCharacters();
+    renderRunGame();
+    renderGuests();
+    refreshHealth();
+
+    // Live listeners
+    db.ref('games/' + gameId + '/state/activeItems').on('value', snap => {
+        activeItems = snap.val() || [];
+        renderRunGame();
+        refreshHealth();
+    });
+    db.ref('games/' + gameId + '/state/scans').on('value', snap => {
+        scans = snap.val() || {};
+        renderLeaderboard();
+        refreshHealth();
+    });
+    db.ref('games/' + gameId + '/players').on('value', snap => {
+        players = snap.val() || {};
+        renderGuests();
+        renderChecklist();
+        renderCharacters();
+    });
+
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('gameHeader').style.display    = 'block';
+    document.getElementById('pageBody').style.display      = 'block';
+}
+
+function loadStoryScripts(storyId) {
+    return new Promise(resolve => {
+        const files  = ['characters.js','skills.js','revelations.js','items.js','roles.js'];
+        const base   = 'stories/' + storyId + '/';
+        let loaded   = 0;
+        files.forEach(f => {
+            const s = document.createElement('script');
+            s.src = base + f + '?v=' + Date.now();
+            s.onload = s.onerror = () => { if (++loaded === files.length) resolve(); };
+            document.head.appendChild(s);
+        });
+    });
+}
+
+// ── HEADER ────────────────────────────────────────────────────
+function renderHeader() {
+    const g = gameData;
+    document.getElementById('topbarTitle').textContent  = g.storyName || 'Game Dashboard';
+    document.getElementById('headerTitle').textContent  = g.storyName || '—';
+    document.getElementById('headerCode').textContent   = g.partyCode || '——';
+    document.getElementById('topbarStatus').textContent = g.status || 'lobby';
+    document.getElementById('topbarStatus').className   = 'status-pill status-' + (g.status || 'lobby');
+
+    const dateStr = g.eventDate
+        ? new Date(g.eventDate + 'T12:00:00').toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric' })
+        : '—';
+    const timeStr = g.eventTime ? ' · ' + formatTime(g.eventTime) : '';
+    document.getElementById('headerMeta').innerHTML =
+        `<span>${g.venueName || 'No venue set'}</span> · ${dateStr}${timeStr}`;
+}
+
+// ── TAB SWITCHING ─────────────────────────────────────────────
+function switchTab(name, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    if (btn) btn.classList.add('active');
+    else document.querySelectorAll('.tab-btn').forEach(b => {
+        if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + name + "'")) b.classList.add('active');
+    });
+}
+
+// ── PRE-GAME CHECKLIST ────────────────────────────────────────
+function renderChecklist() {
+    const playerList  = Object.values(players).filter(p => !p.uid?.startsWith('test_'));
+    const total       = playerList.length;
+    const ready       = playerList.filter(p => p.status === 'ready').length;
+    const hasQuestionnaire = playerList.filter(p => p.questionnaire).length;
+    const rolesGenerated   = Object.keys(roleAssign).length > 0;
+    const skillsAssigned   = Object.keys(skillAssign).length > 0;
+    const gameStarted      = activeItems.includes('willsDeath');
+    const inviteUrl        = `https://thoresonws-pixel.github.io/Thoreson_Estate_Dinner/join.html?code=${gameData.partyCode}`;
+
+    const items = [
+        {
+            label: 'Players joined',
+            value: total + ' joined',
+            status: total >= 8 ? 'ok' : total >= 4 ? 'warn' : 'error',
+            icon:   total >= 8 ? '✓' : total >= 4 ? '⚠' : '✗',
+            action: null
+        },
+        {
+            label: 'Characters chosen',
+            value: ready + ' / ' + total,
+            status: ready === total && total > 0 ? 'ok' : ready > 0 ? 'warn' : 'error',
+            icon:   ready === total && total > 0 ? '✓' : '⚠',
+            action: null
+        },
+        {
+            label: 'Questionnaire completed',
+            value: hasQuestionnaire + ' / ' + total,
+            status: hasQuestionnaire === total && total > 0 ? 'ok' : 'warn',
+            icon:   hasQuestionnaire === total && total > 0 ? '✓' : '⚠',
+            action: null
+        },
+        {
+            label: 'Roles generated',
+            value: rolesGenerated ? 'Complete' : 'Not yet',
+            status: rolesGenerated ? 'ok' : 'error',
+            icon:   rolesGenerated ? '✓' : '✗',
+            action: rolesGenerated ? null : { label: 'Generate', fn: "switchTab('characters', null)" }
+        },
+        {
+            label: 'Skills assigned',
+            value: skillsAssigned ? Object.keys(skillAssign).length + ' skills' : 'Not yet',
+            status: skillsAssigned ? 'ok' : 'warn',
+            icon:   skillsAssigned ? '✓' : '⚠',
+            action: null
+        },
+        {
+            label: 'Invite link sent',
+            value: inviteUrl.substring(0, 40) + '…',
+            status: 'ok',
+            icon:   '✓',
+            action: { label: 'Copy', fn: "copyInviteLink()" }
+        },
+        {
+            label: 'Game started',
+            value: gameStarted ? 'In progress' : 'Not started',
+            status: gameStarted ? 'ok' : 'error',
+            icon:   gameStarted ? '✓' : '✗',
+            action: gameStarted ? null : { label: 'Start', fn: "switchTab('run', null)" }
+        }
+    ];
+
+    document.getElementById('checklist').innerHTML = items.map(item => `
+        <div class="check-item ${item.status}">
+            <div class="check-icon">${item.icon}</div>
+            <div class="check-label">${item.label}</div>
+            <div class="check-value">${item.value}</div>
+            ${item.action ? `<button class="check-action" onclick="${item.action.fn}">${item.action.label}</button>` : ''}
+        </div>
+    `).join('');
+}
+
+function refreshChecklist() { renderChecklist(); }
+
+// ── GAME HEALTH ───────────────────────────────────────────────
+function refreshHealth() {
+    const playerList = Object.values(players);
+    const totalScans = Object.values(scans).reduce((s, c) => s + (typeof c === 'number' ? c : 0), 0);
+    const revealedCount = activeItems.length;
+    const skillsUsed = Object.keys(skillAssign).length;
+
+    document.getElementById('hStatPlayers').textContent  = playerList.filter(p => p.status === 'ready').length;
+    document.getElementById('hStatRevealed').textContent = revealedCount;
+    document.getElementById('hStatScans').textContent    = totalScans;
+    document.getElementById('hStatSkills').textContent   = skillsUsed;
+
+    // Act progress
+    if (typeof revelationsDatabase !== 'undefined') {
+        ['act1','act2','act3'].forEach(act => {
+            const actData = revelationsDatabase[act];
+            if (!actData) return;
+            const total   = actData.items.length;
+            const live    = actData.items.filter(i => activeItems.includes(i.id)).length;
+            document.getElementById(act + 'Progress').textContent = live + '/' + total;
+        });
+    }
+
+    // Alerts
+    const alerts = [];
+    if (playerList.length < 8) alerts.push('Fewer than 8 players have joined');
+    if (Object.keys(roleAssign).length === 0 && playerList.length > 0) alerts.push('Roles have not been generated yet');
+    const inactivePlayers = playerList.filter(p => {
+        if (!p.lastSeen) return false;
+        return (Date.now() - p.lastSeen) > 20 * 60 * 1000;
+    });
+    if (inactivePlayers.length > 0) {
+        alerts.push(inactivePlayers.length + ' player(s) inactive for 20+ minutes');
+    }
+
+    const alertEl = document.getElementById('healthAlerts');
+    if (alerts.length > 0) {
+        document.getElementById('alertItems').innerHTML = alerts.map(a => `<div class="alert-item">${a}</div>`).join('');
+        alertEl.classList.add('visible');
+    } else {
+        alertEl.classList.remove('visible');
+    }
+
+    // Activity table
+    const tbody = document.getElementById('activityTable');
+    if (playerList.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="color:var(--fog);font-style:italic;text-align:center;padding:24px;">No players yet.</td></tr>';
+        return;
+    }
+    tbody.innerHTML = playerList.map(p => {
+        const playerScans = scans[p.characterId] || 0;
+        const lastSeen = p.lastSeen
+            ? new Date(p.lastSeen).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' })
+            : '—';
+        const inactive = p.lastSeen && (Date.now() - p.lastSeen) > 20 * 60 * 1000;
+        const dotClass = !p.lastSeen ? 'dot-offline' : inactive ? 'dot-idle' : 'dot-active';
+        return `
+            <tr>
+                <td><span class="activity-dot ${dotClass}"></span>${p.displayName || '—'}</td>
+                <td style="color:var(--gold);font-style:italic;">${p.characterId || '—'}</td>
+                <td>${lastSeen}</td>
+                <td>${playerScans}</td>
+                <td style="font-family:'Special Elite',monospace;font-size:11px;color:var(--fog);">${p.status || '—'}</td>
+            </tr>`;
+    }).join('');
+}
+
+// ── GUEST LIST ────────────────────────────────────────────────
+function renderGuests() {
+    const tbody = document.getElementById('guestTableBody');
+    const playerList = Object.entries(players);
+
+    if (playerList.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="color:var(--fog);font-style:italic;text-align:center;padding:24px;">No guests yet.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = playerList.map(([uid, p]) => {
+        const score = p.questionnaire?.involvementScore || 0;
+        const gender = p.questionnaire?.gender || '—';
+        const pct = (score / 10) * 100;
+        const isPaid = p.paymentCollected || false;
+        const isTest = uid.startsWith('test_player_');
+
+        return `
+        <tr>
+            <td>
+                <div class="guest-name">${p.displayName || uid} ${isTest ? '<span style="font-size:11px;color:var(--fog);">(test)</span>' : ''}</div>
+            </td>
+            <td style="color:var(--gold);font-style:italic;font-size:14px;">${p.characterId || '—'}</td>
+            <td>
+                <div class="guest-score-bar">
+                    <div class="score-track"><div class="score-fill" style="width:${pct}%"></div></div>
+                    <span style="font-family:'Special Elite',monospace;font-size:11px;color:var(--fog);">${score || '—'}/10</span>
+                </div>
+            </td>
+            <td style="font-family:'Special Elite',monospace;font-size:11px;color:var(--fog);text-transform:uppercase;">${gender}</td>
+            <td>
+                <button class="payment-toggle ${isPaid ? 'payment-paid' : 'payment-unpaid'}"
+                    onclick="togglePayment('${uid}', ${isPaid})">
+                    ${isPaid ? '✓ Paid' : 'Unpaid'}
+                </button>
+            </td>
+            <td style="font-family:'Special Elite',monospace;font-size:10px;letter-spacing:1.5px;color:var(--fog);text-transform:uppercase;">${p.status || '—'}</td>
+            <td><button class="btn-danger" onclick="removePlayer('${uid}', '${p.displayName || uid}')">Remove</button></td>
+        </tr>`;
+    }).join('');
+}
+
+async function togglePayment(uid, currentState) {
+    await db.ref('games/' + gameId + '/players/' + uid + '/paymentCollected').set(!currentState);
+    showToast(!currentState ? 'Payment marked.' : 'Payment cleared.', 'success');
+}
+
+async function removePlayer(uid, name) {
+    if (!confirm('Remove ' + name + '?')) return;
+    await db.ref('games/' + gameId + '/players/' + uid).remove();
+    if (!uid.startsWith('test_player_')) {
+        await db.ref('users/' + uid + '/currentGameId').set(null);
+    }
+    showToast(name + ' removed.', 'success');
+}
+
+// ── CHARACTERS TAB ────────────────────────────────────────────
+function renderCharacters() {
+    const grid = document.getElementById('charGrid');
+    if (typeof characterDatabase === 'undefined') {
+        grid.innerHTML = '<div style="color:var(--fog);font-style:italic;">Story data not loaded.</div>';
+        return;
+    }
+
+    // Build reverse lookup: characterId → player
+    const charToPlayer = {};
+    Object.values(players).forEach(p => {
+        if (p.characterId) charToPlayer[p.characterId] = p;
+    });
+
+    grid.innerHTML = Object.entries(characterDatabase).map(([slug, char]) => {
+        const player   = charToPlayer[slug];
+        const role     = roleAssign[slug];
+        const skill    = skillAssign[slug];
+        const name     = char.nameVariants?.female || char.name;
+
+        return `
+        <div class="char-card">
+            <div class="char-card-top">
+                <div>
+                    <div class="char-name">${name}</div>
+                    <div class="char-slug">${slug}</div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;">
+                    ${role  ? `<span class="role-badge role-${role}">${role}</span>` : ''}
+                    ${skill ? `<span class="skill-badge">${skill}</span>` : ''}
+                </div>
+            </div>
+            ${player
+                ? `<div class="char-player">Played by <span>${player.displayName}</span></div>`
+                : `<div class="char-unassigned">Unassigned</div>`
+            }
+        </div>`;
+    }).join('');
+}
+
+function openGenerateRoles() {
+    switchTab('characters', null);
+    // Trigger the generate modal from admin — for now show inline
+    showToast('Use the ⚄ Generate Roles button in admin.html for full randomizer.', 'success');
+}
+
+// ── RUN GAME TAB ──────────────────────────────────────────────
+function renderRunGame() {
+    if (typeof revelationsDatabase === 'undefined') return;
+
+    // Update start button
+    const started = activeItems.includes('willsDeath');
+    const btn = document.getElementById('gameStartBtn');
+    if (btn) {
+        btn.textContent  = started ? '✕ Hide' : '▶ Begin';
+        btn.className    = started ? 'btn-danger' : 'btn-gold';
+        document.getElementById('gameStartPanel').style.borderColor =
+            started ? 'var(--green)' : 'var(--border)';
+    }
+
+    const DR_BY_ACT = {
+        act1: { id: 'djCountyClerk', label: 'County Clerk Report', preview: 'Original 1902 filing — Thoreson & Hartley Toys' },
+        act2: { id: 'djCoroner',     label: "Coroner's Report",    preview: 'Preliminary autopsy — needs medical interpretation' },
+        act3: { id: 'djPinkerton',   label: 'Pinkerton Background Checks', preview: 'Two name changes flagged' }
+    };
+
+    const grid = document.getElementById('actGrid');
+    grid.innerHTML = Object.entries(revelationsDatabase).map(([actKey, act]) => {
+        const dr = DR_BY_ACT[actKey];
+        const drSent = dr && activeItems.includes(dr.id);
+
+        let html = `<div class="act-col">
+            <div class="act-col-title">${act.label}</div>`;
+
+        act.items.forEach(item => {
+            const isOn = activeItems.includes(item.id);
+            const typeClass = 'type-' + (item.type || 'clue');
+            const typeLabel = (item.type || 'clue').toUpperCase();
+            html += `
+            <button class="rev-btn ${isOn ? 'on' : 'off'}" onclick="toggleRevelation('${item.id}')">
+                <span class="rev-label">${item.title}</span>
+                <span class="rev-meta">
+                    <span class="rev-type ${typeClass}">${typeLabel}</span>
+                    <span style="font-size:12px;opacity:0.8;">${isOn ? '✕' : '✓'}</span>
+                </span>
+            </button>`;
+        });
+
+        html += '<div style="flex:1;"></div>';
+
+        if (dr) {
+            html += `
+            <div style="margin-top:10px;padding:10px;background:rgba(0,0,0,0.3);border-radius:2px;border-left:3px solid ${drSent ? 'var(--green)' : '#3a8fd4'};${drSent ? 'opacity:0.6;' : ''}">
+                <div style="font-size:12px;color:var(--gold);margin-bottom:3px;">📱 ${dr.label}</div>
+                <div style="font-size:11px;color:var(--fog);font-style:italic;margin-bottom:8px;">${dr.preview}</div>
+                <button class="send-btn ${drSent ? 'sent' : 'unsent'}" onclick="sendDRMessage('${dr.id}')" ${drSent ? 'disabled' : ''}>
+                    ${drSent ? '✓ Sent' : 'Send to David Richardson'}
+                </button>
+            </div>`;
+        }
+
+        html += `
+            <button class="audio-btn" onclick="playConfession('${actKey}')">🎙 Play Confession Audio</button>
+        </div>`;
+
+        return html;
+    }).join('');
+
+    renderLeaderboard();
+}
+
+function renderLeaderboard() {
+    const el = document.getElementById('leaderboard');
+    const entries = Object.entries(scans).sort((a,b) => b[1]-a[1]);
+    if (entries.length === 0) {
+        el.innerHTML = '<div style="color:var(--fog);font-style:italic;">No scans yet.</div>';
+        return;
+    }
+    const medals = ['🥇','🥈','🥉'];
+    el.innerHTML = entries.map(([player, count], i) => `
+        <div class="leaderboard-row" style="border-left:3px solid ${i===0?'var(--gold)':i===1?'#aaa':i===2?'#cd7f32':'#444'};">
+            <span class="lb-name">${medals[i]||'✦'} ${player}</span>
+            <span class="lb-count">${count}</span>
+        </div>`).join('');
+}
+
+async function toggleRevelation(itemId) {
+    const current = [...activeItems];
+    const idx = current.indexOf(itemId);
+    if (idx === -1) current.push(itemId);
+    else current.splice(idx, 1);
+    await db.ref('games/' + gameId + '/state/activeItems').set(current);
+}
+
+async function sendDRMessage(itemId) {
+    if (activeItems.includes(itemId)) return;
+    const updated = [...activeItems, itemId];
+    await db.ref('games/' + gameId + '/state/activeItems').set(updated);
+}
+
+function playConfession(act) {
+    const files = {
+        act1: 'audio/confession_act1.mp3',
+        act2: 'audio/confession_act2.mp3',
+        act3: 'audio/confession_act3.mp3'
+    };
+    const audio = document.getElementById('confessionAudio');
+    if (!audio.paused && audio.src.includes(files[act])) {
+        audio.pause(); audio.currentTime = 0; return;
+    }
+    audio.src = files[act];
+    audio.play();
+}
+
+// ── TEST PLAYERS ──────────────────────────────────────────────
+const TEST_FIRST = ['James','Emma','Oliver','Sophia','Henry','Clara','Arthur','Rose','Walter','Mae'];
+const TEST_LAST  = ['Fletcher','Whitmore','Caldwell','Hargrove','Sinclair','Beaumont','Langford','Mercer'];
+
+function randomTestName() {
+    return TEST_FIRST[Math.floor(Math.random()*TEST_FIRST.length)] + ' ' +
+           TEST_LAST[Math.floor(Math.random()*TEST_LAST.length)];
+}
+
+async function addTestPlayersGame() {
+    const takenChars = new Set(Object.values(players).map(p => p.characterId).filter(Boolean));
+    const available  = Object.keys(characterDatabase || {}).filter(id => !takenChars.has(id));
+    if (available.length === 0) { showToast('All characters taken.', 'error'); return; }
+
+    const writes = {};
+    available.forEach((charId, i) => {
+        const uid = 'test_player_' + Date.now() + '_' + i;
+        writes[uid] = {
+            displayName: randomTestName(),
+            characterId: charId,
+            characterName: charId.replace(/_/g,' '),
+            status: 'ready',
+            joinedAt: new Date().toISOString(),
+            questionnaire: {
+                gender: Math.random() > 0.5 ? 'female' : 'male',
+                involvementScore: Math.floor(Math.random()*6)+4,
+                secrets: 'yes',
+                completedAt: new Date().toISOString()
+            }
+        };
+    });
+    await db.ref('games/' + gameId + '/players').update(writes);
+    showToast(available.length + ' test players added.', 'success');
+}
+
+async function removeTestPlayersGame() {
+    const removes = {};
+    Object.keys(players).forEach(uid => {
+        if (uid.startsWith('test_player_')) removes[uid] = null;
+    });
+    if (Object.keys(removes).length === 0) { showToast('No test players found.', 'error'); return; }
+    await db.ref('games/' + gameId + '/players').update(removes);
+    showToast('Test players removed.', 'success');
+}
+
+// ── UTILITIES ─────────────────────────────────────────────────
+function copyInviteLink() {
+    const url = `https://thoresonws-pixel.github.io/Thoreson_Estate_Dinner/join.html?code=${gameData.partyCode}`;
+    navigator.clipboard.writeText(url).then(() => {
+        const el = document.getElementById('inviteCopyConfirm');
+        el.classList.add('show');
+        setTimeout(() => el.classList.remove('show'), 2000);
+    });
+}
+
+function openEditGame() {
+    // For now link back to admin — full edit modal coming
+    window.location.href = 'admin.html';
+}
+
+function formatTime(t) {
+    if (!t) return '';
+    const [h, m] = t.split(':').map(Number);
+    return `${h%12||12}:${m.toString().padStart(2,'0')} ${h>=12?'PM':'AM'}`;
+}
+
+async function handleSignOut() {
+    await auth.signOut();
+    window.location.href = 'admin.html';
+}
+
+let toastTimer;
+function showToast(msg, type='success') {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = `toast ${type} show`;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('show'), 3200);
+}
+</script>
+</body>
+</html>

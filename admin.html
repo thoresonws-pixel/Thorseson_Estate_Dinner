@@ -1404,7 +1404,7 @@
 
         return `
         <div class="game-card" id="card-${id}">
-            <div class="game-card-top">
+            <div class="game-card-top" onclick="window.location.href='game.html?id=${id}'" style="cursor:pointer;">
                 <div class="game-info">
                     <div class="game-story">${g.storyName || 'Mystery Dinner'}</div>
                     <div class="game-meta">
@@ -1423,7 +1423,7 @@
                             <div class="player-bar-fill" style="width:${fillPct}%"></div>
                         </div>
                     </div>
-                    <button class="btn-expand" onclick="toggleCard('${id}')">Details ▾</button>
+                    <div style="font-family:'Special Elite',monospace;font-size:10px;letter-spacing:2px;color:var(--gold-dk);">OPEN →</div>
                 </div>
             </div>
 
