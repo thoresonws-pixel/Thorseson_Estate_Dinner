@@ -1081,7 +1081,7 @@
                     <div class="form-group">
                         <label for="storySelect">Mystery / Story</label>
                         <select id="storySelect">
-                            <option value="thoreson">The Thoreson Estate Dinner</option>
+                            <option value="thoreson_estate_dinner">The Thoreson Estate Dinner</option>
                             <option value="devereaux" disabled>The Devereaux Masquerade (Coming Soon)</option>
                             <option value="wicker" disabled>Last Train to Wicker Park (Coming Soon)</option>
                         </select>
@@ -1189,7 +1189,7 @@
     const db   = firebase.database();
 
     const STORIES = {
-        thoreson: { name: 'The Thoreson Estate Dinner', minPlayers: 10, maxPlayers: 21 }
+        thoreson_estate_dinner: { name: 'The Thoreson Estate Dinner', minPlayers: 10, maxPlayers: 21 }
     };
 
     // Game invite base URL — points to the game app
@@ -1453,7 +1453,7 @@
     }
 
     function resetForm() {
-        document.getElementById('storySelect').value = 'thoreson';
+        document.getElementById('storySelect').value = 'thoreson_estate_dinner';
         document.getElementById('gameDate').value    = new Date().toISOString().split('T')[0];
         document.getElementById('gameTime').value    = '18:30';
         document.getElementById('maxPlayers').value  = '21';
@@ -1866,7 +1866,7 @@
                 <div class="form-group">
                     <label for="editStory">Mystery</label>
                     <select id="editStory">
-                        <option value="thoreson">The Thoreson Estate Dinner</option>
+                        <option value="thoreson_estate_dinner">The Thoreson Estate Dinner</option>
                     </select>
                 </div>
                 <div class="form-group">

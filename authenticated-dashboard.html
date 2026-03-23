@@ -1399,6 +1399,32 @@
         let firebaseReady = false;
         let database = null;
 
+
+        // ── DYNAMIC STORY SCRIPT LOADER ──────────────────────────────
+        // Loads story-specific data files from stories/{storyId}/
+        // Files override the root fallback scripts already loaded
+        function loadStoryScripts(storyId, callback) {
+            const base = 'stories/' + storyId + '/';
+            const files = ['characters.js', 'skills.js', 'revelations.js', 'items.js'];
+            let loaded = 0;
+
+            files.forEach(function(file) {
+                const script = document.createElement('script');
+                script.src = base + file + '?v=' + Date.now();
+                script.onload = function() {
+                    loaded++;
+                    if (loaded === files.length && callback) callback();
+                };
+                script.onerror = function() {
+                    // File missing — count it anyway so we don't hang
+                    loaded++;
+                    console.warn('Story file not found:', base + file);
+                    if (loaded === files.length && callback) callback();
+                };
+                document.head.appendChild(script);
+            });
+        }
+
         // ── GAME-SCOPED REF HELPER ────────────────────────────────────
         // All live game state lives under /games/{gameId}/state/
         // Falls back to root path for legacy localStorage sessions (GM shortcut)
@@ -1625,7 +1651,7 @@
                 if (!user || user.isAnonymous || !user.email) {
                     if (legacySession) {
                         userSession = JSON.parse(legacySession);
-                        initializeAuthenticatedView();
+                        loadStoryScripts('thoreson_estate_dinner', initializeAuthenticatedView);
                     } else {
                         document.getElementById('invitation').style.display = 'block';
                     }
@@ -1676,7 +1702,9 @@
                     // Persist for BroadcastChannel / reload resilience
                     localStorage.setItem('userSession', JSON.stringify(userSession));
 
-                    initializeAuthenticatedView();
+                    // Load story-specific scripts, then init
+                    const storyId = gameData.storyId || 'thoreson_estate_dinner';
+                    loadStoryScripts(storyId, initializeAuthenticatedView);
 
                 } catch(err) {
                     console.error('Auth bootstrap error:', err);

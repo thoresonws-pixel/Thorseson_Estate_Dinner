@@ -562,9 +562,6 @@
     </button>
 </div>
 
-<!-- Character data -->
-<script src="characters.js"></script>
-
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
@@ -610,6 +607,28 @@ function buildRoster(excludeOptional) {
 // Build the roster — optional character included by default
 // If the game has fewer than 12 players registered, elizabeth_monroe is hidden
 let ROSTER = buildRoster(false);
+
+
+// ── DYNAMIC STORY SCRIPT LOADER ──────────────────────────────
+function loadStoryScripts(storyId, callback) {
+    const base = 'stories/' + storyId + '/';
+    const files = ['characters.js', 'skills.js', 'revelations.js', 'items.js'];
+    let loaded = 0;
+    files.forEach(function(file) {
+        const script = document.createElement('script');
+        script.src = base + file + '?v=' + Date.now();
+        script.onload = function() {
+            loaded++;
+            if (loaded === files.length && callback) callback();
+        };
+        script.onerror = function() {
+            loaded++;
+            console.warn('Story file not found:', base + file);
+            if (loaded === files.length && callback) callback();
+        };
+        document.head.appendChild(script);
+    });
+}
 
 // ─────────────────────────────────────────────────────────────
 // STATE
@@ -658,20 +677,26 @@ auth.onAuthStateChanged(async user => {
         ? new Date(gameData.eventDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
         : 'TBD';
 
-    // Show UI
-    document.getElementById('loadingScreen').style.display = 'none';
-    document.getElementById('mainContent').style.display   = 'block';
+    // Load story scripts then show UI
+    const storyId = gameData.storyId || 'thoreson_estate_dinner';
+    loadStoryScripts(storyId, function() {
+        ROSTER = buildRoster(false);
 
-    // Live listener for taken characters
-    db.ref(`games/${currentGameId}/players`).on('value', snap => {
-        takenCharacters = {};
-        snap.forEach(child => {
-            const p = child.val();
-            if (p.characterId && child.key !== user.uid) {
-                takenCharacters[p.characterId] = p.displayName || 'Another guest';
-            }
+        // Show UI
+        document.getElementById('loadingScreen').style.display = 'none';
+        document.getElementById('mainContent').style.display   = 'block';
+
+        // Live listener for taken characters
+        db.ref(`games/${currentGameId}/players`).on('value', snap => {
+            takenCharacters = {};
+            snap.forEach(child => {
+                const p = child.val();
+                if (p.characterId && child.key !== user.uid) {
+                    takenCharacters[p.characterId] = p.displayName || 'Another guest';
+                }
+            });
+            renderGrid();
         });
-        renderGrid();
     });
 });
 
