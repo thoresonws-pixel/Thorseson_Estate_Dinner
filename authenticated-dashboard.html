@@ -1354,8 +1354,15 @@
 
         // Read skills live from characters.js — single source of truth
         function getMySkills() {
-            const charData = characterDatabase[resolveCharacterKey(userSession.username)];
-            return charData ? (charData.skills || []).concat(charData.hiddenSkills || []) : [];
+            const charKey  = resolveCharacterKey(userSession.username);
+            const charData = characterDatabase[charKey];
+            // New system: skills come from game-level skillAssignments
+            const assignedSkill = skillAssignments[charKey];
+            const gameSkills = assignedSkill ? [assignedSkill] : [];
+            // Legacy fallback: hiddenSkills on character (old system)
+            const legacySkills = charData ? (charData.skills || []).concat(charData.hiddenSkills || []) : [];
+            // Merge — game assignments take precedence
+            return [...new Set([...gameSkills, ...legacySkills])];
         }
 
         // Broadcast Channel for real-time sync across devices on same network
@@ -1432,14 +1439,26 @@
         // Loaded from Firebase once on startup, then kept in memory
         let resolvedGenders = {};
 
+        // Game state: genders, skill assignments, role assignments
+        let skillAssignments = {};  // { characterId: "Botany" }
+        let characterRoles   = {};  // { characterId: "killer" }
+
         async function loadResolvedGenders() {
             try {
                 const gid = userSession && userSession.currentGameId;
                 if (!gid) return;
-                const snap = await database.ref('games/' + gid + '/state/resolvedGenders').once('value');
-                resolvedGenders = snap.val() || {};
+                const [genderSnap, skillSnap, roleSnap] = await Promise.all([
+                    database.ref('games/' + gid + '/state/resolvedGenders').once('value'),
+                    database.ref('games/' + gid + '/state/skillAssignments').once('value'),
+                    database.ref('games/' + gid + '/state/characterRoles').once('value')
+                ]);
+                resolvedGenders  = genderSnap.val()  || {};
+                skillAssignments = skillSnap.val()   || {};
+                characterRoles   = roleSnap.val()    || {};
             } catch(e) {
                 resolvedGenders = {};
+                skillAssignments = {};
+                characterRoles = {};
             }
         }
 
@@ -1757,8 +1776,10 @@
 
         function loadCharacterData() {
             try {
-                const charKey = resolveCharacterKey(userSession.username);
+                const charKey  = resolveCharacterKey(userSession.username);
                 const charData = characterDatabase[charKey];
+                // Get assigned role for this character
+                const assignedRole = characterRoles[charKey] || null;
                 if (!charData) {
                     document.getElementById('characterContent').innerHTML = '<div style="color: #e74c3c; padding: 20px;">Debug: No character data found for username: "' + userSession.username + '"</div>';
                     return;
@@ -1789,6 +1810,22 @@
                 // BACKSTORY
                 html += '<div style="' + sectionStyle + '">Your Story</div>';
                 html += '<div style="' + textStyle + ' margin-bottom: 20px;">' + renderText(charData.backstory) + '</div>';
+
+                // Inject role overlay if assigned
+                if (assignedRole && typeof rolesConfig !== 'undefined') {
+                    const overlay = rolesConfig.overlays && rolesConfig.overlays[assignedRole];
+                    if (overlay) {
+                        const base   = overlay.base || '';
+                        const access = overlay.access && overlay.access[charKey] ? overlay.access[charKey] : '';
+                        if (base || access) {
+                            html += '<div style="background:rgba(139,26,26,0.12);border:1px solid rgba(139,26,26,0.3);border-radius:3px;padding:20px 24px;margin-bottom:20px;">';
+                            html += '<div style="' + sectionStyle.replace(/#c9a227/g,'#c07070') + '">— Private —</div>';
+                            if (base)   html += '<div style="' + textStyle + ' margin-bottom:14px;">' + renderText(base) + '</div>';
+                            if (access) html += '<div style="' + textStyle + '">' + renderText(access) + '</div>';
+                            html += '</div>';
+                        }
+                    }
+                }
                 
                 // HOW TO PLAY
                 if (charData.howToPlay) {

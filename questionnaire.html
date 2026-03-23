@@ -314,30 +314,23 @@
                 </div>
             </div>
 
-            <!-- Q2: Involvement level -->
+            <!-- Q2: Involvement level (1-10 slider) -->
             <div class="question-block">
                 <div class="question-label">How involved do you want to be?</div>
-                <div class="question-hint">This helps us match you to a character whose role fits your comfort level.</div>
-                <div class="tile-group cols-1" id="involvementGroup">
+                <div class="question-hint">This helps assign you a role that fits your comfort level. 1 = just here for the fun, 10 = give me the most dramatic role possible.</div>
 
-                    <div class="tile" data-group="involvement" data-value="all-in" onclick="selectTile(this)">
-                        <div class="tile-check"></div>
-                        <div class="tile-title">I'm down for whatever</div>
-                        <div class="tile-desc">Give me the juiciest role available. Secrets, drama, confrontations — bring it.</div>
+                <div style="padding: 10px 0 20px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                        <span style="font-family:'Special Elite',monospace;font-size:11px;letter-spacing:2px;color:var(--fog);">JUST HERE FOR THE FUN</span>
+                        <span style="font-family:'Special Elite',monospace;font-size:11px;letter-spacing:2px;color:var(--fog);">GIVE ME THE DRAMA</span>
                     </div>
-
-                    <div class="tile" data-group="involvement" data-value="moderate" onclick="selectTile(this)">
-                        <div class="tile-check"></div>
-                        <div class="tile-title">I'll play along, but keep it moderate</div>
-                        <div class="tile-desc">I want to participate and have fun, just nothing that puts me on the spot too much.</div>
+                    <input type="range" id="involvementSlider" min="1" max="10" value="5"
+                        style="width:100%;accent-color:#c9a227;cursor:pointer;"
+                        oninput="updateSlider(this.value)">
+                    <div style="text-align:center;margin-top:14px;">
+                        <span style="font-family:'Playfair Display',Georgia,serif;font-size:36px;color:#c9a227;font-weight:700;" id="sliderValue">5</span>
+                        <span style="font-family:'Special Elite',monospace;font-size:11px;letter-spacing:2px;color:var(--fog);display:block;margin-top:4px;" id="sliderLabel">Somewhere in the middle</span>
                     </div>
-
-                    <div class="tile" data-group="involvement" data-value="light" onclick="selectTile(this)">
-                        <div class="tile-check"></div>
-                        <div class="tile-title">Low-key is fine by me</div>
-                        <div class="tile-desc">I'd rather enjoy the evening than carry a heavy role. Something simple works great.</div>
-                    </div>
-
                 </div>
             </div>
 
@@ -391,7 +384,7 @@
     let currentGameId = null;
 
     // ── Required groups — all must be answered to enable Continue ──
-    const REQUIRED_GROUPS = ['gender', 'involvement', 'secrets'];
+    const REQUIRED_GROUPS = ['gender', 'secrets'];
     const answers = {};
 
     // ── Auth check ────────────────────────────────────────────────
@@ -469,6 +462,29 @@
     }
 
     // ── Save and continue ─────────────────────────────────────────
+    function updateSlider(val) {
+        const v = parseInt(val);
+        document.getElementById('sliderValue').textContent = v;
+        const labels = {
+            1: 'Just here for the fun',
+            2: 'Pretty low-key please',
+            3: 'Keep it light',
+            4: 'Slightly involved',
+            5: 'Somewhere in the middle',
+            6: 'Happy to play a real role',
+            7: 'Give me something meaningful',
+            8: 'I want to be in the thick of it',
+            9: 'All in — surprise me',
+            10: 'Give me the most dramatic role possible'
+        };
+        document.getElementById('sliderLabel').textContent = labels[v] || '';
+        answers['involvement'] = v;
+        checkComplete();
+    }
+
+    // Initialize slider answer
+    answers['involvement'] = 5;
+
     async function handleContinue() {
         if (!REQUIRED_GROUPS.every(g => answers[g])) return;
 
@@ -479,10 +495,10 @@
         try {
             await db.ref(`games/${currentGameId}/players/${currentUser.uid}`).update({
                 questionnaire: {
-                    gender:      answers.gender,
-                    involvement: answers.involvement,
-                    secrets:     answers.secrets,
-                    completedAt: new Date().toISOString()
+                    gender:          answers.gender,
+                    involvementScore: answers.involvement,  // number 1-10
+                    secrets:         answers.secrets,
+                    completedAt:     new Date().toISOString()
                 }
             });
 
