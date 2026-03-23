@@ -95,9 +95,9 @@
     
     all.forEach(function(p) {
       if (p.isPoster) {
-        specialPhotos.push(p);
+        if (p.fullUrl) specialPhotos.push(p);
       } else {
-        guestPhotos.push(p);
+        if (p.fullUrl) guestPhotos.push(p);
       }
     });
 
@@ -112,7 +112,7 @@
         return;
       }
       grid.innerHTML = photos.map(function(p) {
-        var url = p.fullUrl || p.wallUrl;
+        var url = p.fullUrl;
         var time = new Date(p.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         var caption = p.caption ? '<div class="caption">' + p.caption + '</div>' : '';
         return '<div class="photo-card">' +
