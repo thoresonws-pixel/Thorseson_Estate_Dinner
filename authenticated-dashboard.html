@@ -1224,19 +1224,6 @@
                        text-transform:uppercase; border-radius:3px;">
                 📷 Take a Photo
             </button>
-            <button id="downloadAllSequential" onclick="downloadAllSequential()" style="display:none;
-                background:transparent; color:#c9a227; border:1px solid rgba(201,162,39,0.5); padding:14px 28px; cursor:pointer;
-                font-family:'Playfair Display',Georgia,serif; font-size:15px; letter-spacing:2px;
-                text-transform:uppercase; border-radius:3px; margin-left:12px;">
-                ↓ Download ZIP (PC)
-            </button>
-            <a id="googlePhotosBtn" href="https://photos.app.goo.gl/w8JugAUUyWCrBZ9n9" target="_blank" style="display:none;
-                background:transparent; color:#8bc34a; border:1px solid rgba(139,195,74,0.5); padding:14px 28px; cursor:pointer;
-                font-family:'Playfair Display',Georgia,serif; font-size:15px; letter-spacing:2px;
-                text-transform:uppercase; border-radius:3px; margin-left:12px; text-decoration:none;">
-                📷 Save to Google Photos
-            </a>
-            <div id="googlePhotosHint" style="display:none; margin-top:8px; font-size:12px; color:#555; font-style:italic;">Open in the Google Photos app → tap ⋮ → "Add to Library" to save all photos to your camera roll.</div>
             <div id="uploadStatus" style="margin-top:12px; font-size:14px; color:#8b8b8b; font-style:italic;"></div>
             <div id="uploadBar" style="display:none; margin-top:10px; width:100%; max-width:400px; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden;">
                 <div id="uploadBarFill" style="height:100%; width:0%; background:#c9a227; border-radius:3px; transition:width 0.3s ease;"></div>
@@ -1272,16 +1259,16 @@
     </div>
 
     <footer>
-        The Thoreson Estate — 1935 <span style="opacity:0.6; margin-left:10px;">v3.22.5</span>
+        The Thoreson Estate — 1935 <span style="opacity:0.6; margin-left:10px;">v3.21.1</span>
     </footer>
 
     <!-- QR Scanner -->
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-messaging-compat.js"></script>
 
@@ -1573,16 +1560,64 @@
             });
         }
 
-        // Initialize on load
+        // ── Initialize on load ─────────────────────────────────────
+        // Priority: Firebase Auth (new system) → localStorage (legacy system)
         (function() {
-            const session = localStorage.getItem('userSession');
-            if (session) {
-                userSession = JSON.parse(session);
-                initializeAuthenticatedView();
-            } else {
-                // Show invitation by default if not logged in
-                document.getElementById('invitation').style.display = 'block';
-            }
+            const auth = firebase.auth();
+
+            auth.onAuthStateChanged(async function(user) {
+                // Real email/password user from the new registration flow
+                if (user && !user.isAnonymous && user.email) {
+                    try {
+                        const db = firebase.database();
+
+                        // Look up their game and character from Firebase
+                        const userSnap = await db.ref('users/' + user.uid).once('value');
+                        const userData = userSnap.val();
+
+                        if (userData && userData.currentGameId) {
+                            const playerSnap = await db.ref(
+                                'games/' + userData.currentGameId + '/players/' + user.uid
+                            ).once('value');
+                            const playerData = playerSnap.val();
+
+                            if (playerData && playerData.characterId) {
+                                // Build a session object in the format the dashboard expects
+                                const firebaseSession = {
+                                    username:        playerData.characterId,
+                                    displayName:     user.displayName || user.email,
+                                    role:            userData.role === 'admin' ? 'master' : 'guest',
+                                    loginTime:       new Date().toISOString(),
+                                    activeItems:     [],
+                                    discoveredSkills: []
+                                };
+                                userSession = firebaseSession;
+                                localStorage.setItem('userSession', JSON.stringify(firebaseSession));
+                                initializeAuthenticatedView();
+                                return;
+                            }
+                        }
+
+                        // Logged in but no character yet — send to picker
+                        window.location.href = 'pick.html';
+                        return;
+
+                    } catch(e) {
+                        console.warn('Firebase Auth bridge error:', e.message);
+                        // Fall through to legacy session check
+                    }
+                }
+
+                // Legacy path: localStorage session (existing players, GM, greeter)
+                const session = localStorage.getItem('userSession');
+                if (session) {
+                    userSession = JSON.parse(session);
+                    initializeAuthenticatedView();
+                } else {
+                    // Not logged in either way — show invitation / RSVP section
+                    document.getElementById('invitation').style.display = 'block';
+                }
+            });
         })();
 
         function initializeAuthenticatedView() {
@@ -1611,11 +1646,6 @@
                     document.getElementById('discoveries').style.display = 'none';
                     document.getElementById('photos').style.display = 'block';
                     loadPhotoWall();
-                    // Add logout button for greeter
-                    const logoutBtn = document.createElement('div');
-                    logoutBtn.style.cssText = 'position:fixed; top:12px; right:12px; z-index:9999;';
-                    logoutBtn.innerHTML = '<button onclick="logout()" style="background:transparent; color:#555; border:1px solid #333; padding:6px 14px; font-family:\'Playfair Display\',serif; font-size:12px; letter-spacing:1px; cursor:pointer; border-radius:2px;">Logout</button>';
-                    document.body.appendChild(logoutBtn);
                     return;
                 }
 
@@ -3021,20 +3051,7 @@
                     return;
                 }
                 const photos = Object.values(data).sort((a,b) => b.time - a.time);
-                const fullUrls = photos.filter(p => p.fullUrl && !p.isPoster).map(p => p.fullUrl);
-                window._guestFullUrls = fullUrls;
-
-                // Update the static download button
-                const dlBtn = document.getElementById('downloadAllSequential');
-                if (dlBtn) {
-                    dlBtn.textContent = '↓ Download ZIP (PC) (' + fullUrls.length + ')';
-                    dlBtn.style.display = fullUrls.length > 0 ? 'inline-block' : 'none';
-                }
-                const gpBtn = document.getElementById('googlePhotosBtn');
-                if (gpBtn && fullUrls.length > 0) {
-                    gpBtn.style.display = 'inline-block';
-                    document.getElementById('googlePhotosHint').style.display = 'block';
-                }
+                const fullUrls = photos.filter(p => p.fullUrl).map(p => p.fullUrl);
 
                 grid.innerHTML = photos.map(p => `
                     <div style="background:rgba(0,0,0,0.4); border:1px solid rgba(201,162,39,0.2); border-radius:4px; overflow:hidden;">
@@ -3065,49 +3082,6 @@
                 }
 
             });
-        }
-
-        async function downloadAllSequential() {
-            const urls = window._guestFullUrls || [];
-            if (!urls.length) return;
-            const btn = document.getElementById('downloadAllSequential');
-            btn.disabled = true;
-
-            try {
-                const zip = new JSZip();
-                const folder = zip.folder('thoreson_photos');
-                let fetched = 0;
-
-                for (let i = 0; i < urls.length; i++) {
-                    btn.textContent = `⏳ Fetching ${i+1} of ${urls.length}...`;
-                    try {
-                        const resp = await fetch(urls[i]);
-                        const blob = await resp.blob();
-                        const ext = blob.type.includes('png') ? 'png' : 'jpg';
-                        folder.file(`photo_${String(i+1).padStart(3,'0')}.${ext}`, blob);
-                        fetched++;
-                    } catch(e) {
-                        console.warn('Skipped photo', i+1, e);
-                    }
-                }
-
-                btn.textContent = `⏳ Zipping ${fetched} photos...`;
-                const zipBlob = await zip.generateAsync({ type: 'blob' });
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(zipBlob);
-                a.download = 'thoreson_photos.zip';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                setTimeout(() => URL.revokeObjectURL(a.href), 10000);
-
-                btn.textContent = `✓ Done — ${fetched} photos in zip`;
-                setTimeout(() => { btn.textContent = `↓ Download All (${urls.length})`; btn.disabled = false; }, 4000);
-            } catch(err) {
-                console.error(err);
-                btn.textContent = '↓ Download ZIP (PC) (retry)';
-                btn.disabled = false;
-            }
         }
 
         function logout() {
