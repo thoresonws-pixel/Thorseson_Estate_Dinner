@@ -982,7 +982,6 @@
             <li><a href="#discoveries" onclick="return navigateAuth('#discoveries')">Discoveries</a></li>
             <li><a href="#photos" onclick="return navigateAuth('#photos')">Photos</a></li>
             <li id="scanNav" style="display:none;"><a href="#" onclick="openScanner(); return false;">Scan</a></li>
-            <li id="masterNav" style="display:none;"><a href="#masterclues" onclick="return navigateAuth('#masterclues')">Master Controls</a></li>
             <li id="slideshowNav" style="display:none;"><a href="slideshow.html" target="_blank">Slideshow</a></li>
             <li><a href="#" onclick="logout(); return false;">Logout</a></li>
         </ul>
@@ -1204,11 +1203,6 @@
         <div id="discoveriesContent"></div>
     </section>
 
-    <!-- MASTER CLUES SECTION -->
-    <section id="masterclues" style="display: none;">
-        <h2 class="section-title">Master Clues Control</h2>
-        <div id="masterCluesContent"></div>
-    </section>
 
     <!-- PHOTOS SECTION -->
     <section id="photos" style="display: none;">
@@ -1547,7 +1541,6 @@
                     const newlyAdded = items.filter(id => oldItems.indexOf(id) === -1);
                     if (document.getElementById('discoveriesContent')) loadDiscoveriesData(newlyAdded.length > 0 ? newlyAdded[newlyAdded.length-1] : null);
                     loadCharacterData();
-                    if (document.getElementById('masterCluesContent') && userSession.role === 'master') loadMasterClues();
                 }
             });
 
@@ -1568,7 +1561,6 @@
                     checkForNewMemories(oldSkills, skills);
                     localStorage.setItem('userSession', JSON.stringify(userSession));
                     if (document.getElementById('discoveriesContent')) loadDiscoveriesData();
-                    if (document.getElementById('masterCluesContent') && userSession.role === 'master') loadMasterClues();
                 }
             });
         }
@@ -1601,28 +1593,15 @@
                 userSession.activeItems = snapshot.val() || [];
                 localStorage.setItem('userSession', JSON.stringify(userSession));
                 if (document.getElementById('discoveriesContent')) loadDiscoveriesData();
-                if (document.getElementById('masterCluesContent') && userSession.role === 'master') loadMasterClues();
             });
 
             gameRef('discoveredSkills').once('value').then(snapshot => {
                 userSession.discoveredSkills = snapshot.val() || [];
                 localStorage.setItem('userSession', JSON.stringify(userSession));
                 if (document.getElementById('discoveriesContent')) loadDiscoveriesData();
-                if (document.getElementById('masterCluesContent') && userSession.role === 'master') loadMasterClues();
             });
         }
 
-        function syncToFirebase() {
-            if (!database || !userSession) return;
-            
-            gameRef('activeItems').set(userSession.activeItems || [])
-                .then(() => console.log('\u2713 Active items synced'))
-                .catch(e => console.error('Firebase sync error:', e));
-
-            gameRef('discoveredSkills').set(userSession.discoveredSkills || [])
-                .then(() => console.log('\u2713 Active skills synced'))
-                .catch(e => console.error('Firebase sync error:', e));
-        }
 
 
         console.log('Dashboard v17 loaded');
@@ -1725,8 +1704,6 @@
                 document.getElementById('discoveries').style.display = 'block';
                 
                 if (userSession.role === 'master') {
-                    document.getElementById('masterNav').style.display = 'block';
-                    document.getElementById('masterclues').style.display = 'none';
                 }
 
                 if (userSession.role === 'master' || userSession.role === 'greeter') {
@@ -1757,7 +1734,6 @@
                     loadDiscoveriesData();
                 });
                 if (userSession.role === 'master') {
-                    loadMasterClues();
                 }
             } catch(e) {
                 document.body.insertAdjacentHTML('afterbegin', '<div style="background:red;color:white;padding:20px;position:fixed;top:60px;left:0;right:0;z-index:9999;">Init Error: ' + e.message + '<br>Username: ' + (userSession ? userSession.username : 'null') + '<br>Role: ' + (userSession ? userSession.role : 'null') + '</div>');
@@ -2164,301 +2140,12 @@
             });
         }
 
-        function loadMasterClues() {
-            if (!userSession.activeItems) userSession.activeItems = [];
-            if (!userSession.discoveredSkills) userSession.discoveredSkills = [];
-            
-            let html = '<div style="background: rgba(201, 162, 39, 0.1); border: 2px solid #c9a227; padding: 30px; border-radius: 5px; margin-bottom: 30px;">';
-            html += '<div style="font-family: \'Playfair Display\', Georgia, serif; font-size: 24px; color: #c9a227; margin-bottom: 10px;">Master Controls</div>';
-            html += '<p style="color: #8b8b8b; margin-bottom: 25px; font-size: 14px;">Toggle items to push them to all guests\' Discoveries page in real time.</p>';
 
-            // ── OPENING SPEECH ────────────────────────────────────────
-            html += `
-            <div style="margin-bottom:24px; padding:20px 24px; background:rgba(0,0,0,0.3); border-radius:5px; border:1px solid rgba(201,162,39,0.3);">
-                <div onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; margin-bottom:0;">
-                    <div style="font-family:'Playfair Display',serif; font-size:18px; color:#c9a227;">📋 Opening Speech</div>
-                    <div style="color:#c9a227; font-size:16px;">▸</div>
-                </div>
-                <div style="display:none; margin-top:16px; border-top:1px solid rgba(201,162,39,0.2); padding-top:16px;">
-                    <div style="font-size:13px; color:#8b8b8b; font-style:italic; margin-bottom:16px;">Read this after everyone has a drink and you have the room's attention.</div>
 
-                    <div style="font-size:15px; line-height:2; color:#e8e8e8;">
-                        <p style="margin:0 0 12px;">"Thank you all for coming tonight. As many of you know, my father invited you here for a dinner party. He said he had an announcement to make — something that would <em>'change everything.'</em>"</p>
-                                                <p style="margin:0 0 12px;">"Most of you know my father. William Thoreson. He built this family from nothing — came to Dallas in 1899 with very little and spent the next thirty years turning it into something. Thoreson Toys. Started in a workshop on Commerce Street in 1902. By 1920 it was one of the most successful toy manufacturers in the Southwest. By 1930, his name was on buildings."</p>
-                        <p style="margin:0 0 12px;">"He was a self-made man. That's how he told it. That's how everyone told it. The Thoreson name on that company meant one thing — that Will Thoreson had built something worth having, on his own, through hard work and nothing else."</p>
-                                                <p style="margin:0 0 12px;">"He was proud of that story."</p>
-                                                <p style="margin:0 0 12px;">"Tonight he wanted to share something with all of us. He wouldn't tell me what — only that it was important. That it was time. Whatever it was, he felt it couldn't wait any longer."</p>
-                                                <p style="margin:0 0 12px;">"He never got that opportunity. My father... William Thoreson... is dead."</p>
-                                                <p style="margin:0 0 12px;">"He was found in his study earlier this evening. We don't know how. We don't know why. What we do know is that everyone who matters to this family — everyone he trusted enough to invite into this house tonight — is standing in this room right now."</p>
-                                                <p style="margin:0 0 12px;">"Which means one of you knows something."</p>
-                                                <p style="margin:0 0 12px;">"Maybe more than something."</p>
-                                                <p style="margin:0 0 12px;">"I want to be very clear about something. As of this moment, no one leaves this estate. Not until we understand what happened here tonight. I don't care who you are, I don't care how far you drove to get here — <strong style="color:#c9a227;">no one leaves.</strong>"</p>
-                                                <p style="margin:0 0 12px;">"I'm Scott Thoreson — Will's eldest son and the family's attorney. I have spent my entire career protecting this family. Tonight that means finding out what happened to my father."</p>
-                        <p style="margin:0 0 12px;">"The police are here. They're doing their job — processing the scene, taking statements, handling what they need to handle. But they weren't in this house tonight. They don't know my father. They don't know the people in this room. We do. And there are things only we are going to be able to figure out."</p>
-                        <p style="margin:0 0 20px;">"And I need every single one of you to help me."</p>
 
-                        <div style="border-top:1px solid rgba(201,162,39,0.2); padding-top:16px; margin-top:4px;">
-                            <div style="font-family:'Playfair Display',serif; font-size:14px; color:#c9a227; letter-spacing:2px; text-transform:uppercase; margin-bottom:12px;">The Rules</div>
 
-                            <p style="margin:0 0 12px;">"Now. Here is how tonight is going to work."</p>
 
-                            <p style="margin:0 0 12px;">"My father invited every one of you here for a reason. He trusted you. And somewhere in this room — in the things you've witnessed, the conversations you've had, the things people have said to you over the years — there are pieces of what really happened. No single person has the whole story. But together, we do. What we're doing tonight is building that story, one piece at a time. So talk to each other. Ask questions. Don't decide something is too small to mention — you don't know what someone else needs to hear."</p>
 
-                            
-                            <p style="margin:0 0 12px;">"Everyone should have the app open on their phone. If you haven't logged in yet, do it now. Your <strong style="color:#c9a227;">Character tab</strong> is yours alone — your history, what you know, who you are tonight. No one else can see it. Read it. Know it. Be it."</p>
-
-                            <p style="margin:0 0 12px;">"As we uncover things together, they'll appear in your <strong style="color:#c9a227;">Discoveries tab</strong> — shared across every phone in this room at the same time. Think of it as your personal evidence repository. Inside you'll find four sections: <strong style="color:#c9a227;">Clues</strong> — the physical evidence we've found; <strong style="color:#c9a227;">Story</strong> — the narrative as it comes together; <strong style="color:#c9a227;">Expert Notes</strong> — analysis from those of you with specialist knowledge; and <strong style="color:#c9a227;">Memories</strong> — the personal recollections that surface as the night goes on. When you need to go back and double-check something, that's where you look."</p>
-
-                            <p style="margin:0 0 12px;">"Now — as the evening unfolds and things come to light, you may find that old memories begin to surface. Things that didn't mean anything at the time suddenly take on a different weight. When that happens, your phone will notify you. Those memories belong to you. Share them when the moment is right. They may be exactly the piece someone else has been missing."</p>
-
-                            <p style="margin:0 0 12px;">"As you investigate, you're going to find things with QR codes on them. When you do, open the app, tap Scan in the navigation, and scan the code. Now — some of you have particular areas of expertise. You know who you are. Certain documents and clues will reveal more to the right person than they will to anyone else. A financial ledger means something different to a banker than it does to the rest of us. A medical report means something different to a trained nurse. If you scan something and it tells you that you need a specialist — find that person. Get them in front of it. The right eyes on the right document could break this whole thing open."</p>
-
-                            <p style="margin:0 0 12px;">"One last thing. Tonight is about finding the truth — that's the priority. But we're also all together in this house, and if you feel the urge to capture a moment, please do. There's a photo wall in the app — take pictures, share them with the group. The night will be what it is. Let's remember it."</p>
-
-                            
-                            <p style="margin:0 0 12px;">"We'll work in rounds. I'll give everyone time to investigate, then I'll call us back together to share what we've learned. Every round brings us closer. No one sits this out — if you're standing in this room, you're part of this investigation."</p>
-
-                            <p style="margin:0 0 12px;">"Most of the estate is open to you. Search freely. If you see <strong style="color:#c9a227;">blue tape</strong> on something — a drawer, a cabinet, a box — leave it alone. Blue tape means there's nothing there worth your time. Could be family documents, something fragile, something private. It is not a clue. Move on."</p>
-
-                            <p style="margin:0 0 12px;">"My father's office is currently off limits. The police are in there dealing with the situation and they've asked us to stay out while they work. That may change later in the evening — I'll let you know when it does."</p>
-
-                            
-                            <p style="margin:0 0 12px;">"My father spent thirty years building something in this city. He was not a perfect man — I'm beginning to understand that more clearly than I ever have tonight. But he was my father. And he deserved better than this."</p>
-
-                            <p style="margin:0 0 16px;">"So let's find out what happened to him."</p>
-
-                            <p style="margin:0;">"Begin."</p>
-                        </div>
-                    </div>
-                </div>
-            </div>`;
-
-            // Game Start button
-            var gameStarted = userSession.activeItems.includes('willsDeath');
-            html += '<div style="margin-bottom: 24px; padding: 16px; background: rgba(0,0,0,0.3); border-radius: 5px; border: 2px solid ' + (gameStarted ? '#4caf50' : '#c9a227') + '; display: flex; justify-content: space-between; align-items: center;">';
-            html += '<div>';
-            html += '<div style="font-family: \'Playfair Display\', Georgia, serif; font-size: 18px; color: #c9a227; margin-bottom: 4px;">🕯 Start the Game</div>';
-            html += '<div style="font-size: 13px; color: #999;">Reveals Will\'s death to all guests and opens the investigation.</div>';
-            html += '</div>';
-            html += '<button onclick="toggleItem(\'willsDeath\')" style="background: ' + (gameStarted ? '#e74c3c' : '#c9a227') + '; color: ' + (gameStarted ? 'white' : '#1a1a2e') + '; border: none; padding: 10px 24px; cursor: pointer; border-radius: 3px; font-size: 14px; font-weight: bold; white-space: nowrap; margin-left: 20px;">' + (gameStarted ? '✕ Hide' : '▶ Begin') + '</button>';
-            html += '</div>';
-
-            // ── PER-ACT GRID: revelations + DJ text + confession audio ──
-            const djTextsByAct = {
-                act1: { id: 'djCountyClerk', label: 'County Clerk Report',        preview: 'Original 1902 filing — Thoreson &amp; Hartley Toys' },
-                act2: { id: 'djCoroner',     label: "Coroner's Report",            preview: 'Preliminary autopsy — needs medical interpretation' },
-                act3: { id: 'djPinkerton',   label: 'Pinkerton Background Checks', preview: 'Two name changes flagged among party guests' }
-            };
-            const confessionByAct = {
-                act1: 'audio/confession_act1.mp3',
-                act2: 'audio/confession_act2.mp3',
-                act3: 'audio/confession_act3.mp3'
-            };
-            html += '<audio id="confessionAudio" style="display:none;"></audio>';
-            html += '<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px;">';
-            Object.entries(revelationsDatabase).forEach(([actKey, act]) => {
-                const dj = djTextsByAct[actKey];
-                const confSrc = confessionByAct[actKey];
-                const djSent = dj && userSession.activeItems.includes(dj.id);
-
-                html += `<div style="background: rgba(0,0,0,0.2); border-radius: 5px; padding: 16px; border-top: 2px solid rgba(201,162,39,0.4); display:flex; flex-direction:column;">`;
-                html += `<div style="font-family: 'Playfair Display', Georgia, serif; font-size: 15px; color: #c9a227; text-transform: uppercase; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid rgba(201,162,39,0.2);">${act.label}</div>`;
-
-                // Revelation toggles
-                act.items.forEach(item => {
-                    const isActive = userSession.activeItems.includes(item.id);
-                    const badgeBg = item.type === 'story' ? '#8b7355' : '#c9a227';
-                    const badgeColor = item.type === 'story' ? 'white' : '#1a1a2e';
-                    const badgeLabel = item.type === 'story' ? 'STORY' : 'CLUE';
-                    const btnBg = isActive ? '#c0392b' : '#2d7a2d';
-                    html += `
-                        <button onclick="toggleItem('${item.id}')" style="width:100%; background:${btnBg}; color:white; border:none; padding:10px 12px; cursor:pointer; border-radius:3px; margin-bottom:8px; text-align:left; line-height:1.4;">
-                            <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <span style="font-family:'Playfair Display',serif; font-size:14px; font-weight:bold;">${item.title}</span>
-                                <span style="display:flex; align-items:center; gap:6px; flex-shrink:0; margin-left:8px;">
-                                    <span style="font-size:9px; background:${badgeBg}; color:${badgeColor}; padding:2px 5px; border-radius:2px;">${badgeLabel}</span>
-                                    <span style="font-size:12px; opacity:0.8;">${isActive ? '✕ Hide' : '✓ Reveal'}</span>
-                                </span>
-                            </div>
-                        </button>
-                    `;
-                });
-
-                // Spacer to push footer items down
-                html += `<div style="flex:1;"></div>`;
-
-                // DJ text button
-                if (dj) {
-                    html += `<div style="margin-top:12px; padding:10px; background:rgba(0,0,0,0.3); border-radius:3px; border-left:3px solid ${djSent ? '#4caf50' : '#3a8fd4'}; ${djSent ? 'opacity:0.6;' : ''}">`;
-                    html += `<div style="font-size:12px; color:#c9a227; margin-bottom:3px;">📱 ${dj.label}</div>`;
-                    html += `<div style="font-size:11px; color:#999; font-style:italic; margin-bottom:8px;">${dj.preview}</div>`;
-                    html += `<button onclick="fireDJText('${dj.id}')" ${djSent ? 'disabled' : ''} style="width:100%; background:${djSent ? '#555' : '#3a8fd4'}; color:white; border:none; padding:6px 0; cursor:${djSent ? 'default' : 'pointer'}; border-radius:3px; font-size:12px; letter-spacing:1px;">${djSent ? '✓ Sent' : 'Send to DJ'}</button>`;
-                    html += `</div>`;
-                }
-
-                // Confession audio button
-                if (confSrc) {
-                    html += `<div style="margin-top:10px;">`;
-                    html += `<button onclick="playConfession('${actKey}')" style="width:100%; padding:9px 0; cursor:pointer; border-radius:3px; font-family:'Playfair Display',serif; font-size:12px; letter-spacing:1px; text-transform:uppercase; border:1px solid #c9a227; background:rgba(201,162,39,0.15); color:#c9a227;">🎙 Play Confession</button>`;
-                    html += `</div>`;
-                }
-
-                html += `</div>`;
-            });
-            html += '</div>';
-
-            html += '</div>';
-
-            // ── CLUE SCAN LEADERBOARD ─────────────────────────────────
-            html += '<div style="margin-top:30px; border-top:2px solid rgba(201,162,39,0.3); padding-top:20px;">';
-            html += '<div style="font-family:\'Playfair Display\',Georgia,serif; font-size:20px; color:#c9a227; margin-bottom:5px;">🔎 Clue Scan Leaderboard</div>';
-            html += '<p style="color:#8b8b8b; margin-bottom:15px; font-size:13px;">Updates in real time as guests scan QR codes.</p>';
-            html += '<div id="leaderboardContent" style="font-size:14px; color:#999; font-style:italic;">Loading...</div>';
-            html += '</div>';
-
-            // BRADFORD CHASE SCRIPT
-            html += '<div style="margin-top:30px; padding:20px; border:1px solid #8b6914; background:rgba(201,162,39,0.05);">';
-            html += '<div style="font-family:\'Playfair Display\',serif; font-size:15px; letter-spacing:2px; text-transform:uppercase; color:#c9a227; margin-bottom:8px;">🔑 GM Emergency Reference</div>';
-            html += '<div style="font-size:13px; color:#8b8b8b; margin-bottom:10px;">All skill expert content, character memories, revelation summaries, and login codes in one page.</div>';
-            html += '<a href="gm-reference.html" target="_blank" style="display:inline-block; padding:10px 24px; border-radius:3px; font-family:\'Playfair Display\',serif; font-size:13px; letter-spacing:2px; text-transform:uppercase; border:1px solid #c9a227; background:transparent; color:#c9a227; text-decoration:none;">Open GM Reference</a>';
-            html += '</div>';
-
-            html += '<div style="margin-top:30px; padding:20px; border:1px solid #8b6914; background:rgba(201,162,39,0.05);">';
-            html += '<div style="font-family:\'Playfair Display\',serif; font-size:15px; letter-spacing:2px; text-transform:uppercase; color:#c9a227; margin-bottom:8px;">🚔 Bradford Chase Updates</div>';
-            html += '<div style="font-size:13px; color:#8b8b8b; margin-bottom:15px;">Announce these in character throughout the night. Tap to expand, read aloud, then collapse.</div>';
-
-            var chaseUpdates = [
-                { timing: "COCKTAIL HOUR", text: "Ladies and gentlemen — I\\'ve just received word from the sheriff\\'s office. Thomas Bradford, who was expected this evening, has fled Dallas County. His home was found empty this afternoon. Deputies are in pursuit. A wanted notice has been posted. I\\'m told he should be considered... well, let\\'s say \\'uncooperative.\\'" },
-                { timing: "MID ACT 1", text: "Update from the sheriff — Bradford\\'s automobile was spotted heading south on Route 77 at considerable speed. He ran two stop signs in Waxahachie. Officers are in pursuit. I\\'m sure this has nothing to do with the patent letter he sent three weeks ago." },
-                { timing: "LATE ACT 1", text: "I\\'m told Bradford\\'s car ran out of fuel near Corsicana. He was last seen on foot, heading into a cotton field. The deputy described him as \\'surprisingly fast for a man of his build.\\'" },
-                { timing: "ACT 2", text: "Bradford update — he was briefly apprehended hiding in a barn outside Ennis. He escaped custody when the deputy went inside for coffee. The sheriff has requested additional resources. And, apparently, faster deputies." },
-                { timing: "ACT 3", text: "Final update on our friend Mr. Bradford — he was spotted boarding a southbound freight train near Waco, disguised as... and I am reading this directly... a feed salesman. The five-hundred-dollar reward remains available. The sheriff\\'s department asks that if you see a nervous man in a bad hat asking questions about grain prices, please contact the authorities." }
-            ];
-
-            chaseUpdates.forEach(function(update, i) {
-                html += '<div style="margin:8px 0; border:1px solid rgba(201,162,39,0.2); border-radius:3px;">';
-                html += '<div onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display===\'none\'?\'block\':\'none\'" style="padding:10px 14px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;">';
-                html += '<span style="font-size:13px; color:#c9a227;">' + update.timing + '</span>';
-                html += '<span style="font-size:11px; color:#666;">tap to read</span>';
-                html += '</div>';
-                html += '<div style="display:none; padding:8px 14px 14px; font-size:14px; line-height:1.7; color:#d4c090; font-style:italic; border-top:1px solid rgba(201,162,39,0.1);">"' + update.text + '"</div>';
-                html += '</div>';
-            });
-            html += '</div>';
-
-            // START GAME / RESET button
-            // Test Mode toggle
-            html += '<div style="margin-top:30px; padding:20px; border:1px solid #c9a227; background:rgba(201,162,39,0.05);">';
-            html += '<div style="font-family:\'Playfair Display\',serif; font-size:15px; letter-spacing:2px; text-transform:uppercase; color:#c9a227; margin-bottom:8px;">🧪 Test Mode</div>';
-            html += '<div style="font-size:13px; color:#8b8b8b; margin-bottom:15px;">When ON — real player codes receive no live updates. Only you (master) and the 5 test accounts see changes in real time.</div>';
-            html += '<button onclick="toggleTestMode()" id="testModeBtn" style="padding:10px 24px; cursor:pointer; border-radius:3px; font-family:\'Playfair Display\',serif; font-size:13px; letter-spacing:2px; text-transform:uppercase; border:1px solid #c9a227; background:transparent; color:#c9a227; margin-right:10px;">Checking...</button>';
-            html += '</div>';
-
-            html += '<div style="margin-top:30px; padding-top:25px; border-top:1px solid #3a3a2a;">';
-            html += '<div style="font-family:\'Playfair Display\',serif; font-size:15px; letter-spacing:2px; text-transform:uppercase; color:#c9a227; margin-bottom:8px;">\ud83d\udd04 Force Reload All Devices</div>';
-            html += '<div style="font-size:13px; color:#8b8b8b; margin-bottom:15px;">After pushing a code update to GitHub (wait ~3 min for deploy), press this to instantly reload every connected device to the latest version.</div>';
-            html += '<button onclick="forceReloadAll()" style="padding:10px 24px; cursor:pointer; border-radius:3px; font-family:\'Playfair Display\',serif; font-size:13px; letter-spacing:2px; text-transform:uppercase; border:1px solid #c9a227; background:transparent; color:#c9a227;">Force Reload All</button>';
-            html += '</div>';
-
-            html += '<div style="margin-top:40px; padding-top:25px; border-top:3px solid #e74c3c;">';
-            html += '<div style="font-family:\'Playfair Display\',serif; font-size:16px; letter-spacing:3px; text-transform:uppercase; color:#e74c3c; margin-bottom:12px;">\u26A0 GAME RESET</div>';
-            html += '<div style="font-size:13px; color:#8b8b8b; margin-bottom:15px;">Clears ALL revelations, skill discoveries, and popup history across all connected devices. Use before the event starts to ensure a clean slate.</div>';
-            html += '<button onclick="resetGame()" style="background:#e74c3c; color:white; border:none; padding:12px 30px; cursor:pointer; border-radius:3px; font-family:\'Playfair Display\',serif; font-size:14px; letter-spacing:2px; text-transform:uppercase;">Reset &amp; Start Fresh</button>';
-            html += '</div>';
-
-            document.getElementById('masterCluesContent').innerHTML = html;
-            updateTestModeBtn();
-        }
-
-        function fireDJText(itemId) {
-            if (!userSession.activeItems) userSession.activeItems = [];
-            var isTesting = userSession.role === 'master';
-            if (userSession.activeItems.includes(itemId)) {
-                if (!isTesting) return; // real game — one-shot only
-                // Test mode: allow re-fire by removing from activeItems + shownMemories first
-                userSession.activeItems = userSession.activeItems.filter(function(id) { return id !== itemId; });
-                var shown = getShownMemories();
-                shown = shown.filter(function(id) { return id !== itemId; });
-                localStorage.setItem('shownMemories', JSON.stringify(shown));
-                // Also clear it from Firebase shownMemories signal
-                if (database) gameRef('memoryReset').set(Date.now());
-            }
-            var oldItems = userSession.activeItems.slice();
-            userSession.activeItems.push(itemId);
-            checkForNewMemories(oldItems, userSession.activeItems);
-            localStorage.setItem('userSession', JSON.stringify(userSession));
-            syncToFirebase();
-            broadcastChannel.postMessage({ type: 'itemUpdate', activeItems: userSession.activeItems });
-            loadMasterClues();
-        }
-
-        function toggleItem(itemId) {
-            if (!userSession.activeItems) userSession.activeItems = [];
-            var oldItems = userSession.activeItems.slice(); // snapshot before change
-            const index = userSession.activeItems.indexOf(itemId);
-            if (index === -1) {
-                userSession.activeItems.push(itemId);
-            } else {
-                userSession.activeItems.splice(index, 1);
-                // Clear from shown memories so it can re-trigger if toggled back on
-                var shown = getShownMemories();
-                var shownIndex = shown.indexOf(itemId);
-                if (shownIndex !== -1) {
-                    shown.splice(shownIndex, 1);
-                    localStorage.setItem('shownMemories', JSON.stringify(shown));
-                }
-            }
-            // Check for new memories on THIS device (the one toggling)
-            checkForNewMemories(oldItems, userSession.activeItems);
-            localStorage.setItem('userSession', JSON.stringify(userSession));
-            syncToFirebase();
-            broadcastChannel.postMessage({ type: 'itemUpdate', activeItems: userSession.activeItems });
-            loadMasterClues();
-            loadCharacterData();
-        }
-
-        function updateTestModeBtn() {
-            const btn = document.getElementById('testModeBtn');
-            if (!btn || !database) return;
-            gameRef('testMode').once('value').then(snap => {
-                const on = snap.val() === true;
-                btn.textContent = on ? '✓ Test Mode ON — Turn Off' : 'Test Mode OFF — Turn On';
-                btn.style.background = on ? '#c9a227' : 'transparent';
-                btn.style.color = on ? '#1a1a2e' : '#c9a227';
-            });
-        }
-
-        function playConfession(act) {
-            const files = { act1: 'audio/confession_act1.mp3', act2: 'audio/confession_act2.mp3', act3: 'audio/confession_act3.mp3' };
-            const audio = document.getElementById('confessionAudio');
-            if (!audio) return;
-            if (!audio.paused && audio.src.includes(files[act])) {
-                audio.pause();
-                audio.currentTime = 0;
-                return;
-            }
-            audio.src = files[act];
-            audio.play();
-        }
-
-        function toggleTestMode() {
-            if (!database) return;
-            gameRef('testMode').once('value').then(snap => {
-                const current = snap.val() === true;
-                gameRef('testMode').set(!current).then(() => {
-                    updateTestModeBtn();
-                    console.log('testMode set to', !current);
-                });
-            });
-        }
-
-        function forceReloadAll() {
-            if (!confirm('This will reload all connected devices to the latest version. Continue?')) return;
-            var newVersion = Date.now();
-            gameRef('appVersion').set(newVersion).then(function() {
-                console.log('Force reload triggered:', newVersion);
-            });
-        }
 
         function watchAppVersion() {
             if (!database || !userSession) return;
@@ -2474,57 +2161,7 @@
             });
         }
 
-        function resetGame() {
-            if (!confirm('This will clear ALL revelations, skill discoveries, popup history, and scan counts for every connected device. Are you sure?')) return;
-            
-            // Clear local state
-            userSession.activeItems = [];
-            userSession.discoveredSkills = [];
-            localStorage.setItem('userSession', JSON.stringify(userSession));
-            localStorage.setItem('shownMemories', '[]');
-            localStorage.setItem('personalDiscoveries', '[]');
-            
-            // Clear Firebase (triggers listeners on all devices)
-            if (database) {
-                gameRef('activeItems').set([]);
-                gameRef('discoveredSkills').set([]);
-                gameRef('memoryReset').set(Date.now());
-                gameRef('scans').remove();
-                gameRef('scanLog').remove();
-                gameRef('photos').remove();
-                // Also clear Storage photos
-                try {
-                    const storage = firebase.storage();
-                    storage.ref('photos/wall').listAll().then(res => res.items.forEach(item => item.delete()));
-                    storage.ref('photos/full').listAll().then(res => res.items.forEach(item => item.delete()));
-                } catch(e) {}
-            }
-            
-            // Broadcast to same-device tabs
-            broadcastChannel.postMessage({ type: 'itemUpdate', activeItems: [] });
-            broadcastChannel.postMessage({ type: 'skillUpdate', discoveredSkills: [] });
-            broadcastChannel.postMessage({ type: 'gameReset' });
-            
-            // Re-render
-            loadMasterClues();
-            loadCharacterData();
-            loadDiscoveriesData();
-        }
 
-        function toggleSkill(skillName) {
-            if (!userSession.discoveredSkills) userSession.discoveredSkills = [];
-            const discoveredKey = skillName.toLowerCase() + 'Discovered';
-            const index = userSession.discoveredSkills.indexOf(discoveredKey);
-            if (index === -1) {
-                userSession.discoveredSkills.push(discoveredKey);
-            } else {
-                userSession.discoveredSkills.splice(index, 1);
-            }
-            localStorage.setItem('userSession', JSON.stringify(userSession));
-            syncToFirebase();
-            broadcastChannel.postMessage({ type: 'skillUpdate', discoveredSkills: userSession.discoveredSkills });
-            loadMasterClues();
-        }
 
         // ── MEMORY POPUP SYSTEM ──────────────────────────────────
         var memoryQueue = [];
@@ -3005,7 +2642,7 @@
         function markSkillDiscovered(skillName) {
             // Save to LOCAL storage only — not Firebase
             // Only the scanning player sees this on their Discoveries page
-            // Scott's Master Controls toggle pushes to Firebase for everyone
+
             var key = skillName.toLowerCase() + 'Discovered';
             var personal = getPersonalDiscoveries();
             if (personal.indexOf(key) === -1) {
