@@ -1345,7 +1345,22 @@
         const query  = document.getElementById('searchInput').value.toLowerCase();
         const status = document.getElementById('statusFilter').value;
 
-        const entries = Object.entries(allGames).reverse(); // newest first
+        // Sort by: active/lobby games closest to event date first, complete games last
+        const entries = Object.entries(allGames).sort(([, a], [, b]) => {
+            // Complete games always sink to the bottom
+            const aComplete = a.status === 'complete';
+            const bComplete = b.status === 'complete';
+            if (aComplete && !bComplete) return 1;
+            if (!aComplete && bComplete) return -1;
+
+            // Both complete or both not — sort by event date ascending (soonest first)
+            const aDate = a.eventDate ? new Date(a.eventDate).getTime() : Infinity;
+            const bDate = b.eventDate ? new Date(b.eventDate).getTime() : Infinity;
+            if (aDate !== bDate) return aDate - bDate;
+
+            // Same date — sort by created time descending (newest first)
+            return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+        });
 
         const filtered = entries.filter(([id, g]) => {
             const matchStatus = status === 'all' || g.status === status;
