@@ -4,34 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#c9a227">
-    <title>Admin — Thor's Murder Mysteries</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Special+Elite&display=swap" rel="stylesheet">
+    <title>Admin Console — Thor's Murder Mysteries</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --black:     #06040a;
-            --deep:      #0f0b14;
-            --surface:   #160f1e;
-            --panel:     #1e1528;
-            --card:      #241a32;
-            --border:    rgba(201,162,39,0.15);
-            --border-hl: rgba(201,162,39,0.45);
+            --black:     #0d1117;
+            --deep:      #161b22;
+            --surface:   #1c2128;
+            --panel:     #21262d;
+            --card:      #2d333b;
+            --border:    rgba(255,255,255,0.08);
+            --border-hl: rgba(255,255,255,0.2);
             --crimson:   #8b1a1a;
-            --crimson-lt:#c0392b;
+            --crimson-lt:#f85149;
+            --accent:    #388bfd;
+            --accent-lt: #58a6ff;
+            --accent-dk: #1f6feb;
+            --green:     #3fb950;
+            --green-dk:  #238636;
+            --amber:     #d29922;
+            --fog:       #8b949e;
+            --mist:      #c9d1d9;
+            --white:     #f0f6fc;
+            /* Keep gold/crimson for story cards only */
             --gold:      #c9a227;
             --gold-lt:   #e8c55a;
             --gold-dk:   #8a6d14;
-            --green:     #27aa5b;
-            --green-dk:  #1a7a3f;
-            --fog:       #9a9080;
-            --mist:      #c4b8a4;
-            --white:     #f5f0e6;
-            --parchment: #e8dcc8;
         }
 
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--black);
             color: var(--white);
             min-height: 100vh;
@@ -52,18 +56,18 @@
         }
 
         .topbar-brand {
-            font-family: 'Playfair Display', Georgia, serif;
+            font-family: 'Inter', sans-serif; font-weight: 600;
             font-size: 18px;
             font-weight: 700;
-            color: var(--gold);
-            letter-spacing: 1px;
+            color: var(--white);
+            letter-spacing: 0;
         }
 
         .topbar-brand span {
             font-size: 11px;
-            font-family: 'Special Elite', monospace;
+            font-family: 'JetBrains Mono', monospace;
             letter-spacing: 3px;
-            color: var(--crimson-lt);
+            color: var(--accent);
             display: block;
             margin-top: -2px;
         }
@@ -75,13 +79,13 @@
         }
 
         .admin-badge {
-            font-family: 'Special Elite', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
             letter-spacing: 2.5px;
             text-transform: uppercase;
-            color: var(--gold);
-            background: rgba(201,162,39,0.1);
-            border: 1px solid rgba(201,162,39,0.25);
+            color: var(--accent-lt);
+            background: rgba(56,139,253,0.1);
+            border: 1px solid rgba(56,139,253,0.25);
             padding: 4px 10px;
         }
 
@@ -91,7 +95,7 @@
         }
 
         .btn-signout {
-            font-family: 'Special Elite', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
             letter-spacing: 2px;
             color: var(--fog);
@@ -146,7 +150,7 @@
         }
 
         .page-title {
-            font-family: 'Playfair Display', Georgia, serif;
+            font-family: 'Inter', sans-serif; font-weight: 600;
             font-size: 32px;
             color: var(--gold);
             font-weight: 700;
@@ -181,11 +185,11 @@
             position: absolute;
             top: 0; left: 0; right: 0;
             height: 2px;
-            background: var(--gold-dk);
+            background: var(--accent);
         }
 
         .stat-value {
-            font-family: 'Playfair Display', Georgia, serif;
+            font-family: 'Inter', sans-serif; font-weight: 600;
             font-size: 36px;
             font-weight: 700;
             color: var(--gold);
@@ -194,7 +198,7 @@
         }
 
         .stat-label {
-            font-family: 'Special Elite', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
             letter-spacing: 2px;
             color: var(--fog);
@@ -211,7 +215,7 @@
         }
 
         .section-title {
-            font-family: 'Playfair Display', Georgia, serif;
+            font-family: 'Inter', sans-serif; font-weight: 600;
             font-size: 20px;
             color: var(--white);
             font-weight: 700;
@@ -219,7 +223,7 @@
 
         /* ── BUTTONS ───────────────────────────────────────── */
         .btn-gold {
-            font-family: 'Special Elite', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
             letter-spacing: 2.5px;
             text-transform: uppercase;
@@ -235,7 +239,7 @@
         .btn-gold:disabled { opacity: 0.45; cursor: not-allowed; }
 
         .btn-ghost {
-            font-family: 'Special Elite', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -250,7 +254,7 @@
         .btn-ghost:hover { color: var(--mist); border-color: var(--fog); }
 
         .btn-danger {
-            font-family: 'Special Elite', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -284,7 +288,7 @@
         .panel-header:hover { background: rgba(201,162,39,0.04); }
 
         .panel-header-title {
-            font-family: 'Playfair Display', Georgia, serif;
+            font-family: 'Inter', sans-serif; font-weight: 600;
             font-size: 18px;
             color: var(--gold);
             font-weight: 700;
@@ -315,7 +319,7 @@
         .form-group.full { grid-column: 1 / -1; }
 
         label {
-            font-family: 'Special Elite', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
             letter-spacing: 2px;
             color: var(--gold-dk);
@@ -326,7 +330,7 @@
             background: rgba(255,255,255,0.06);
             border: 1px solid rgba(201,162,39,0.2);
             color: var(--white);
-            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             font-size: 16px;
             padding: 11px 14px;
             border-radius: 2px;
@@ -362,7 +366,7 @@
         .creation-result.visible { display: block; }
 
         .result-label {
-            font-family: 'Special Elite', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
             letter-spacing: 2px;
             color: var(--green);
@@ -379,7 +383,7 @@
         .result-item { display: flex; flex-direction: column; gap: 4px; }
 
         .result-key {
-            font-family: 'Special Elite', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
             letter-spacing: 1.5px;
             color: var(--fog);
@@ -387,7 +391,7 @@
         }
 
         .result-val {
-            font-family: 'Playfair Display', Georgia, serif;
+            font-family: 'Inter', sans-serif; font-weight: 600;
             font-size: 22px;
             color: var(--gold);
             letter-spacing: 4px;
@@ -408,13 +412,13 @@
         }
 
         .btn-copy {
-            font-family: 'Special Elite', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
             letter-spacing: 2px;
             text-transform: uppercase;
-            color: var(--gold);
-            background: rgba(201,162,39,0.1);
-            border: 1px solid rgba(201,162,39,0.25);
+            color: var(--accent-lt);
+            background: rgba(56,139,253,0.1);
+            border: 1px solid rgba(56,139,253,0.25);
             padding: 6px 14px;
             cursor: pointer;
             transition: all 0.2s;
@@ -454,7 +458,7 @@
         }
         .empty-state-icon { font-size: 40px; margin-bottom: 14px; display: block; }
         .empty-state-title {
-            font-family: 'Playfair Display', Georgia, serif;
+            font-family: 'Inter', sans-serif; font-weight: 600;
             font-size: 20px;
             color: var(--mist);
             margin-bottom: 8px;
@@ -484,7 +488,7 @@
         .game-info { flex: 1; min-width: 200px; }
 
         .game-story {
-            font-family: 'Playfair Display', Georgia, serif;
+            font-family: 'Inter', sans-serif; font-weight: 600;
             font-size: 18px;
             color: var(--white);
             font-weight: 700;
@@ -492,7 +496,7 @@
         }
 
         .game-meta {
-            font-family: 'Special Elite', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
             letter-spacing: 1.5px;
             color: var(--fog);
@@ -509,7 +513,7 @@
 
         /* Status pill */
         .status-pill {
-            font-family: 'Special Elite', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -524,7 +528,7 @@
         .player-bar { width: 160px; }
 
         .player-bar-label {
-            font-family: 'Special Elite', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
             letter-spacing: 1.5px;
             color: var(--fog);
@@ -567,7 +571,7 @@
         .detail-item { display: flex; flex-direction: column; gap: 4px; }
 
         .detail-key {
-            font-family: 'Special Elite', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
             letter-spacing: 1.5px;
             color: var(--fog);
@@ -580,7 +584,7 @@
         }
 
         .detail-val.code {
-            font-family: 'Playfair Display', Georgia, serif;
+            font-family: 'Inter', sans-serif; font-weight: 600;
             font-size: 22px;
             color: var(--gold);
             letter-spacing: 4px;
@@ -591,7 +595,7 @@
         .players-section { margin-top: 16px; }
 
         .players-label {
-            font-family: 'Special Elite', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
             letter-spacing: 2px;
             color: var(--gold-dk);
@@ -637,7 +641,7 @@
 
         /* Status change buttons */
         .btn-status {
-            font-family: 'Special Elite', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -654,7 +658,7 @@
 
         /* Expand toggle */
         .btn-expand {
-            font-family: 'Special Elite', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -684,7 +688,7 @@
             bottom: 30px;
             right: 30px;
             padding: 14px 22px;
-            font-family: 'Special Elite', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 12px;
             letter-spacing: 1.5px;
             z-index: 9999;
@@ -694,7 +698,7 @@
             pointer-events: none;
         }
         .toast.show { opacity: 1; transform: translateY(0); }
-        .toast.success { background: var(--green-dk); border: 1px solid rgba(39,170,91,0.4); color: #a8f0c8; }
+        .toast.success { background: #1a3a1a; border: 1px solid rgba(63,185,80,0.4); color: #3fb950; }
         .toast.error   { background: var(--crimson);  border: 1px solid rgba(192,57,43,0.5); color: #f5c0c0; }
 
         /* ── RESPONSIVE ────────────────────────────────────── */
@@ -730,14 +734,14 @@
         }
 
         .gm-title {
-            font-family: 'Playfair Display', Georgia, serif;
+            font-family: 'Inter', sans-serif; font-weight: 600;
             font-size: 18px;
             color: var(--gold);
             font-weight: 700;
         }
 
         .gm-title span {
-            font-family: 'Special Elite', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
             letter-spacing: 2px;
             color: var(--fog);
@@ -746,7 +750,7 @@
         }
 
         .gm-close {
-            font-family: 'Special Elite', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -783,7 +787,7 @@
         }
 
         .gm-act-title {
-            font-family: 'Playfair Display', Georgia, serif;
+            font-family: 'Inter', sans-serif; font-weight: 600;
             font-size: 15px;
             color: var(--gold);
             text-transform: uppercase;
@@ -810,7 +814,7 @@
         .gm-toggle-btn.on  { background: #8b1a1a; color: white; }
 
         .gm-toggle-label {
-            font-family: 'Playfair Display', Georgia, serif;
+            font-family: 'Inter', sans-serif; font-weight: 600;
             font-size: 14px;
             font-weight: 700;
         }
@@ -837,7 +841,7 @@
             border: none;
             cursor: pointer;
             border-radius: 2px;
-            font-family: 'Special Elite', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -855,7 +859,7 @@
         }
 
         .gm-section-title {
-            font-family: 'Playfair Display', Georgia, serif;
+            font-family: 'Inter', sans-serif; font-weight: 600;
             font-size: 16px;
             color: var(--gold);
             text-transform: uppercase;
@@ -875,7 +879,7 @@
             padding: 10px 0;
             cursor: pointer;
             border-radius: 2px;
-            font-family: 'Playfair Display', Georgia, serif;
+            font-family: 'Inter', sans-serif; font-weight: 600;
             font-size: 13px;
             letter-spacing: 1px;
             text-transform: uppercase;
@@ -894,7 +898,7 @@
             padding: 12px 28px;
             cursor: pointer;
             border-radius: 2px;
-            font-family: 'Special Elite', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -909,7 +913,7 @@
             padding: 10px 22px;
             cursor: pointer;
             border-radius: 2px;
-            font-family: 'Special Elite', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -928,7 +932,7 @@
             border-radius: 2px;
         }
 
-        .gm-player-name { font-family: 'Playfair Display', Georgia, serif; color: var(--gold); }
+        .gm-player-name { font-family: 'Inter', sans-serif; font-weight: 600; color: var(--gold); }
         .gm-player-count { color: var(--white); font-size: 16px; font-weight: bold; }
 
         @media (max-width: 768px) {
@@ -970,7 +974,7 @@
         }
 
         .edit-modal-title {
-            font-family: 'Playfair Display', Georgia, serif;
+            font-family: 'Inter', sans-serif; font-weight: 600;
             font-size: 20px;
             color: var(--gold);
             font-weight: 700;
@@ -1011,7 +1015,7 @@
         }
 
         .gen-title {
-            font-family: 'Playfair Display', Georgia, serif;
+            font-family: 'Inter', sans-serif; font-weight: 600;
             font-size: 22px;
             color: var(--gold);
             font-weight: 700;
@@ -1020,7 +1024,7 @@
         .gen-body { padding: 28px; }
 
         .gen-section-title {
-            font-family: 'Special Elite', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
             letter-spacing: 3px;
             color: var(--gold-dk);
@@ -1047,7 +1051,7 @@
         }
 
         .gen-player-name {
-            font-family: 'Playfair Display', Georgia, serif;
+            font-family: 'Inter', sans-serif; font-weight: 600;
             font-size: 16px;
             color: var(--white);
             font-weight: 700;
@@ -1060,7 +1064,7 @@
         }
 
         .gen-player-score {
-            font-family: 'Special Elite', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
             color: var(--fog);
             letter-spacing: 1.5px;
@@ -1074,7 +1078,7 @@
         }
 
         .gen-tag {
-            font-family: 'Special Elite', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
             letter-spacing: 1.5px;
             text-transform: uppercase;
@@ -1092,7 +1096,7 @@
             background: rgba(255,255,255,0.06);
             border: 1px solid rgba(201,162,39,0.2);
             color: var(--white);
-            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             font-size: 14px;
             padding: 6px 10px;
             border-radius: 2px;
