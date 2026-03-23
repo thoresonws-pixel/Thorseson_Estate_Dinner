@@ -1451,6 +1451,7 @@
                 <div class="game-actions">
                     <button class="btn-gold" onclick="openGMPanel('${id}')">🎭 Run Game</button>
                     ${g.status === 'lobby' ? `<button class="btn-status btn-start" onclick="openGenerateModal('${id}')">⚄ Generate Roles</button>` : ''}
+                    ${g.status === 'lobby' ? `<button class="btn-ghost" style="font-size:10px;padding:6px 12px;" onclick="addTestPlayers('${id}')">+ Test Players</button>` : ''}
                     ${canStart    ? `<button class="btn-status btn-start"    onclick="setStatus('${id}','active')">▶ Start</button>` : ''}
                     ${canComplete ? `<button class="btn-status btn-complete" onclick="setStatus('${id}','complete')">■ Complete</button>` : ''}
                     <button class="btn-copy" onclick="copyText('${inviteUrl}', 'invite-${id}')">Copy Invite</button>
@@ -1887,15 +1888,8 @@
         });
 
         if (Object.keys(genPlayers).length === 0) {
-            document.getElementById('genPlayerGrid').innerHTML = `
-                <div style="grid-column:1/-1;">
-                    <div style="color:var(--fog);font-style:italic;margin-bottom:16px;">
-                        No players have chosen characters yet.
-                    </div>
-                    <button class="btn-ghost" onclick="addTestPlayers('${gameId}')">
-                        + Add Test Players (for development)
-                    </button>
-                </div>`;
+            document.getElementById('genPlayerGrid').innerHTML =
+                '<div style="color:var(--fog);font-style:italic;">No players have chosen characters yet.</div>';
             return;
         }
 
