@@ -929,10 +929,10 @@
     <!-- Tabs -->
     <div class="tab-bar">
         <button class="tab-btn active" onclick="switchTab('pregame', this)">Pre-Game</button>
-        <button class="tab-btn" onclick="switchTab('health', this)">Game Health</button>
+
         <button class="tab-btn" onclick="switchTab('guests', this)">Guest List</button>
         <button class="tab-btn" onclick="switchTab('characters', this)">Characters</button>
-        <button class="tab-btn" onclick="switchTab('run', this)">Run Game</button>
+        <button class="tab-btn" onclick="switchTab('monitor', this)">GM Monitor</button>
         <button class="tab-btn" onclick="switchTab('screen', this)">Big Screen</button>
     </div>
 </div>
@@ -1015,7 +1015,8 @@
     </div>
 
     <!-- ═══ GAME HEALTH TAB ════════════════════════════════════ -->
-    <div class="tab-panel" id="tab-health">
+    <!-- tab-health merged into tab-monitor -->
+    <div class="tab-panel" id="tab-health" style="display:none!important;">
 
         <div class="alert-strip" id="healthAlerts">
             <div class="alert-strip-title">⚠ Attention Needed</div>
@@ -1121,8 +1122,58 @@
 
     </div>
 
-    <!-- ═══ RUN GAME TAB ═══════════════════════════════════════ -->
-    <div class="tab-panel" id="tab-run">
+    <!-- ═══ GM MONITOR TAB — merged Game Health + Run Game ══════ -->
+    <div class="tab-panel" id="tab-monitor">
+
+        <!-- ── LIVE STATS ROW ─────────────────────────────────── -->
+        <div class="health-grid" style="margin-bottom:20px;">
+            <div class="health-stat dead">
+                <div class="health-stat-value" id="hStatPlayers2">—</div>
+                <div class="health-stat-label">Players Active</div>
+            </div>
+            <div class="health-stat dead">
+                <div class="health-stat-value" id="hStatRevealed2">—</div>
+                <div class="health-stat-label">Revelations Live</div>
+            </div>
+            <div class="health-stat dead">
+                <div class="health-stat-value" id="hStatScans2">—</div>
+                <div class="health-stat-label">Total Scans</div>
+            </div>
+            <div class="health-stat dead">
+                <div class="health-stat-value" id="hStatAct">—</div>
+                <div class="health-stat-label">Current Act</div>
+            </div>
+        </div>
+
+        <!-- ── ALERT STRIP ────────────────────────────────────── -->
+        <div class="alert-strip" id="monitorAlerts">
+            <div class="alert-strip-title">⚠ Attention Needed</div>
+            <div id="monitorAlertItems"></div>
+        </div>
+
+        <!-- ── PLAYER ACTIVITY ───────────────────────────────── -->
+        <div class="section-head" style="margin-bottom:10px;">
+            <div class="section-title">Player Activity</div>
+            <button class="btn-ghost" onclick="refreshHealth()">↻ Refresh</button>
+        </div>
+        <div class="panel" style="padding:0;margin-bottom:28px;">
+            <table class="activity-table">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Character</th>
+                        <th>Last Seen</th>
+                        <th>Scans</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="activityTable2">
+                    <tr><td colspan="5" style="color:var(--fog);font-style:italic;text-align:center;padding:24px;">Game hasn't started yet.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+    <!-- ── REVELATION CONTROLS ───────────────────────────────── -->
 
         <div class="section-head">
             <div class="section-title">Revelation Controls</div>
@@ -1366,6 +1417,7 @@ function renderHeader() {
 
 // ── TAB SWITCHING ─────────────────────────────────────────────
 function switchTab(name, btn) {
+    if (name === 'run' || name === 'health') name = 'monitor';
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('tab-' + name).classList.add('active');
@@ -1457,10 +1509,19 @@ function refreshHealth() {
     const revealedCount = activeItems.length;
     const skillsUsed = Object.keys(skillAssign).length;
 
-    document.getElementById('hStatPlayers').textContent  = playerList.filter(p => p.status === 'ready').length;
-    document.getElementById('hStatRevealed').textContent = revealedCount;
-    document.getElementById('hStatScans').textContent    = totalScans;
-    document.getElementById('hStatSkills').textContent   = skillsUsed;
+    const activePlayers = playerList.filter(p => p.status === 'ready').length;
+    ['hStatPlayers','hStatPlayers2'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=activePlayers; });
+    ['hStatRevealed','hStatRevealed2'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=revealedCount; });
+    ['hStatScans','hStatScans2'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=totalScans; });
+    ['hStatSkills'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=skillsUsed; });
+
+    // Current act
+    const actEl = document.getElementById('hStatAct');
+    if (actEl && typeof revelationsDatabase !== 'undefined') {
+        const act3Live = revelationsDatabase.act3?.items.some(i => activeItems.includes(i.id));
+        const act2Live = revelationsDatabase.act2?.items.some(i => activeItems.includes(i.id));
+        actEl.textContent = act3Live ? '3' : act2Live ? '2' : activeItems.includes('willsDeath') ? '1' : '—';
+    }
 
     // Act progress
     if (typeof revelationsDatabase !== 'undefined') {
@@ -1487,14 +1548,18 @@ function refreshHealth() {
 
     const alertEl = document.getElementById('healthAlerts');
     if (alerts.length > 0) {
-        document.getElementById('alertItems').innerHTML = alerts.map(a => `<div class="alert-item">${a}</div>`).join('');
+        ['alertItems','monitorAlertItems'].forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML=alerts.map(a=>`<div class="alert-item">${a}</div>`).join(''); });
         alertEl.classList.add('visible');
+        const mon=document.getElementById('monitorAlerts'); if(mon) mon.classList.add('visible');
     } else {
         alertEl.classList.remove('visible');
+        const mon2=document.getElementById('monitorAlerts'); if(mon2) mon2.classList.remove('visible');
     }
 
     // Activity table
-    const tbody = document.getElementById('activityTable');
+    ['activityTable','activityTable2'].forEach(tbId => {
+    const tbody = document.getElementById(tbId);
+    if (!tbody) return;
     if (playerList.length === 0) {
         tbody.innerHTML = '<tr><td colspan="5" style="color:var(--fog);font-style:italic;text-align:center;padding:24px;">No players yet.</td></tr>';
         return;

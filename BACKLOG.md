@@ -1,55 +1,99 @@
-# Thoreson Estate — Post-Game Backlog
+# Thor's Murder Mysteries — Platform Backlog
 
 ## HIGH PRIORITY
-1. **Cocktail hour side quests** — Icebreaker tasks, character scavenger hunt, relationship missions, gossip round. Players need to be in character BEFORE the murder happens. Nobody should be reading their backstory for the first time when Will dies.
-2. **Detective board on TV** — Cork board display on the big TV behind GM. As revelations are toggled from Master Controls, clues auto-pin as polaroid-style cards. Red string animates between connected evidence. Replaces the need for the investigator to manually track clues — DJ did a great job in character but struggled to write everything down. The TV becomes the room's shared brain.
-3. **Photo captions** — Let players add a comment/caption when they take a photo. Caption shows on the photo wall slideshow and in the photo gallery. One player was taking photos outside the app just so she could annotate them — the captions were some of the funniest moments of the night. This needs to be built into the camera flow.
-4. **Leaderboard 2.0** — Expand scoring system and display on TV periodically.
-   - **First scanner bonus** — extra points if you're the first person to scan a clue
-   - **Puzzle solver points** — QR code inside the safe: "Only scan this if YOU cracked the combination." Same for any lockbox or puzzle.
-   - **Leaderboard on TV** — rotate it into the slideshow every few cycles, or GM triggers it from Master Controls at key moments (end of each act, final reveal)
-   - **Point categories** — clues found, puzzles solved, first discoveries. Visible breakdown on the leaderboard.
+
+1. **Cocktail hour side quests** — Icebreaker tasks, character scavenger hunt, relationship missions, gossip round. Players need to be in character BEFORE the murder happens.
+
+2. **Time-gated revelations** — Add `minMinutes` field to each revelation in `revelations.js`. GM panel shows countdown "Available in 23 min" and greys the button until timer clears. Prevents the story resolving too fast regardless of player skill. Design targets for Thoreson: Act 2 floor at 45 min, wolfsbane at 90 min, Pinkerton at 100 min, confession at 110 min.
+
+3. **Merge Game Health + Run Game into one GM monitoring view** — GM is watching cameras, not operating a control board. 90-95% automated. Single screen shows: live revelation status, player activity, story progress, and the rare manual intervention controls (hold/release a revelation, send a nudge). Replace two tabs with one.
+
+4. **Formal accusation round** — Structured moment at end of Act 2 where a timed prompt fires on every player's phone: "Name your suspect and one reason." Forces the social dynamic. Killer gets a chance to deflect publicly. Currently players solve it like a puzzle instead of interrogating each other — this fixes that.
+
+5. **Detective board on TV** — Cork board on the big screen. Clues auto-pin as polaroid cards when revelations fire. Red string connects related evidence. The room's shared brain — replaces manual note-taking.
+
+6. **Cocktail hour character interaction tasks** — Specific missions during cocktail hour: find out X's secret, confirm Y's alibi, trade information with Z. Players arrive at Act 1 already suspicious of each other instead of still reading their backstories.
 
 ## FEATURES
-3. **Detective board on phones** — Redesign Discoveries page to match the TV board aesthetic. Players can review clues on their own phone but the TV is the primary view.
-4. **Native app** — React Native or Flutter. Proper push notifications, offline support, smoother QR scanning.
 
-## STORY / GAME DESIGN
-5. **Rework the confession delivery** — Three audio recordings was too repetitive. By Act 3 it felt tedious. Options: one full recording split into unlockable segments; shorter clips for Acts 2-3 with just the key reveals; mix formats (Act 1 audio, Act 2 written letter, Act 3 Pinkerton report); or let the investigator read Acts 2-3 aloud from the TV board. Variety keeps each act feeling fresh.
-6. **Pacing control** — 23 people going every direction finding clues at different times. The story lost cohesion. Solutions:
-   - **Gated acts** — Act 2 QR codes don't work until GM opens Act 2. "This evidence hasn't been discovered yet."
-   - **Group reveal moments** — each act ends with a "gather round." GM presents findings on TV detective board, THEN opens next act.
-   - **Fewer clues per act** — 5-6 key clues instead of many scattered ones. Quality over quantity.
-   - **Team structure** — groups of 3-4 with mixed skills, must collaborate to unlock clues.
-   - **Pace clock on TV** — visible countdown per act creates urgency and rhythm.
-   - The combination of gated acts + detective board + gather rounds would solve most of this.
-7. **Rework memory/clue delivery** — Players read every memory, skill analysis, and clue text verbatim from their phones. Killed immersion. Fixes:
-   - **Bullet points not paragraphs** — give 2-3 key facts, not a script. Force players to paraphrase.
-   - **"Share in your own words"** — explicit instruction at the end of every memory popup.
-   - **Timed popups** — memory visible for 45-60 seconds then fades. Can't stand there reading.
-   - **One-line triggers** — "You recognize that handwriting" not a full analysis. Player explains from backstory knowledge.
-   - **GM announcement** — "When your phone buzzes, read it to yourself, then tell the group what your character remembers. Don't read from your phone — it's 1935."
-   - Skill expert analyses may need to stay longer/readable since they're technical — but personal memories should be internalized and shared naturally.
+7. **Photo captions** — Let players annotate photos when taking them. Show on slideshow and gallery. Was one of the funniest parts of game night and happened outside the app.
 
-## PRODUCTION
-6. *(costumes, lighting, music, dinner pairing — pending survey results)*
+8. **Leaderboard 2.0**
+   - First scanner bonus
+   - Puzzle solver QR code inside safe/lockbox
+   - Leaderboard rotates into TV slideshow or GM triggers it
+   - Point categories: clues found, puzzles solved, first discoveries
+
+9. **Pace clock on TV** — Visible countdown per act. Creates urgency and rhythm. GM controls it.
+
+10. **Detective board on phones** — Redesign Discoveries page to match TV board aesthetic. Phone is secondary view, TV is primary.
+
+11. **Native app** — React Native or Flutter. Push notifications, offline support, smoother QR scanning. Target for commercial launch.
+
+12. **GM intercom/nudge system** — From the GM monitoring screen, send a message to a specific player or group: "Check the study" / "Talk to Miranda about Switzerland." Appears as a subtle notification. GM stays invisible but can unstick a group without breaking immersion.
+
+13. **PWA upgrade** — Add to home screen, offline caching of character data, background sync. Bridges gap before native app.
+
+## GAME DESIGN
+
+14. **Rework memory delivery** — Players read memories verbatim from phones, kills immersion.
+    - Bullet points not paragraphs — 2-3 key facts, force paraphrasing
+    - "Share in your own words" instruction on every popup
+    - Timed popups — visible 45-60 seconds then fades
+    - GM announcement at start: "It's 1935, you don't have a phone"
+
+15. **Rework confession delivery** — Three audio recordings was repetitive by Act 3.
+    - Mix formats: Act 1 audio, Act 2 written letter, Act 3 Pinkerton report
+    - Or: one full recording split into unlockable segments
+
+16. **Pacing structure** — Tie acts to dinner service (cocktails → appetizers → main → dessert). Natural time anchors regardless of how fast players are solving.
+    - Target: cocktails 60 min, Act 1 40 min, Act 2 35 min, Act 3 + confession 30 min
+    - Gated acts — Act 2 QR codes don't work until GM opens Act 2
+
+17. **More red herrings in Act 1** — Bradford patent letter was supposed to slow things down but got solved too fast. More parallel tracks = more time spent, more accusations.
+
+18. **Skill backstory depth** — Currently one generic line per skill. Write 2-3 sentence versions for each skill × character combination where the character background makes the skill feel earned.
+
+19. **Role overlay content** — killer/heir access stories currently written for miranda and walter only. Need raymond, charlotte, vivienne entries.
 
 ## PLATFORM
-8. **Party system & accounts** — The foundation for running multiple events. Flow:
-   - GM creates a party → unique party code generated (e.g. "THORESON-2847")
-   - Players visit site, enter party code, create account (name, email)
-   - GM selects a story from a library of available mysteries
-   - Character selection opens — players see public descriptions (not backstories), pick their character first-come-first-serve. GM can lock or reassign.
-   - Game night: everyone logs in with their account, all data scoped to party code
-   - Post-game: photos, survey, results all tied to that party code
-   - Eliminates memorized 5-digit login codes
-9. **Story template system** — Boilerplate structure so new mysteries can be created without rebuilding the app. A story template defines: characters, backstories, skills, items, revelations, memories, acts, clue connections. The engine reads the template and runs the game. Thoreson Estate becomes "story #1" in a library.
-10. **GM dashboard per party** — Master Controls scoped to a party code. Multiple GMs could run different parties on the same night with different stories.
+
+20. **SendGrid integration** — Wire ✉ Send Invite Email button to SendGrid API. Template already built in `buildInviteMessage()`.
+
+21. **Twilio integration** — Wire 💬 Send Invite Text button to Twilio API.
+
+22. **Firebase rules** — Add `/cancelledGames` and `/adminInvites` to Realtime Database rules. Currently blocking cancel game flow.
+
+23. **Story architecture migration** — Move characters/skills/revelations to Firebase under `/stories/{storyId}/` rather than flat JS files. Load dynamically per game. Prerequisite for story #2 launch.
+
+24. **Payment integration** — Stripe for ticket sales. Currently manual toggle per player in Guest List tab.
+
+25. **Custom domain** — Register thorsmurdermysteries.com (or chosen brand name). Point at GitHub Pages free, migrate to Firebase Hosting when server-side code needed.
+
+## STORIES
+
+26. **The Devereaux Masquerade** — New Orleans, 1924. Write actual content (currently running Thoreson placeholder).
+
+27. **Last Train to Wicker Park** — Chicago, 1947. "Our take on murder on the Orient Express." Write actual content.
+
+28. **Thor's Asgard** — Asgard, age of the gods. Norse mythology murder mystery. Write actual content.
+
+29. **Story #2 design principle** — Write from scratch with flexible role/skill assignment in mind. No character identity tied to a specific skill. Killer/heir overlays written for all eligible characters from day one.
 
 ## BUSINESS
-11. **Commercial launch plan** — venue model, pricing, staffing (see session 2 transcript)
-12. **Brochure** — Estate Experience ($115/pp), Private Affair ($135/pp), Corporate ($2,500 flat)
-13. **Survey results analysis** — review all feedback, extract pricing data and venue preferences
 
-## BUGS / FIXES FROM GAME NIGHT
-10. *(add items from debrief)*
+30. **Brand name decision** — Thor's Murder Mysteries is the frontrunner. Register domain once decided.
+
+31. **Kickstarter** — Strong fit. Working prototype, proof of concept, demo video of March 21 event. File trademark first. Consider launching with 2 stories live and a 3rd in development.
+
+32. **Commercial launch plan** — Venue model, pricing ($50-100/ticket), staffing. Shark Tank pitch angle: platform licensing to other GMs = scalability story.
+
+33. **Apple Sign-In** — Requires Apple Developer account ($99/yr). Worth adding before commercial launch for iOS users.
+
+## KNOWN BUGS / FIXES
+
+34. **Firebase rules** — `/cancelledGames` and `/adminInvites` paths return PERMISSION_DENIED. Update rules in Firebase Console.
+
+35. **Legacy game storyId** — Existing games with `storyId: 'thoreson'` need updating to `'thoreson_estate_dinner'` in Firebase, or use the normalizer already in game.html.
+
+36. **characters.js.bak** — Backup file committed to repo. Remove before commercial launch.
