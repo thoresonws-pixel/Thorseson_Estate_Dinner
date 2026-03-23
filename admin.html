@@ -1560,8 +1560,7 @@
     // ── Game card HTML ────────────────────────────────────
     function gameCardHTML(id, g) {
         const players     = Object.entries(g.players || {});
-        const realPlayers = players.filter(([uid]) => !uid.startsWith('test_player_'));
-        const playerCount = realPlayers.length;
+        const playerCount = players.length;
         const maxPlayers  = g.maxPlayers || 21;
         const fillPct     = Math.min(100, Math.round((playerCount / maxPlayers) * 100));
         const statusClass = `status-${g.status}`;
@@ -1577,16 +1576,16 @@
         // ── FLAG SYMBOLS ─────────────────────────────────────────
         const flags = [];
         // $ unpaid players
-        const unpaid = realPlayers.filter(([,p]) => !p.paymentCollected).length;
+        const unpaid = players.filter(([,p]) => !p.paymentCollected).length;
         if (unpaid > 0) flags.push({ sym: '$', tip: unpaid + ' unpaid', color: '#d29922' });
         // ⚄ roles not generated
         const state = g.state || {};
-        if (realPlayers.length > 0 && !state.characterRoles) flags.push({ sym: '⚄', tip: 'Roles not generated', color: '#8b949e' });
+        if (players.length > 0 && !state.characterRoles) flags.push({ sym: '⚄', tip: 'Roles not generated', color: '#8b949e' });
         // ⚠ missing questionnaire
-        const noQ = realPlayers.filter(([,p]) => !p.questionnaire).length;
+        const noQ = players.filter(([,p]) => !p.questionnaire).length;
         if (noQ > 0) flags.push({ sym: '⚠', tip: noQ + ' missing questionnaire', color: '#d29922' });
         // 👤 still choosing
-        const choosing = realPlayers.filter(([,p]) => p.status !== 'ready').length;
+        const choosing = players.filter(([,p]) => p.status !== 'ready').length;
         if (choosing > 0) flags.push({ sym: '👤', tip: choosing + ' still choosing character', color: '#8b949e' });
 
         const flagsHTML = flags.map(f =>

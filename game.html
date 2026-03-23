@@ -1930,6 +1930,8 @@ const TEST_FIRST = ['James','Emma','Oliver','Sophia','Henry','Clara','Ruth','Ros
         tpRowData = available.map(charId => ({
             name:        randomTestName(),
             characterId: charId,
+            email:       '',
+            phone:       '',
             score:       Math.floor(Math.random()*6)+4,
             gender:      Math.random() > 0.5 ? 'female' : 'male'
         }));
@@ -1954,12 +1956,16 @@ const TEST_FIRST = ['James','Emma','Oliver','Sophia','Henry','Clara','Ruth','Ros
 
     function renderTPRows() {
         document.getElementById('tpRows').innerHTML = tpRowData.map((row, i) => `
-            <div class="tp-row" id="tp-row-${i}">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 50px 50px 44px;gap:6px;margin-bottom:6px;">
                 <input class="tp-input" value="${row.name}"
-                    oninput="tpRowData[${i}].name=this.value" placeholder="Player name">
+                    oninput="tpRowData[${i}].name=this.value" placeholder="Name">
                 <select class="tp-select" onchange="tpRowData[${i}].characterId=this.value">
                     ${getCharOptions(row.characterId)}
                 </select>
+                <input class="tp-input" value="${row.email||''}" type="email"
+                    oninput="tpRowData[${i}].email=this.value" placeholder="Email (opt)">
+                <input class="tp-input" value="${row.phone||''}" type="tel"
+                    oninput="tpRowData[${i}].phone=this.value" placeholder="Phone (opt)">
                 <input class="tp-score" type="number" min="1" max="10" value="${row.score}"
                     oninput="tpRowData[${i}].score=parseInt(this.value)||5">
                 <select class="tp-select" onchange="tpRowData[${i}].gender=this.value">
@@ -1979,6 +1985,8 @@ const TEST_FIRST = ['James','Emma','Oliver','Sophia','Henry','Clara','Ruth','Ros
         tpRowData.push({
             name:        randomTestName(),
             characterId: nextChar || Object.keys(characterDatabase)[0],
+            email:       '',
+            phone:       '',
             score:       5,
             gender:      'female'
         });
@@ -2011,6 +2019,8 @@ const TEST_FIRST = ['James','Emma','Oliver','Sophia','Henry','Clara','Ruth','Ros
                 characterName: row.characterId.replace(/_/g,' '),
                 status:        'ready',
                 joinedAt:      new Date().toISOString(),
+                testEmail:     row.email || null,
+                testPhone:     row.phone || null,
                 questionnaire: {
                     gender:          row.gender,
                     involvementScore: row.score,
@@ -2160,9 +2170,11 @@ ${inviteUrl}
             <button class="btn-signout" onclick="closeTPModal()">✕</button>
         </div>
         <div class="tp-body">
-            <div class="tp-row" style="margin-bottom:6px;">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 60px 60px 80px;gap:8px;margin-bottom:6px;">
                 <div class="tp-row-header">Name</div>
                 <div class="tp-row-header">Character</div>
+                <div class="tp-row-header">Email</div>
+                <div class="tp-row-header">Phone</div>
                 <div class="tp-row-header">Score</div>
                 <div class="tp-row-header">Gender</div>
                 <div></div>
