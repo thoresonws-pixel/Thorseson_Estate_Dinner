@@ -1468,12 +1468,31 @@
     let currentUser = null;
 
     // ── Auth + admin check ────────────────────────────────
+    const ADMIN_EMAILS = ['thoresonws@gmail.com'];
+
     auth.onAuthStateChanged(async user => {
         if (!user || user.isAnonymous) { window.location.href = "signin.html"; return; }
 
-        const snap = await db.ref(`users/${user.uid}/role`).once('value');
-        if (snap.val() !== 'admin') {
-            // Not admin — boot them
+        // Fast path for known admins — skip DB lookup
+        if (ADMIN_EMAILS.includes((user.email || '').toLowerCase())) {
+            currentUser = user;
+            document.getElementById('topbarUser').textContent = user.displayName || user.email;
+            document.getElementById('authScreen').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+            document.getElementById('gameDate').value = new Date().toISOString().split('T')[0];
+            loadGames();
+            return;
+        }
+
+        try {
+            const snap = await db.ref('users/' + user.uid + '/role').once('value');
+            if (snap.val() !== 'admin') {
+                await auth.signOut();
+                window.location.href = 'signin.html';
+                return;
+            }
+        } catch(e) {
+            // DB read failed — if not in known admin list, boot them
             await auth.signOut();
             window.location.href = 'signin.html';
             return;
