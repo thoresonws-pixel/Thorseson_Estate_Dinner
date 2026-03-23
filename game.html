@@ -1221,7 +1221,7 @@ let activeItems  = [];
 let scans        = {};
 let roleAssign   = {};
 let skillAssign  = {};
-let rolesConfig  = null;
+// rolesConfig loaded from stories/{storyId}/roles.js
 
 // ── AUTH ──────────────────────────────────────────────────────
 auth.onAuthStateChanged(async user => {
@@ -1646,7 +1646,22 @@ function closeGenModal() {
 }
 
 function runGameGeneration() {
-    if (!rolesConfig) { showToast('Roles config not loaded yet.', 'error'); return; }
+    if (typeof rolesConfig === 'undefined' || !rolesConfig) {
+        showToast('Loading roles config…', 'success');
+        // Wait up to 3 seconds for rolesConfig to appear
+        let attempts = 0;
+        const wait = setInterval(() => {
+            attempts++;
+            if (typeof rolesConfig !== 'undefined' && rolesConfig) {
+                clearInterval(wait);
+                runGameGeneration();
+            } else if (attempts > 15) {
+                clearInterval(wait);
+                showToast('Roles config failed to load. Try refreshing.', 'error');
+            }
+        }, 200);
+        return;
+    }
     genAssignments = {};
 
     const playerList   = Object.values(genPlayers);
