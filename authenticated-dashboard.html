@@ -1265,11 +1265,12 @@
     </div>
 
     <footer>
-        The Thoreson Estate — 1935 <span style="opacity:0.6; margin-left:10px;">v3.22.1</span>
+        The Thoreson Estate — 1935 <span style="opacity:0.6; margin-left:10px;">v3.22.2</span>
     </footer>
 
     <!-- QR Scanner -->
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
@@ -3059,29 +3060,42 @@
             if (!urls.length) return;
             const btn = document.getElementById('downloadAllSequential');
             btn.disabled = true;
-            let saved = 0;
-            for (let i = 0; i < urls.length; i++) {
-                btn.textContent = `↓ Saving ${i+1} of ${urls.length}...`;
-                try {
-                    const resp = await fetch(urls[i]);
-                    const blob = await resp.blob();
-                    const ext = blob.type.includes('png') ? 'png' : 'jpg';
-                    const objUrl = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = objUrl;
-                    a.download = `thoreson_photo_${String(i+1).padStart(3,'0')}.${ext}`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    setTimeout(() => URL.revokeObjectURL(objUrl), 5000);
-                    saved++;
-                } catch(e) {
-                    console.warn('Failed photo', i+1, e);
+
+            try {
+                const zip = new JSZip();
+                const folder = zip.folder('thoreson_photos');
+                let fetched = 0;
+
+                for (let i = 0; i < urls.length; i++) {
+                    btn.textContent = `⏳ Fetching ${i+1} of ${urls.length}...`;
+                    try {
+                        const resp = await fetch(urls[i]);
+                        const blob = await resp.blob();
+                        const ext = blob.type.includes('png') ? 'png' : 'jpg';
+                        folder.file(`photo_${String(i+1).padStart(3,'0')}.${ext}`, blob);
+                        fetched++;
+                    } catch(e) {
+                        console.warn('Skipped photo', i+1, e);
+                    }
                 }
-                await new Promise(r => setTimeout(r, 800));
+
+                btn.textContent = `⏳ Zipping ${fetched} photos...`;
+                const zipBlob = await zip.generateAsync({ type: 'blob' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(zipBlob);
+                a.download = 'thoreson_photos.zip';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+
+                btn.textContent = `✓ Done — ${fetched} photos in zip`;
+                setTimeout(() => { btn.textContent = `↓ Download All (${urls.length})`; btn.disabled = false; }, 4000);
+            } catch(err) {
+                console.error(err);
+                btn.textContent = '↓ Download All (retry)';
+                btn.disabled = false;
             }
-            btn.textContent = `✓ Done — ${saved} photos saved`;
-            setTimeout(() => { btn.textContent = `↓ Download All (${urls.length})`; btn.disabled = false; }, 4000);
         }
 
         function logout() {
