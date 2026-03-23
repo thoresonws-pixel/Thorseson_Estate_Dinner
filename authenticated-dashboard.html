@@ -1234,8 +1234,9 @@
                 background:transparent; color:#8bc34a; border:1px solid rgba(139,195,74,0.5); padding:14px 28px; cursor:pointer;
                 font-family:'Playfair Display',Georgia,serif; font-size:15px; letter-spacing:2px;
                 text-transform:uppercase; border-radius:3px; margin-left:12px; text-decoration:none;">
-                📷 Add to Photo Roll
+                📷 Save to Google Photos
             </a>
+            <div id="googlePhotosHint" style="display:none; margin-top:8px; font-size:12px; color:#555; font-style:italic;">Open in the Google Photos app → tap ⋮ → "Add to Library" to save all photos to your camera roll.</div>
             <div id="uploadStatus" style="margin-top:12px; font-size:14px; color:#8b8b8b; font-style:italic;"></div>
             <div id="uploadBar" style="display:none; margin-top:10px; width:100%; max-width:400px; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden;">
                 <div id="uploadBarFill" style="height:100%; width:0%; background:#c9a227; border-radius:3px; transition:width 0.3s ease;"></div>
@@ -1271,7 +1272,7 @@
     </div>
 
     <footer>
-        The Thoreson Estate — 1935 <span style="opacity:0.6; margin-left:10px;">v3.22.4</span>
+        The Thoreson Estate — 1935 <span style="opacity:0.6; margin-left:10px;">v3.22.5</span>
     </footer>
 
     <!-- QR Scanner -->
@@ -3030,7 +3031,10 @@
                     dlBtn.style.display = fullUrls.length > 0 ? 'inline-block' : 'none';
                 }
                 const gpBtn = document.getElementById('googlePhotosBtn');
-                if (gpBtn && fullUrls.length > 0) gpBtn.style.display = 'inline-block';
+                if (gpBtn && fullUrls.length > 0) {
+                    gpBtn.style.display = 'inline-block';
+                    document.getElementById('googlePhotosHint').style.display = 'block';
+                }
 
                 grid.innerHTML = photos.map(p => `
                     <div style="background:rgba(0,0,0,0.4); border:1px solid rgba(201,162,39,0.2); border-radius:4px; overflow:hidden;">
