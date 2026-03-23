@@ -1315,12 +1315,13 @@ async function bootstrap() {
     roleAssign   = state.characterRoles   || {};
     skillAssign  = state.skillAssignments || {};
 
-    renderHeader();
-    renderChecklist();
-    renderCharacters();
-    renderRunGame();
-    renderGuests();
-    refreshHealth();
+    // Render all sections — wrapped so one failure doesn't block loading screen
+    try { renderHeader(); } catch(e) { console.error('renderHeader:', e); }
+    try { renderChecklist(); } catch(e) { console.error('renderChecklist:', e); }
+    try { renderCharacters(); } catch(e) { console.error('renderCharacters:', e); }
+    try { renderRunGame(); } catch(e) { console.error('renderRunGame:', e); }
+    try { renderGuests(); } catch(e) { console.error('renderGuests:', e); }
+    try { refreshHealth(); } catch(e) { console.error('refreshHealth:', e); }
 
     // Live listeners
     db.ref('games/' + gameId + '/state/activeItems').on('value', snap => {
