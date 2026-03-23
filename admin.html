@@ -1123,6 +1123,50 @@
             flex-wrap: wrap;
         }
 
+
+        /* ── CANCEL GAME MODAL ───────────────────────────────────── */
+        .cancel-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(6,4,10,0.88);
+            z-index: 500;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            backdrop-filter: blur(6px);
+        }
+        .cancel-overlay.open { display: flex; }
+        .cancel-modal {
+            background: var(--panel);
+            border: 1px solid rgba(248,81,73,0.3);
+            width: 100%;
+            max-width: 480px;
+        }
+        .cancel-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .cancel-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--crimson-lt);
+        }
+        .cancel-body { padding: 24px; }
+        .cancel-game-name {
+            font-size: 14px;
+            color: var(--mist);
+            margin-bottom: 20px;
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+        }
+
     </style>
 </head>
 <body>
@@ -1490,7 +1534,7 @@
                     <button class="btn-copy" onclick="copyText('${inviteUrl}', 'invite-${id}')">Copy Invite</button>
                     <span class="copy-confirm" id="invite-${id}">Copied!</span>
                     <button class="btn-ghost" onclick="openEditModal('${id}')">Edit</button>
-                    <button class="btn-danger" onclick="deleteGame('${id}', '${g.storyName}')">Delete</button>
+                    <button class="btn-danger" onclick="openCancelModal('${id}', '${g.partyName || g.storyName}')">Cancel Game</button>
                     ${Object.keys(g.players||{}).some(k=>k.startsWith('test_player_')) ? `<button class="btn-ghost" style="color:var(--fog);font-size:10px;" onclick="removeTestPlayers('${id}')">Remove Test Players</button>` : ''}
                 </div>
             </div>
@@ -1572,11 +1616,45 @@
         showToast('Status updated to ' + status, 'success');
     }
 
-    // ── Delete game ───────────────────────────────────────
-    async function deleteGame(gameId, name) {
-        if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
-        await db.ref(`games/${gameId}`).remove();
-        showToast('Party deleted.', 'success');
+    // ── Cancel / Delete game ──────────────────────────────
+    function openCancelModal(gameId, name) {
+        document.getElementById('cancelGameId').value    = gameId;
+        document.getElementById('cancelGameName').textContent = name;
+        document.getElementById('cancelNotes').value     = '';
+        document.getElementById('cancelReason').value    = 'other';
+        document.getElementById('cancelOverlay').classList.add('open');
+    }
+
+    function closeCancelModal() {
+        document.getElementById('cancelOverlay').classList.remove('open');
+    }
+
+    async function confirmCancelGame() {
+        const gameId = document.getElementById('cancelGameId').value;
+        const reason = document.getElementById('cancelReason').value;
+        const notes  = document.getElementById('cancelNotes').value.trim();
+        const g      = allGames[gameId];
+        if (!g) return;
+
+        try {
+            // Archive the game to /cancelledGames before deleting
+            const archive = {
+                ...g,
+                cancelledAt:    new Date().toISOString(),
+                cancelReason:   reason,
+                cancelNotes:    notes || null,
+                originalGameId: gameId
+            };
+            await db.ref('cancelledGames/' + gameId).set(archive);
+
+            // Now remove the live game
+            await db.ref('games/' + gameId).remove();
+
+            closeCancelModal();
+            showToast('Game cancelled and archived.', 'success');
+        } catch(err) {
+            showToast('Error: ' + err.message, 'error');
+        }
     }
 
     // ── Form helpers ──────────────────────────────────────
@@ -2356,6 +2434,45 @@
                     ✓ Lock & Apply
                 </button>
                 <button class="btn-ghost" onclick="closeGenerateModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ── CANCEL GAME MODAL ──────────────────────────────────── -->
+<div class="cancel-overlay" id="cancelOverlay" onclick="if(event.target===this)closeCancelModal()">
+    <div class="cancel-modal">
+        <div class="cancel-header">
+            <div class="cancel-title">Cancel Game</div>
+            <button class="btn-signout" onclick="closeCancelModal()">✕</button>
+        </div>
+        <div class="cancel-body">
+            <div class="cancel-game-name" id="cancelGameName">—</div>
+            <input type="hidden" id="cancelGameId">
+
+            <div class="form-group" style="margin-bottom:16px;">
+                <label for="cancelReason">Reason for Cancellation</label>
+                <select id="cancelReason" class="gen-select" style="margin-top:6px;">
+                    <option value="guest_count">Guest Count Too Low</option>
+                    <option value="host_cancelled">Host Cancelled</option>
+                    <option value="scheduling">Scheduling Conflict</option>
+                    <option value="venue">Venue Issue</option>
+                    <option value="test">Test / Development</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom:20px;">
+                <label for="cancelNotes">Notes <span style="color:var(--fog);font-size:10px;">(optional)</span></label>
+                <textarea id="cancelNotes" style="margin-top:6px;width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(201,162,39,0.2);color:var(--white);font-family:'Inter',sans-serif;font-size:14px;padding:10px 12px;border-radius:2px;resize:vertical;min-height:80px;" placeholder="Any additional context…"></textarea>
+            </div>
+
+            <div style="display:flex;gap:10px;">
+                <button class="btn-danger" style="flex:1;padding:10px;" onclick="confirmCancelGame()">
+                    Cancel Game
+                </button>
+                <button class="btn-ghost" onclick="closeCancelModal()">Keep Game</button>
             </div>
         </div>
     </div>

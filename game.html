@@ -921,6 +921,7 @@
                 <button class="btn-gold" onclick="copyInviteLink()">Copy Invite</button>
                 <span class="copy-confirm" id="inviteCopyConfirm">Copied!</span>
                 <button class="btn-ghost" onclick="openEditGame()">Edit</button>
+                <button class="btn-danger" onclick="openCancelFromGame()">Cancel Game</button>
             </div>
         </div>
     </div>
@@ -1857,6 +1858,39 @@ function showToast(msg, type='success') {
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => el.classList.remove('show'), 3200);
 }
+
+    function openCancelFromGame() {
+        document.getElementById('cancelGameName').textContent =
+            (gameData.partyName || gameData.storyName || 'This game');
+        document.getElementById('cancelNotes').value  = '';
+        document.getElementById('cancelReason').value = 'other';
+        document.getElementById('cancelOverlay').classList.add('open');
+    }
+
+    function closeCancelModal() {
+        document.getElementById('cancelOverlay').classList.remove('open');
+    }
+
+    async function confirmCancelGame() {
+        const reason = document.getElementById('cancelReason').value;
+        const notes  = document.getElementById('cancelNotes').value.trim();
+        try {
+            const archive = {
+                ...gameData,
+                cancelledAt:    new Date().toISOString(),
+                cancelReason:   reason,
+                cancelNotes:    notes || null,
+                originalGameId: gameId
+            };
+            await db.ref('cancelledGames/' + gameId).set(archive);
+            await db.ref('games/' + gameId).remove();
+            showToast('Game cancelled and archived.', 'success');
+            setTimeout(() => window.location.href = 'admin.html', 1200);
+        } catch(err) {
+            showToast('Error: ' + err.message, 'error');
+        }
+    }
+
 </script>
 
 <!-- ── TEST PLAYER MODAL ──────────────────────────────────── -->
@@ -1880,6 +1914,42 @@ function showToast(msg, type='success') {
                 <button class="btn-ghost" onclick="randomizeAll()">⚄ Randomize All</button>
                 <button class="btn-gold" onclick="saveTestPlayers()">Save Players</button>
                 <button class="btn-ghost" onclick="closeTPModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ── CANCEL GAME MODAL ──────────────────────────────────── -->
+<div class="tp-overlay" id="cancelOverlay" onclick="if(event.target===this)closeCancelModal()">
+    <div class="tp-modal" style="max-width:480px;border-color:rgba(248,81,73,0.3);">
+        <div class="tp-header">
+            <div class="tp-title" style="color:#f85149;">Cancel Game</div>
+            <button class="btn-signout" onclick="closeCancelModal()">✕</button>
+        </div>
+        <div class="tp-body">
+            <div style="font-size:14px;color:var(--mist);margin-bottom:20px;padding:10px 14px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:4px;" id="cancelGameName">—</div>
+
+            <div style="margin-bottom:16px;">
+                <label style="font-family:'Special Elite',monospace;font-size:10px;letter-spacing:2px;color:var(--gold-dk);text-transform:uppercase;display:block;margin-bottom:6px;">Reason for Cancellation</label>
+                <select id="cancelReason" class="tp-select" style="width:100%;">
+                    <option value="guest_count">Guest Count Too Low</option>
+                    <option value="host_cancelled">Host Cancelled</option>
+                    <option value="scheduling">Scheduling Conflict</option>
+                    <option value="venue">Venue Issue</option>
+                    <option value="test">Test / Development</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom:20px;">
+                <label style="font-family:'Special Elite',monospace;font-size:10px;letter-spacing:2px;color:var(--gold-dk);text-transform:uppercase;display:block;margin-bottom:6px;">Notes (optional)</label>
+                <textarea id="cancelNotes" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--white);font-family:'Cormorant Garamond',Georgia,serif;font-size:15px;padding:10px 12px;border-radius:2px;resize:vertical;min-height:80px;" placeholder="Any additional context…"></textarea>
+            </div>
+
+            <div class="tp-actions">
+                <button class="btn-danger" style="padding:10px 24px;" onclick="confirmCancelGame()">Cancel Game</button>
+                <button class="btn-ghost" onclick="closeCancelModal()">Keep Game</button>
             </div>
         </div>
     </div>
