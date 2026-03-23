@@ -46,9 +46,12 @@
 </div>
 <div class="count" id="count">Loading...</div>
 <div class="download-bar">
-  <button class="download-btn" id="downloadPhotosBtn" onclick="downloadSet('photos')" disabled>↓ Download Guest Photos</button>
+  <button class="download-btn" id="downloadPhotosBtn" onclick="downloadSet('photos')" disabled>↓ Download ZIP (PC)</button>
   <span style="display:inline-block; width:20px;"></span>
-  <button class="download-btn" id="downloadSpecialsBtn" onclick="downloadSet('specials')" disabled style="border-color:#8b6914; color:#8b6914;">↓ Download QR Specials</button>
+  <a class="download-btn" id="googlePhotosBtn" href="#" target="_blank"
+     style="border-color:#8bc34a; color:#8bc34a; display:none; text-decoration:none;">📷 Add to Photo Roll</a>
+  <span style="display:inline-block; width:20px;"></span>
+  <button class="download-btn" id="downloadSpecialsBtn" onclick="downloadSet('specials')" disabled style="border-color:#8b6914; color:#8b6914;">↓ Download QR Specials (ZIP)</button>
   <div class="progress" id="progress"></div>
   <div style="margin-top:24px; padding-top:20px; border-top:1px solid rgba(201,162,39,0.2);">
     <a href="survey.html" style="color:#c9a227; font-family:'Playfair Display',serif; font-size:15px; text-decoration:none; letter-spacing:2px;">✦ Please take our 2-minute survey ✦</a>
@@ -102,7 +105,10 @@
     });
 
     document.getElementById('count').textContent = guestPhotos.length + ' guest photos · ' + specialPhotos.length + ' QR specials';
-    if (guestPhotos.length > 0) document.getElementById('downloadPhotosBtn').disabled = false;
+    if (guestPhotos.length > 0) {
+      document.getElementById('downloadPhotosBtn').disabled = false;
+      document.getElementById('googlePhotosBtn').style.display = 'inline-block';
+    }
     if (specialPhotos.length > 0) document.getElementById('downloadSpecialsBtn').disabled = false;
 
     function renderGrid(photos, gridId, emptyMsg) {
@@ -183,7 +189,7 @@
       prog.style.display = 'none';
 
       setTimeout(function() {
-        btn.textContent = which === 'photos' ? '↓ Download Guest Photos' : '↓ Download QR Specials';
+        btn.textContent = which === 'photos' ? '↓ Download ZIP (PC)' : '↓ Download QR Specials (ZIP)';
         btn.disabled = false;
       }, 3000);
     });

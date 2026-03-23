@@ -1228,8 +1228,14 @@
                 background:transparent; color:#c9a227; border:1px solid rgba(201,162,39,0.5); padding:14px 28px; cursor:pointer;
                 font-family:'Playfair Display',Georgia,serif; font-size:15px; letter-spacing:2px;
                 text-transform:uppercase; border-radius:3px; margin-left:12px;">
-                ↓ Download All
+                ↓ Download ZIP (PC)
             </button>
+            <a id="googlePhotosBtn" href="#" target="_blank" style="display:none;
+                background:transparent; color:#8bc34a; border:1px solid rgba(139,195,74,0.5); padding:14px 28px; cursor:pointer;
+                font-family:'Playfair Display',Georgia,serif; font-size:15px; letter-spacing:2px;
+                text-transform:uppercase; border-radius:3px; margin-left:12px; text-decoration:none;">
+                📷 Add to Photo Roll
+            </a>
             <div id="uploadStatus" style="margin-top:12px; font-size:14px; color:#8b8b8b; font-style:italic;"></div>
             <div id="uploadBar" style="display:none; margin-top:10px; width:100%; max-width:400px; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden;">
                 <div id="uploadBarFill" style="height:100%; width:0%; background:#c9a227; border-radius:3px; transition:width 0.3s ease;"></div>
@@ -1265,7 +1271,7 @@
     </div>
 
     <footer>
-        The Thoreson Estate — 1935 <span style="opacity:0.6; margin-left:10px;">v3.22.2</span>
+        The Thoreson Estate — 1935 <span style="opacity:0.6; margin-left:10px;">v3.22.3</span>
     </footer>
 
     <!-- QR Scanner -->
@@ -3020,9 +3026,11 @@
                 // Update the static download button
                 const dlBtn = document.getElementById('downloadAllSequential');
                 if (dlBtn) {
-                    dlBtn.textContent = '↓ Download All (' + fullUrls.length + ')';
+                    dlBtn.textContent = '↓ Download ZIP (PC) (' + fullUrls.length + ')';
                     dlBtn.style.display = fullUrls.length > 0 ? 'inline-block' : 'none';
                 }
+                const gpBtn = document.getElementById('googlePhotosBtn');
+                if (gpBtn && fullUrls.length > 0) gpBtn.style.display = 'inline-block';
 
                 grid.innerHTML = photos.map(p => `
                     <div style="background:rgba(0,0,0,0.4); border:1px solid rgba(201,162,39,0.2); border-radius:4px; overflow:hidden;">
@@ -3093,7 +3101,7 @@
                 setTimeout(() => { btn.textContent = `↓ Download All (${urls.length})`; btn.disabled = false; }, 4000);
             } catch(err) {
                 console.error(err);
-                btn.textContent = '↓ Download All (retry)';
+                btn.textContent = '↓ Download ZIP (PC) (retry)';
                 btn.disabled = false;
             }
         }
