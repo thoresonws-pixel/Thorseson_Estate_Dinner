@@ -1595,7 +1595,7 @@
         const story   = STORIES[storyId];
         const el      = document.getElementById('playerRangeDisplay');
         if (story && el) {
-            el.textContent = story.minPlayers + ' min — ' + story.maxPlayers + ' max';
+            el.textContent = story.minPlayers + ' – ' + story.maxPlayers + ' players';
             el.style.color = 'var(--accent-lt)';
         }
     }
@@ -1604,7 +1604,7 @@
         const storyId = document.getElementById('editStory').value;
         const story   = STORIES[storyId];
         const el      = document.getElementById('editPlayerRange');
-        if (story && el) el.textContent = story.minPlayers + ' min — ' + story.maxPlayers + ' max';
+        if (story && el) el.textContent = story.minPlayers + ' – ' + story.maxPlayers + ' players';
     }
 
     // ── Create game ───────────────────────────────────────
