@@ -785,6 +785,113 @@
             .tab-btn { padding: 12px 14px; font-size: 10px; }
             .act-grid { grid-template-columns: 1fr; }
         }
+
+        /* ── TEST PLAYER MODAL ───────────────────────────────────── */
+        .tp-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(6,4,10,0.88);
+            z-index: 500;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            backdrop-filter: blur(6px);
+        }
+        .tp-overlay.open { display: flex; }
+        .tp-modal {
+            background: var(--panel);
+            border: 1px solid var(--border-hl);
+            width: 100%;
+            max-width: 560px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .tp-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .tp-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 20px;
+            color: var(--gold);
+            font-weight: 700;
+        }
+        .tp-body { padding: 24px; }
+        .tp-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 60px 60px 80px;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .tp-row-header {
+            font-family: 'Special Elite', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--gold-dk);
+            text-transform: uppercase;
+        }
+        .tp-input {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(201,162,39,0.2);
+            color: var(--white);
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 14px;
+            padding: 8px 10px;
+            border-radius: 2px;
+            width: 100%;
+        }
+        .tp-input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+        .tp-select {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(201,162,39,0.2);
+            color: var(--white);
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 13px;
+            padding: 8px 6px;
+            border-radius: 2px;
+            width: 100%;
+        }
+        .tp-select option { background: var(--panel); }
+        .tp-score {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(201,162,39,0.2);
+            color: var(--gold);
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 16px;
+            font-weight: 700;
+            padding: 8px 6px;
+            border-radius: 2px;
+            width: 100%;
+            text-align: center;
+        }
+        .tp-remove {
+            background: none;
+            border: 1px solid rgba(192,57,43,0.3);
+            color: var(--crimson-lt);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 2px;
+            font-size: 14px;
+            width: 100%;
+        }
+        .tp-remove:hover { background: rgba(192,57,43,0.1); }
+        .tp-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
     </style>
 </head>
 <body>
@@ -939,7 +1046,7 @@
         <div class="section-head">
             <div class="section-title">Guest List</div>
             <div style="display:flex;gap:10px;">
-                <button class="btn-ghost" onclick="addTestPlayersGame()">+ Test Players</button>
+                <button class="btn-ghost" onclick="openTPModal()">+ Test Players</button>
                 <button class="btn-ghost" onclick="removeTestPlayersGame()">Remove Test Players</button>
             </div>
         </div>
@@ -1549,39 +1656,123 @@ function playConfession(act) {
 }
 
 // ── TEST PLAYERS ──────────────────────────────────────────────
-const TEST_FIRST = ['James','Emma','Oliver','Sophia','Henry','Clara','Arthur','Rose','Walter','Mae'];
-const TEST_LAST  = ['Fletcher','Whitmore','Caldwell','Hargrove','Sinclair','Beaumont','Langford','Mercer'];
+const TEST_FIRST = ['James','Emma','Oliver','Sophia','Henry','Clara','Ruth','Rose','Walter','Mae','George','Iris','Albert','Violet'];
+    const TEST_LAST  = ['Fletcher','Whitmore','Caldwell','Hargrove','Sinclair','Beaumont','Langford','Mercer','Ashby','Vance','Pemberton','Holt'];
 
-function randomTestName() {
-    return TEST_FIRST[Math.floor(Math.random()*TEST_FIRST.length)] + ' ' +
-           TEST_LAST[Math.floor(Math.random()*TEST_LAST.length)];
-}
+    function randomTestName() {
+        return TEST_FIRST[Math.floor(Math.random()*TEST_FIRST.length)] + ' ' +
+               TEST_LAST[Math.floor(Math.random()*TEST_LAST.length)];
+    }
 
-async function addTestPlayersGame() {
-    const takenChars = new Set(Object.values(players).map(p => p.characterId).filter(Boolean));
-    const available  = Object.keys(characterDatabase || {}).filter(id => !takenChars.has(id));
-    if (available.length === 0) { showToast('All characters taken.', 'error'); return; }
+    let tpRowData = []; // array of { name, characterId, score, gender }
 
-    const writes = {};
-    available.forEach((charId, i) => {
-        const uid = 'test_player_' + Date.now() + '_' + i;
-        writes[uid] = {
-            displayName: randomTestName(),
+    function openTPModal() {
+        // Wait for characterDatabase to be available
+        if (typeof characterDatabase === 'undefined' || Object.keys(characterDatabase).length === 0) {
+            showToast('Story data still loading — try again in a moment.', 'error');
+            return;
+        }
+
+        // Pre-populate with all unassigned characters
+        const takenChars = new Set(Object.values(players).map(p => p.characterId).filter(Boolean));
+        const available  = Object.keys(characterDatabase).filter(id => !takenChars.has(id));
+
+        tpRowData = available.map(charId => ({
+            name:        randomTestName(),
             characterId: charId,
-            characterName: charId.replace(/_/g,' '),
-            status: 'ready',
-            joinedAt: new Date().toISOString(),
-            questionnaire: {
-                gender: Math.random() > 0.5 ? 'female' : 'male',
-                involvementScore: Math.floor(Math.random()*6)+4,
-                secrets: 'yes',
-                completedAt: new Date().toISOString()
-            }
-        };
-    });
-    await db.ref('games/' + gameId + '/players').update(writes);
-    showToast(available.length + ' test players added.', 'success');
-}
+            score:       Math.floor(Math.random()*6)+4,
+            gender:      Math.random() > 0.5 ? 'female' : 'male'
+        }));
+
+        renderTPRows();
+        document.getElementById('tpOverlay').classList.add('open');
+    }
+
+    function closeTPModal() {
+        document.getElementById('tpOverlay').classList.remove('open');
+        tpRowData = [];
+    }
+
+    function getCharOptions(selectedId) {
+        const takenChars = new Set(Object.values(players).map(p => p.characterId).filter(Boolean));
+        return Object.entries(characterDatabase).map(([slug, char]) => {
+            const name = char.nameVariants?.female || char.name;
+            const taken = takenChars.has(slug) && slug !== selectedId;
+            return `<option value="${slug}" ${slug === selectedId ? 'selected' : ''} ${taken ? 'disabled' : ''}>${name}${taken ? ' (taken)' : ''}</option>`;
+        }).join('');
+    }
+
+    function renderTPRows() {
+        document.getElementById('tpRows').innerHTML = tpRowData.map((row, i) => `
+            <div class="tp-row" id="tp-row-${i}">
+                <input class="tp-input" value="${row.name}"
+                    oninput="tpRowData[${i}].name=this.value" placeholder="Player name">
+                <select class="tp-select" onchange="tpRowData[${i}].characterId=this.value">
+                    ${getCharOptions(row.characterId)}
+                </select>
+                <input class="tp-score" type="number" min="1" max="10" value="${row.score}"
+                    oninput="tpRowData[${i}].score=parseInt(this.value)||5">
+                <select class="tp-select" onchange="tpRowData[${i}].gender=this.value">
+                    <option value="female" ${row.gender==='female'?'selected':''}>F</option>
+                    <option value="male"   ${row.gender==='male'?'selected':''}>M</option>
+                </select>
+                <button class="tp-remove" onclick="removeTPRow(${i})">✕</button>
+            </div>`).join('');
+    }
+
+    function addTPRow() {
+        const takenChars = new Set([
+            ...Object.values(players).map(p => p.characterId).filter(Boolean),
+            ...tpRowData.map(r => r.characterId)
+        ]);
+        const nextChar = Object.keys(characterDatabase).find(id => !takenChars.has(id));
+        tpRowData.push({
+            name:        randomTestName(),
+            characterId: nextChar || Object.keys(characterDatabase)[0],
+            score:       5,
+            gender:      'female'
+        });
+        renderTPRows();
+    }
+
+    function removeTPRow(i) {
+        tpRowData.splice(i, 1);
+        renderTPRows();
+    }
+
+    function randomizeAll() {
+        tpRowData = tpRowData.map(row => ({
+            ...row,
+            name:   randomTestName(),
+            score:  Math.floor(Math.random()*6)+4,
+            gender: Math.random() > 0.5 ? 'female' : 'male'
+        }));
+        renderTPRows();
+    }
+
+    async function saveTestPlayers() {
+        if (tpRowData.length === 0) { closeTPModal(); return; }
+        const writes = {};
+        tpRowData.forEach((row, i) => {
+            const uid = 'test_player_' + Date.now() + '_' + i;
+            writes[uid] = {
+                displayName:   row.name,
+                characterId:   row.characterId,
+                characterName: row.characterId.replace(/_/g,' '),
+                status:        'ready',
+                joinedAt:      new Date().toISOString(),
+                questionnaire: {
+                    gender:          row.gender,
+                    involvementScore: row.score,
+                    secrets:         'yes',
+                    completedAt:     new Date().toISOString()
+                }
+            };
+        });
+        await db.ref('games/' + gameId + '/players').update(writes);
+        showToast(tpRowData.length + ' test players added.', 'success');
+        closeTPModal();
+    }
 
 async function removeTestPlayersGame() {
     const removes = {};
@@ -1628,5 +1819,32 @@ function showToast(msg, type='success') {
     toastTimer = setTimeout(() => el.classList.remove('show'), 3200);
 }
 </script>
+
+<!-- ── TEST PLAYER MODAL ──────────────────────────────────── -->
+<div class="tp-overlay" id="tpOverlay" onclick="if(event.target===this)closeTPModal()">
+    <div class="tp-modal">
+        <div class="tp-header">
+            <div class="tp-title">Add Test Players</div>
+            <button class="btn-signout" onclick="closeTPModal()">✕</button>
+        </div>
+        <div class="tp-body">
+            <div class="tp-row" style="margin-bottom:6px;">
+                <div class="tp-row-header">Name</div>
+                <div class="tp-row-header">Character</div>
+                <div class="tp-row-header">Score</div>
+                <div class="tp-row-header">Gender</div>
+                <div></div>
+            </div>
+            <div id="tpRows"></div>
+            <div class="tp-actions">
+                <button class="btn-ghost" onclick="addTPRow()">+ Add Row</button>
+                <button class="btn-ghost" onclick="randomizeAll()">⚄ Randomize All</button>
+                <button class="btn-gold" onclick="saveTestPlayers()">Save Players</button>
+                <button class="btn-ghost" onclick="closeTPModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
