@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#c9a227">
+    <meta name="description" content="Join a Thoreson Estate Dinner party">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Thoreson Estate">
+    <title>Join a Party - Thoreson Estate Dinner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container { width: 100%; max-width: 420px; }
+
+        .card {
+            position: relative;
+            background: linear-gradient(145deg, #f5f0e6 0%, #e8e0d0 50%, #d4c9b5 100%);
+            border: 3px solid #8b7355;
+            box-shadow:
+                0 0 0 1px #a08060,
+                0 0 0 6px #2a2520,
+                0 0 0 8px #8b7355,
+                0 20px 60px rgba(0,0,0,0.5);
+            padding: 50px 40px 40px;
+            text-align: center;
+        }
+
+        .corner { position: absolute; width: 40px; height: 40px; border: 2px solid #8b7355; }
+        .corner-tl { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+        .corner-tr { top: 10px; right: 10px; border-left: none; border-bottom: none; }
+        .corner-bl { bottom: 10px; left: 10px; border-right: none; border-top: none; }
+        .corner-br { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+
+        .title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 32px;
+            color: #2a2520;
+            margin-bottom: 6px;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: #8b7355;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .welcome-name {
+            font-size: 17px;
+            color: #2a2520;
+            font-style: italic;
+            margin-bottom: 4px;
+            min-height: 22px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 18px 0 24px;
+        }
+        .divider-line { flex: 1; height: 1px; background: #8b7355; opacity: 0.4; }
+        .divider-diamond {
+            width: 8px; height: 8px;
+            background: #c9a227;
+            transform: rotate(45deg);
+            flex-shrink: 0;
+        }
+
+        .instruction {
+            font-size: 15px;
+            color: #5a4a3a;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .form-group { margin-bottom: 20px; text-align: left; }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #2a2520;
+            margin-bottom: 7px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .code-input-wrapper {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Big chunky code input */
+        input#partyCode {
+            width: 100%;
+            padding: 16px 14px;
+            border: 2px solid #8b7355;
+            background: rgba(255,255,255,0.85);
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: #2a2520;
+            border-radius: 3px;
+            letter-spacing: 8px;
+            text-align: center;
+            text-transform: uppercase;
+            transition: all 0.3s;
+        }
+        input#partyCode:focus {
+            outline: none;
+            border-color: #c9a227;
+            box-shadow: 0 0 12px rgba(201,162,39,0.3);
+            background: rgba(255,255,255,0.95);
+        }
+        input#partyCode::placeholder {
+            color: #c4b89a;
+            letter-spacing: 4px;
+            font-size: 22px;
+        }
+
+        /* Preview card that appears after a valid code is recognized */
+        .party-preview {
+            display: none;
+            background: rgba(201,162,39,0.1);
+            border: 1px solid rgba(201,162,39,0.4);
+            border-radius: 3px;
+            padding: 16px 20px;
+            margin: 16px 0;
+            text-align: left;
+        }
+        .party-preview.visible { display: block; }
+        .preview-label {
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #8b7355;
+            margin-bottom: 4px;
+        }
+        .preview-story {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 20px;
+            color: #2a2520;
+            margin-bottom: 6px;
+        }
+        .preview-meta {
+            font-size: 14px;
+            color: #5a4a3a;
+        }
+        .preview-dot {
+            display: inline-block;
+            width: 8px; height: 8px;
+            background: #27aa5b;
+            border-radius: 50%;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: #c9a227;
+            color: #2a2520;
+            border: none;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: all 0.3s;
+            margin-top: 6px;
+        }
+        .btn-primary:hover:not(:disabled) { background: #e8c55a; transform: scale(1.02); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 11px;
+            background: transparent;
+            color: #8b7355;
+            border: 1px solid #8b7355;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 14px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        .btn-secondary:hover { border-color: #c9a227; color: #c9a227; }
+
+        .error-msg {
+            display: none;
+            color: #c0392b;
+            font-size: 14px;
+            margin-top: 14px;
+            padding: 10px 14px;
+            background: rgba(192,57,43,0.08);
+            border: 1px solid rgba(192,57,43,0.25);
+            border-radius: 3px;
+            text-align: left;
+        }
+
+        .footer-text {
+            font-size: 13px;
+            color: #8b7355;
+            margin-top: 24px;
+            line-height: 1.6;
+        }
+
+        /* Loading */
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner {
+            display: inline-block;
+            width: 16px; height: 16px;
+            border: 2px solid rgba(42,37,32,0.3);
+            border-top-color: #2a2520;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        /* Loading screen while auth resolves */
+        .auth-loading {
+            text-align: center;
+            color: #8b7355;
+            font-size: 16px;
+            font-style: italic;
+            padding: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div>
+        <div class="corner corner-br"></div>
+
+        <div id="authLoading" class="auth-loading">
+            <div class="spinner"></div> Verifying your account…
+        </div>
+
+        <div id="mainContent" style="display:none">
+            <h1 class="title">Join a Party</h1>
+            <p class="subtitle">Thoreson Estate Dinner</p>
+            <p class="welcome-name" id="welcomeName"></p>
+
+            <div class="divider">
+                <div class="divider-line"></div>
+                <div class="divider-diamond"></div>
+                <div class="divider-line"></div>
+            </div>
+
+            <p class="instruction">
+                Enter the party code you received from your host to join the evening's festivities.
+            </p>
+
+            <div class="form-group">
+                <label for="partyCode">Party Code</label>
+                <input
+                    type="text"
+                    id="partyCode"
+                    placeholder="••••••"
+                    maxlength="8"
+                    autocomplete="off"
+                    autocapitalize="characters"
+                    spellcheck="false"
+                    oninput="handleCodeInput(this)"
+                >
+            </div>
+
+            <!-- Shows once a matching game is found -->
+            <div class="party-preview" id="partyPreview">
+                <div class="preview-label">You've been invited to</div>
+                <div class="preview-story" id="previewStory">—</div>
+                <div class="preview-meta">
+                    <span class="preview-dot"></span>
+                    <span id="previewStatus">Open for guests</span>
+                </div>
+            </div>
+
+            <button class="btn-primary" id="joinBtn" disabled onclick="handleJoin()">
+                Join Party
+            </button>
+
+            <button class="btn-secondary" onclick="handleSignOut()">
+                Sign Out
+            </button>
+
+            <div class="error-msg" id="errorMsg"></div>
+
+            <p class="footer-text">
+                Need a code? Contact your host for your invitation link.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyApHrYubqWrR4m0ihdpq6Ym40jv4HTQ5i0",
+        authDomain: "thoreson-estate.firebaseapp.com",
+        databaseURL: "https://thoreson-estate-default-rtdb.firebaseio.com",
+        projectId: "thoreson-estate",
+        storageBucket: "thoreson-estate.firebasestorage.app",
+        messagingSenderId: "182924616892",
+        appId: "1:182924616892:web:8153e1c69895cee665dcb9"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db   = firebase.database();
+
+    let currentUser = null;
+    let matchedGameId = null;
+    let codeCheckTimeout = null;
+
+    // ── Auth state ────────────────────────────────────────────────
+    auth.onAuthStateChanged(user => {
+        document.getElementById('authLoading').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'block';
+
+        if (!user) {
+            // Not logged in — send to register
+            window.location.href = 'register.html';
+            return;
+        }
+
+        currentUser = user;
+
+        // If they already have a game, skip straight to dashboard
+        db.ref(`users/${user.uid}/currentGameId`).once('value').then(snap => {
+            if (snap.val()) {
+                window.location.href = 'authenticated-dashboard.html';
+            }
+        });
+
+        // Show welcome name
+        const name = user.displayName || user.email;
+        document.getElementById('welcomeName').textContent = `Welcome, ${name}`;
+
+        // Pre-fill code if passed in URL (?code=XXXXXX)
+        const params = new URLSearchParams(window.location.search);
+        const urlCode = params.get('code');
+        if (urlCode) {
+            const input = document.getElementById('partyCode');
+            input.value = urlCode.toUpperCase();
+            lookupPartyCode(urlCode.toUpperCase());
+        }
+    });
+
+    // ── Code input handler ────────────────────────────────────────
+    function handleCodeInput(input) {
+        // Uppercase and strip non-alphanumeric
+        input.value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+        // Reset state
+        document.getElementById('partyPreview').classList.remove('visible');
+        document.getElementById('joinBtn').disabled = true;
+        matchedGameId = null;
+        hideError();
+
+        // Debounce lookup
+        clearTimeout(codeCheckTimeout);
+        if (input.value.length >= 4) {
+            codeCheckTimeout = setTimeout(() => lookupPartyCode(input.value), 400);
+        }
+    }
+
+    // ── Look up party code in Firebase ───────────────────────────
+    async function lookupPartyCode(code) {
+        try {
+            // Query /games where partyCode === entered code
+            const snap = await db.ref('games')
+                .orderByChild('partyCode')
+                .equalTo(code)
+                .once('value');
+
+            if (!snap.exists()) return; // No match yet — user still typing
+
+            // Grab first matching game
+            snap.forEach(child => {
+                const game = child.val();
+                matchedGameId = child.key;
+
+                const statusMap = {
+                    lobby:    'Open — accepting guests',
+                    active:   'In progress',
+                    complete: 'This party has ended'
+                };
+
+                document.getElementById('previewStory').textContent = game.storyName || 'Mystery Dinner';
+                document.getElementById('previewStatus').textContent = statusMap[game.status] || 'Open';
+                document.getElementById('partyPreview').classList.add('visible');
+
+                if (game.status === 'lobby') {
+                    document.getElementById('joinBtn').disabled = false;
+                } else {
+                    showError('This party is no longer accepting new guests.');
+                }
+            });
+
+        } catch (err) {
+            console.error('Code lookup error:', err);
+        }
+    }
+
+    // ── Join the game ─────────────────────────────────────────────
+    async function handleJoin() {
+        if (!matchedGameId || !currentUser) return;
+
+        const btn = document.getElementById('joinBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span>Joining…';
+        hideError();
+
+        try {
+            const uid = currentUser.uid;
+            const now = new Date().toISOString();
+
+            // Check if they're already in this game
+            const existingSnap = await db.ref(`games/${matchedGameId}/players/${uid}`).once('value');
+            if (existingSnap.exists()) {
+                // Already in — just update their currentGame and send them through
+                await db.ref(`users/${uid}/currentGameId`).set(matchedGameId);
+                window.location.href = 'questionnaire.html';
+                return;
+            }
+
+            // Add player to game
+            await db.ref(`games/${matchedGameId}/players/${uid}`).set({
+                displayName: currentUser.displayName || currentUser.email,
+                joinedAt: now,
+                characterId: null,
+                status: 'selecting'
+            });
+
+            // Update user record
+            await db.ref(`users/${uid}`).update({
+                currentGameId: matchedGameId,
+                [`gamesPlayed/${matchedGameId}`]: now
+            });
+
+            window.location.href = 'questionnaire.html';
+
+        } catch (err) {
+            btn.disabled = false;
+            btn.textContent = 'Join Party';
+            showError('Something went wrong joining the party. Please try again. (' + err.message + ')');
+        }
+    }
+
+    // ── Sign out ──────────────────────────────────────────────────
+    async function handleSignOut() {
+        await auth.signOut();
+        window.location.href = 'register.html';
+    }
+
+    // ── Error helpers ─────────────────────────────────────────────
+    function showError(msg) {
+        const el = document.getElementById('errorMsg');
+        el.textContent = msg;
+        el.style.display = 'block';
+    }
+    function hideError() {
+        document.getElementById('errorMsg').style.display = 'none';
+    }
+
+    // Enter key
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && matchedGameId) handleJoin();
+    });
+</script>
+</body>
+</html>

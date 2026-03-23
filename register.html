@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#c9a227">
+    <meta name="description" content="Create your account for a Thoreson Estate Dinner experience">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Thoreson Estate">
+    <title>Create Account - Thoreson Estate Dinner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .card {
+            position: relative;
+            background: linear-gradient(145deg, #f5f0e6 0%, #e8e0d0 50%, #d4c9b5 100%);
+            border: 3px solid #8b7355;
+            box-shadow:
+                0 0 0 1px #a08060,
+                0 0 0 6px #2a2520,
+                0 0 0 8px #8b7355,
+                0 20px 60px rgba(0,0,0,0.5);
+            padding: 50px 40px 40px;
+            text-align: center;
+        }
+
+        /* Corner decorations */
+        .corner {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 2px solid #8b7355;
+        }
+        .corner-tl { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+        .corner-tr { top: 10px; right: 10px; border-left: none; border-bottom: none; }
+        .corner-bl { bottom: 10px; left: 10px; border-right: none; border-top: none; }
+        .corner-br { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+
+        .title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 32px;
+            color: #2a2520;
+            margin-bottom: 6px;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: #8b7355;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 18px 0 24px;
+        }
+        .divider-line { flex: 1; height: 1px; background: #8b7355; opacity: 0.4; }
+        .divider-diamond {
+            width: 8px; height: 8px;
+            background: #c9a227;
+            transform: rotate(45deg);
+            flex-shrink: 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #2a2520;
+            margin-bottom: 7px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #8b7355;
+            background: rgba(255,255,255,0.85);
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 16px;
+            color: #2a2520;
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #c9a227;
+            box-shadow: 0 0 10px rgba(201,162,39,0.25);
+            background: rgba(255,255,255,0.95);
+        }
+        input::placeholder { color: #a09080; }
+
+        .password-wrapper {
+            position: relative;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #8b7355;
+            font-size: 13px;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            letter-spacing: 0.5px;
+            padding: 2px 4px;
+        }
+        .toggle-password:hover { color: #c9a227; }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: #c9a227;
+            color: #2a2520;
+            border: none;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        .btn-primary:hover:not(:disabled) {
+            background: #e8c55a;
+            transform: scale(1.02);
+        }
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-msg {
+            display: none;
+            color: #c0392b;
+            font-size: 14px;
+            margin-top: 14px;
+            padding: 10px 14px;
+            background: rgba(192,57,43,0.08);
+            border: 1px solid rgba(192,57,43,0.25);
+            border-radius: 3px;
+            text-align: left;
+        }
+
+        .success-msg {
+            display: none;
+            color: #27622a;
+            font-size: 14px;
+            margin-top: 14px;
+            padding: 10px 14px;
+            background: rgba(39,98,42,0.08);
+            border: 1px solid rgba(39,98,42,0.25);
+            border-radius: 3px;
+            text-align: left;
+        }
+
+        .footer-text {
+            font-size: 13px;
+            color: #8b7355;
+            margin-top: 24px;
+            line-height: 1.6;
+        }
+        .footer-text a {
+            color: #c9a227;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .footer-text a:hover { text-decoration: underline; }
+
+        .strength-bar {
+            height: 3px;
+            margin-top: 6px;
+            border-radius: 2px;
+            background: #d4c9b5;
+            overflow: hidden;
+        }
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s, background 0.3s;
+        }
+
+        /* Loading spinner */
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner {
+            display: inline-block;
+            width: 16px; height: 16px;
+            border: 2px solid rgba(42,37,32,0.3);
+            border-top-color: #2a2520;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div>
+        <div class="corner corner-br"></div>
+
+        <h1 class="title">Create Account</h1>
+        <p class="subtitle">Thoreson Estate Dinner</p>
+
+        <div class="divider">
+            <div class="divider-line"></div>
+            <div class="divider-diamond"></div>
+            <div class="divider-line"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="displayName">Your Name</label>
+            <input
+                type="text"
+                id="displayName"
+                placeholder="First name, or whatever you go by"
+                autocomplete="name"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input
+                type="email"
+                id="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <div class="password-wrapper">
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="At least 6 characters"
+                    autocomplete="new-password"
+                    required
+                >
+                <button type="button" class="toggle-password" onclick="togglePw('password', this)">Show</button>
+            </div>
+            <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+        </div>
+
+        <div class="form-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <div class="password-wrapper">
+                <input
+                    type="password"
+                    id="confirmPassword"
+                    placeholder="Same password again"
+                    autocomplete="new-password"
+                    required
+                >
+                <button type="button" class="toggle-password" onclick="togglePw('confirmPassword', this)">Show</button>
+            </div>
+        </div>
+
+        <button class="btn-primary" id="submitBtn" onclick="handleRegister()">
+            Create Account
+        </button>
+
+        <div class="error-msg" id="errorMsg"></div>
+        <div class="success-msg" id="successMsg"></div>
+
+        <p class="footer-text">
+            Already have an account? <a href="login.html">Sign in here</a>
+        </p>
+    </div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+
+<script>
+    // ── Firebase init ────────────────────────────────────────────
+    const firebaseConfig = {
+        apiKey: "AIzaSyApHrYubqWrR4m0ihdpq6Ym40jv4HTQ5i0",
+        authDomain: "thoreson-estate.firebaseapp.com",
+        databaseURL: "https://thoreson-estate-default-rtdb.firebaseio.com",
+        projectId: "thoreson-estate",
+        storageBucket: "thoreson-estate.firebasestorage.app",
+        messagingSenderId: "182924616892",
+        appId: "1:182924616892:web:8153e1c69895cee665dcb9"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db   = firebase.database();
+
+    // ── Redirect if already logged in ───────────────────────────
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            // Check if they're mid-onboarding or fully set up
+            db.ref(`users/${user.uid}/currentGameId`).once('value').then(snap => {
+                if (snap.val()) {
+                    window.location.href = 'authenticated-dashboard.html';
+                } else {
+                    window.location.href = 'join.html';
+                }
+            });
+        }
+    });
+
+    // ── Password strength indicator ──────────────────────────────
+    document.getElementById('password').addEventListener('input', function() {
+        const val = this.value;
+        const fill = document.getElementById('strengthFill');
+        let score = 0;
+        if (val.length >= 6)  score++;
+        if (val.length >= 10) score++;
+        if (/[A-Z]/.test(val)) score++;
+        if (/[0-9]/.test(val)) score++;
+        if (/[^a-zA-Z0-9]/.test(val)) score++;
+
+        const pct   = (score / 5) * 100;
+        const color = score <= 1 ? '#c0392b' : score <= 3 ? '#e67e22' : '#27622a';
+        fill.style.width = pct + '%';
+        fill.style.background = color;
+    });
+
+    // ── Helpers ──────────────────────────────────────────────────
+    function togglePw(fieldId, btn) {
+        const input = document.getElementById(fieldId);
+        const show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        btn.textContent = show ? 'Hide' : 'Show';
+    }
+
+    function showError(msg) {
+        const el = document.getElementById('errorMsg');
+        el.textContent = msg;
+        el.style.display = 'block';
+        document.getElementById('successMsg').style.display = 'none';
+    }
+
+    function showSuccess(msg) {
+        const el = document.getElementById('successMsg');
+        el.textContent = msg;
+        el.style.display = 'block';
+        document.getElementById('errorMsg').style.display = 'none';
+    }
+
+    function setLoading(loading) {
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = loading;
+        btn.innerHTML = loading
+            ? '<span class="spinner"></span>Creating account…'
+            : 'Create Account';
+    }
+
+    // ── Registration ─────────────────────────────────────────────
+    async function handleRegister() {
+        const displayName     = document.getElementById('displayName').value.trim();
+        const email           = document.getElementById('email').value.trim();
+        const password        = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        // Client-side validation
+        if (!displayName) return showError('Please enter your name.');
+        if (!email)        return showError('Please enter your email address.');
+        if (password.length < 6) return showError('Password must be at least 6 characters.');
+        if (password !== confirmPassword) return showError('Passwords do not match.');
+
+        setLoading(true);
+
+        try {
+            // 1. Create Firebase Auth account
+            const cred = await auth.createUserWithEmailAndPassword(email, password);
+            const user = cred.user;
+
+            // 2. Set display name on Auth profile
+            await user.updateProfile({ displayName });
+
+            // 3. Create user record in Realtime Database
+            await db.ref(`users/${user.uid}`).set({
+                displayName,
+                email,
+                createdAt: new Date().toISOString(),
+                gamesPlayed: [],
+                currentGameId: null
+            });
+
+            showSuccess('Account created! Redirecting…');
+
+            // 4. Brief pause so they see the success message, then go to join
+            setTimeout(() => {
+                window.location.href = 'join.html';
+            }, 1200);
+
+        } catch (err) {
+            setLoading(false);
+            switch (err.code) {
+                case 'auth/email-already-in-use':
+                    showError('An account with that email already exists. Try signing in instead.');
+                    break;
+                case 'auth/invalid-email':
+                    showError('That doesn\'t look like a valid email address.');
+                    break;
+                case 'auth/weak-password':
+                    showError('Password is too weak. Please choose something stronger.');
+                    break;
+                default:
+                    showError('Something went wrong. Please try again. (' + err.message + ')');
+            }
+        }
+    }
+
+    // Allow Enter key to submit
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Enter') handleRegister();
+    });
+</script>
+</body>
+</html>
