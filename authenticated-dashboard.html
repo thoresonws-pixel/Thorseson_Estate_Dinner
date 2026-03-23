@@ -1434,12 +1434,11 @@
 
             // If testMode is active, real accounts skip live listeners
             // Master and test accounts always listen
-            const isTest = userSession && userSession.role === 'test';
             const isMaster = userSession && userSession.role === 'master';
-            if (!isTest && !isMaster) {
+            if (!isMaster) {
                 database.ref('testMode').once('value').then(snap => {
                     if (snap.val() === true) {
-                        console.log('⏸ Test mode active — live updates paused for real accounts');
+                        console.log('⏸ Test mode active — live updates paused for guests');
                         return;
                     }
                     attachFirebaseListeners();
@@ -2002,7 +2001,7 @@
             if (expertHtml === '') expertHtml = '<div style="text-align:center; padding:40px; color:#999; font-style:italic;">No expert notes yet. Scan a QR code with your skill to unlock them.</div>';
 
             // ── MEMORIES ───────────────────────────────────────────────
-            const charKey = userSession.character || userSession.username;
+            const charKey = userSession.username;
             const charData = characterDatabase[charKey];
             const shown = getShownMemories();
             let memoriesHtml = '';
@@ -2265,7 +2264,7 @@
 
         function fireDJText(itemId) {
             if (!userSession.activeItems) userSession.activeItems = [];
-            var isTesting = userSession.role === 'master' || userSession.role === 'test';
+            var isTesting = userSession.role === 'master';
             if (userSession.activeItems.includes(itemId)) {
                 if (!isTesting) return; // real game — one-shot only
                 // Test mode: allow re-fire by removing from activeItems + shownMemories first
@@ -2445,7 +2444,7 @@
             if (newlyAdded.length === 0) return;
 
             var username = userSession.username;
-            var charKey = (userSession.character) ? userSession.character : username;
+            var charKey = userSession.username;
             var charData = characterDatabase[charKey];
             if (!charData) return;
 
@@ -3211,7 +3210,7 @@
                     if (!token) { console.log('No FCM token received'); return; }
                     console.log('FCM token registered');
                     // Save token under fcmTokens/{username} in Firebase
-                    var charKey = userSession.character || userSession.username;
+                    var charKey = userSession.username;
                     if (database) {
                         database.ref('fcmTokens/' + charKey + '/' + token.substring(0, 20)).set(token);
                     }
@@ -3229,7 +3228,7 @@
 
             // Only fire notifications to test/master accounts while test mode is active.
             // Real guest accounts get nothing until test mode is OFF.
-            var isTestOrMaster = userSession && (userSession.role === 'test' || userSession.role === 'master');
+            var isTestOrMaster = userSession && userSession.role === 'master';
             if (!isTestOrMaster && database) {
                 database.ref('testMode').once('value').then(function(snap) {
                     if (snap.val() === true) return; // test mode on — silence real accounts
