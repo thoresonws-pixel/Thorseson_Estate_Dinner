@@ -622,7 +622,7 @@ function normalizeStoryId(storyId) {
 
 function loadStoryScripts(storyId, callback) {
     const base = 'stories/' + normalizeStoryId(storyId) + '/';
-    const files = ['characters.js', 'skills.js', 'revelations.js', 'items.js'];
+    const files = ['characters.js', 'skills.js', 'revelations.js', 'items.js', 'flow.js', 'facts.js', 'quests.js'];
     let loaded = 0;
     files.forEach(function(file) {
         const script = document.createElement('script');

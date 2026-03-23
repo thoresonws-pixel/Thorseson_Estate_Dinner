@@ -958,6 +958,8 @@
             <div style="color:var(--fog);font-style:italic;">Loading checklist…</div>
         </div>
 
+        <div id="phaseControls"></div>
+
         <div style="margin-top:28px;margin-bottom:28px;">
             <div class="section-title" style="margin-bottom:14px;">Host Contact</div>
             <div class="panel" style="display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;">
@@ -1370,7 +1372,7 @@ function normalizeStoryId(storyId) {
 function loadStoryScripts(storyId) {
     const normalized = normalizeStoryId(storyId);
     return new Promise(resolve => {
-        const files  = ['characters.js','skills.js','revelations.js','items.js','roles.js'];
+        const files  = ['characters.js','skills.js','revelations.js','items.js','roles.js','flow.js','facts.js','quests.js'];
         const base   = 'stories/' + normalized + '/';
         let loaded   = 0;
         let errors   = 0;
@@ -2234,6 +2236,227 @@ ${inviteUrl}
             const data = snap.val();
             if (!data) return;
             document.getElementById('currentScreenMode').textContent = (data.mode || 'idle').toUpperCase();
+        });
+    }
+
+
+    // ── PHASE ENGINE ──────────────────────────────────────────────
+    let currentPhaseId  = null;
+    let phaseStartTime  = null;
+
+    function renderPhaseControls() {
+        const el = document.getElementById('phaseControls');
+        if (!el || typeof gameFlow === 'undefined') return;
+
+        const phases      = gameFlow.phases;
+        const statePhase  = currentPhaseId || null;
+        const currentIdx  = phases.findIndex(p => p.id === statePhase);
+
+        el.innerHTML = `
+        <div style="margin-bottom:28px;">
+            <div class="section-title" style="margin-bottom:14px;">Game Flow</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+                ${phases.map((phase, i) => {
+                    const isActive  = phase.id === statePhase;
+                    const isPast    = currentIdx > -1 && i < currentIdx;
+                    const isFuture  = currentIdx === -1 || i > currentIdx;
+                    const color     = isActive ? 'var(--gold)' : isPast ? 'var(--green)' : 'var(--border)';
+                    const bg        = isActive ? 'rgba(201,162,39,0.08)' : 'transparent';
+                    return `
+                    <div style="display:flex;align-items:center;gap:14px;padding:12px 16px;border:1px solid ${color};background:${bg};border-radius:4px;">
+                        <span style="font-size:20px;">${phase.icon}</span>
+                        <div style="flex:1;">
+                            <div style="font-size:14px;font-weight:600;color:${isActive ? 'var(--gold)' : isPast ? 'var(--green)' : 'var(--mist)'};">${phase.label}</div>
+                            <div style="font-size:12px;color:var(--fog);margin-top:2px;">${phase.description}</div>
+                            ${phase.minMinutes ? `<div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--fog);margin-top:4px;">MIN ${phase.minMinutes} MIN</div>` : ''}
+                        </div>
+                        ${isActive ? `<span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:2px;">ACTIVE</span>` : ''}
+                        ${isPast   ? `<span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--green);letter-spacing:2px;">DONE ✓</span>` : ''}
+                        ${!isActive && !isPast && i === currentIdx + 1 ? `
+                        <button class="btn-gold" style="font-size:11px;padding:6px 14px;" onclick="advancePhase('${phase.id}')">
+                            ${currentIdx === -1 ? 'Start Game' : 'Next Phase →'}
+                        </button>` : ''}
+                    </div>`;
+                }).join('')}
+            </div>
+        </div>`;
+    }
+
+    async function advancePhase(phaseId) {
+        if (!gameId || typeof gameFlow === 'undefined') return;
+
+        const phase = gameFlow.phases.find(p => p.id === phaseId);
+        if (!phase) return;
+
+        // Check minimum time floor
+        if (phaseStartTime && phase.minMinutes) {
+            const elapsed = (Date.now() - phaseStartTime) / 60000;
+            if (elapsed < phase.minMinutes) {
+                const remaining = Math.ceil(phase.minMinutes - elapsed);
+                showToast(`Too soon — ${remaining} min remaining in current phase.`, 'error');
+                return;
+            }
+        }
+
+        try {
+            // Write phase to Firebase
+            await db.ref('games/' + gameId + '/state/currentPhase').set({
+                id:        phaseId,
+                startedAt: new Date().toISOString(),
+                startedBy: firebase.auth().currentUser?.email || 'GM'
+            });
+
+            // Auto-reveal items defined in onStart
+            if (phase.onStart?.autoReveal?.length) {
+                const updates = {};
+                const current = activeItems || [];
+                phase.onStart.autoReveal.forEach(id => {
+                    if (!current.includes(id)) current.push(id);
+                });
+                await db.ref('games/' + gameId + '/state/activeItems').set(current);
+            }
+
+            // Distribute facts and quests at cocktail hour
+            if (phase.onStart?.distributeFacts) {
+                await distributeFacts();
+            }
+            if (phase.onStart?.distributeQuests) {
+                await distributeQuests();
+            }
+
+            showToast('Phase advanced: ' + phase.label, 'success');
+
+        } catch(err) {
+            showToast('Error: ' + err.message, 'error');
+        }
+    }
+
+    // ── FACT DISTRIBUTION ─────────────────────────────────────────
+    async function distributeFacts() {
+        if (typeof storyFacts === 'undefined') return;
+
+        const charToUid = {};
+        Object.entries(players).forEach(([uid, p]) => {
+            if (p.characterId) charToUid[p.characterId] = uid;
+        });
+
+        const assignments = {};
+
+        storyFacts.forEach(fact => {
+            // Find who carries this fact
+            const candidates = [fact.preferredChar, ...(fact.fallbacks || [])];
+            let assignedUid = null;
+
+            for (const charId of candidates) {
+                const uid = charToUid[charId];
+                if (uid && !assignments[uid]) {
+                    assignedUid = uid;
+                    break;
+                }
+            }
+
+            if (!assignedUid) {
+                // Assign to any player who doesn't have a fact yet
+                for (const [charId, uid] of Object.entries(charToUid)) {
+                    if (!assignments[uid]) { assignedUid = uid; break; }
+                }
+            }
+
+            if (assignedUid) {
+                if (!assignments[assignedUid]) assignments[assignedUid] = [];
+                assignments[assignedUid].push(fact);
+            }
+        });
+
+        // Write to Firebase — each player gets their facts
+        const writes = {};
+        Object.entries(assignments).forEach(([uid, facts]) => {
+            writes['games/' + gameId + '/players/' + uid + '/cocktailFacts'] =
+                facts.map(f => ({ id: f.id, text: f.text }));
+        });
+
+        await db.ref().update(writes);
+        console.log('Facts distributed to', Object.keys(assignments).length, 'players');
+    }
+
+    // ── QUEST DISTRIBUTION ────────────────────────────────────────
+    async function distributeQuests() {
+        if (typeof questsDatabase === 'undefined') return;
+
+        const charToUid = {};
+        const uidToChar = {};
+        Object.entries(players).forEach(([uid, p]) => {
+            if (p.characterId) {
+                charToUid[p.characterId] = uid;
+                uidToChar[uid] = p.characterId;
+            }
+        });
+
+        const presentChars = new Set(Object.keys(charToUid));
+        const allQuests    = questsDatabase.cocktail || [];
+
+        // Filter to eligible quests
+        const eligible = allQuests.filter(q =>
+            q.requires.every(r => presentChars.has(r))
+        );
+
+        const targeted  = eligible.filter(q => q.type === 'targeted');
+        const generic   = eligible.filter(q => q.type === 'generic');
+        const discovery = eligible.filter(q => q.type === 'discovery');
+
+        const writes = {};
+        const usedQuestIds = new Set();
+
+        Object.entries(charToUid).forEach(([charId, uid]) => {
+            const playerQuests = [];
+
+            // 1 targeted quest if available and not excluded
+            const myTargeted = targeted.filter(q =>
+                !usedQuestIds.has(q.id) &&
+                !(q.exclude || []).includes(charId)
+            );
+            if (myTargeted.length > 0) {
+                const pick = myTargeted[Math.floor(Math.random() * myTargeted.length)];
+                // Resolve {{slug}} tokens
+                const resolved = resolveQuestTokens(pick.text, charToUid);
+                playerQuests.push({ id: pick.id, text: resolved, type: 'targeted', completed: false });
+                usedQuestIds.add(pick.id);
+            }
+
+            // 1-2 generic/discovery quests
+            const pool = [...generic, ...discovery].filter(q => !usedQuestIds.has(q.id));
+            const shuffled = pool.sort(() => Math.random() - 0.5);
+            const needed = 3 - playerQuests.length;
+            shuffled.slice(0, needed).forEach(q => {
+                playerQuests.push({ id: q.id, text: q.text, type: q.type, completed: false });
+            });
+
+            writes['games/' + gameId + '/players/' + uid + '/cocktailQuests'] = playerQuests;
+        });
+
+        await db.ref().update(writes);
+        console.log('Quests distributed to', Object.keys(charToUid).length, 'players');
+    }
+
+    function resolveQuestTokens(text, charToUid) {
+        // Replace {{slug}} with character name using characterDatabase
+        return text.replace(/\{\{([^}]+)\}\}/g, (match, slug) => {
+            if (typeof characterDatabase !== 'undefined' && characterDatabase[slug]) {
+                return characterDatabase[slug].nameVariants?.female || characterDatabase[slug].name || slug;
+            }
+            return slug;
+        });
+    }
+
+    // Listen for phase changes
+    function listenPhase() {
+        if (!gameId) return;
+        db.ref('games/' + gameId + '/state/currentPhase').on('value', snap => {
+            const data = snap.val();
+            currentPhaseId = data ? data.id : null;
+            phaseStartTime = data ? new Date(data.startedAt).getTime() : null;
+            renderPhaseControls();
+            renderChecklist();
         });
     }
 
