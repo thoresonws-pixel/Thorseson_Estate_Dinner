@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Big Screen — Thor's Murder Mysteries</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Special+Elite&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            background: #06040a;
+            color: #f5f0e6;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ── SCREENS ─────────────────────────────────────────── */
+        .screen {
+            position: absolute;
+            inset: 0;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .screen.active { display: flex; }
+
+        /* ── IDLE SCREEN ─────────────────────────────────────── */
+        #screen-idle {
+            background: radial-gradient(ellipse at center, #1a1128 0%, #06040a 70%);
+        }
+        .idle-logo {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 72px;
+            font-weight: 700;
+            color: #c9a227;
+            letter-spacing: 4px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .idle-sub {
+            font-family: 'Special Elite', monospace;
+            font-size: 16px;
+            letter-spacing: 6px;
+            color: rgba(201,162,39,0.4);
+            text-transform: uppercase;
+            text-align: center;
+        }
+        .idle-ornament {
+            color: rgba(201,162,39,0.2);
+            font-size: 48px;
+            margin: 24px 0;
+        }
+
+        /* ── LEADERBOARD SCREEN ──────────────────────────────── */
+        #screen-leaderboard {
+            background: radial-gradient(ellipse at center, #0f0b14 0%, #06040a 80%);
+            padding: 60px;
+        }
+        .lb-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: #c9a227;
+            letter-spacing: 3px;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        .lb-subtitle {
+            font-family: 'Special Elite', monospace;
+            font-size: 13px;
+            letter-spacing: 4px;
+            color: rgba(201,162,39,0.4);
+            text-align: center;
+            margin-bottom: 48px;
+            text-transform: uppercase;
+        }
+        .lb-list {
+            width: 100%;
+            max-width: 800px;
+        }
+        .lb-row {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding: 18px 28px;
+            margin-bottom: 12px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(201,162,39,0.12);
+            border-left: 4px solid transparent;
+            transition: all 0.4s ease;
+        }
+        .lb-row.rank-1 { border-left-color: #c9a227; background: rgba(201,162,39,0.06); }
+        .lb-row.rank-2 { border-left-color: #aaaaaa; }
+        .lb-row.rank-3 { border-left-color: #cd7f32; }
+        .lb-medal { font-size: 32px; width: 48px; text-align: center; }
+        .lb-name {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 28px;
+            color: #f5f0e6;
+            flex: 1;
+        }
+        .lb-char {
+            font-size: 16px;
+            color: rgba(201,162,39,0.6);
+            font-style: italic;
+        }
+        .lb-score {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 42px;
+            font-weight: 700;
+            color: #c9a227;
+            min-width: 80px;
+            text-align: right;
+        }
+        .lb-label {
+            font-family: 'Special Elite', monospace;
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: rgba(201,162,39,0.4);
+            text-align: right;
+        }
+        .lb-empty {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: rgba(255,255,255,0.2);
+            font-style: italic;
+            text-align: center;
+        }
+
+        /* ── PHOTO SLIDESHOW SCREEN ──────────────────────────── */
+        #screen-slideshow {
+            background: #06040a;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 0;
+            align-items: stretch;
+            justify-content: flex-start;
+        }
+        .slideshow-single {
+            width: 100vw;
+            height: 100vh;
+            object-fit: contain;
+            transition: opacity 0.8s ease;
+        }
+        .slideshow-caption {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            color: rgba(255,255,255,0.8);
+            background: rgba(0,0,0,0.5);
+            padding: 10px 24px;
+            text-align: center;
+            max-width: 80vw;
+        }
+
+        /* ── DETECTIVE BOARD SCREEN (placeholder) ────────────── */
+        #screen-detective {
+            background: radial-gradient(ellipse at center, #0a0f1e 0%, #06040a 80%);
+            padding: 60px;
+        }
+        .detective-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: #c9a227;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        .detective-sub {
+            font-family: 'Special Elite', monospace;
+            font-size: 13px;
+            letter-spacing: 4px;
+            color: rgba(201,162,39,0.4);
+            text-align: center;
+            margin-bottom: 48px;
+            text-transform: uppercase;
+        }
+        .detective-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            width: 100%;
+            max-width: 1200px;
+            overflow-y: auto;
+            max-height: calc(100vh - 200px);
+        }
+        .clue-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(201,162,39,0.15);
+            padding: 18px 20px;
+            animation: clueReveal 0.5s ease;
+        }
+        @keyframes clueReveal {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .clue-type {
+            font-family: 'Special Elite', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 2px;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+        .type-clue  { background: #c9a227; color: #06040a; }
+        .type-story { background: #8b7355; color: white; }
+        .clue-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            color: #f5f0e6;
+            font-weight: 700;
+        }
+
+        /* ── VIDEO SCREEN ────────────────────────────────────── */
+        #screen-video {
+            background: #000;
+        }
+        #bigVideo {
+            width: 100vw;
+            height: 100vh;
+            object-fit: contain;
+        }
+
+        /* ── GAME LINK OVERLAY ───────────────────────────────── */
+        .game-link {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            font-family: 'Special Elite', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: rgba(201,162,39,0.25);
+            text-decoration: none;
+            z-index: 999;
+            transition: color 0.3s;
+        }
+        .game-link:hover { color: rgba(201,162,39,0.7); }
+
+        /* ── TRANSITION OVERLAY ──────────────────────────────── */
+        .transition-overlay {
+            position: fixed;
+            inset: 0;
+            background: #06040a;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+        .transition-overlay.active { opacity: 1; }
+    </style>
+</head>
+<body>
+
+<!-- Idle -->
+<div class="screen active" id="screen-idle">
+    <div class="idle-ornament">✦</div>
+    <div class="idle-logo">Thor's Murder Mysteries</div>
+    <div class="idle-sub">An Evening of Intrigue</div>
+    <div class="idle-ornament">✦</div>
+</div>
+
+<!-- Leaderboard -->
+<div class="screen" id="screen-leaderboard">
+    <div class="lb-title">🔎 Scan Leaderboard</div>
+    <div class="lb-subtitle">Evidence Discovered</div>
+    <div class="lb-list" id="lbList">
+        <div class="lb-empty">No scans yet — get investigating.</div>
+    </div>
+</div>
+
+<!-- Slideshow -->
+<div class="screen" id="screen-slideshow">
+    <img id="slideshowImg" class="slideshow-single" src="" alt="">
+    <div class="slideshow-caption" id="slideshowCaption" style="display:none;"></div>
+</div>
+
+<!-- Detective Board -->
+<div class="screen" id="screen-detective">
+    <div class="detective-title">🔍 Evidence Board</div>
+    <div class="detective-sub">What We Know So Far</div>
+    <div class="detective-grid" id="detectiveGrid">
+        <div style="color:rgba(255,255,255,0.2);font-style:italic;text-align:center;grid-column:1/-1;">No evidence revealed yet.</div>
+    </div>
+</div>
+
+<!-- Video -->
+<div class="screen" id="screen-video">
+    <video id="bigVideo" controls autoplay></video>
+</div>
+
+<!-- Game Dashboard link -->
+<a class="game-link" id="gameDashLink" href="#" target="_blank">← Game Dashboard</a>
+
+<!-- Transition overlay -->
+<div class="transition-overlay" id="transitionOverlay"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyApHrYubqWrR4m0ihdpq6Ym40jv4HTQ5i0",
+    authDomain: "thoreson-estate.firebaseapp.com",
+    databaseURL: "https://thoreson-estate-default-rtdb.firebaseio.com",
+    projectId: "thoreson-estate",
+    storageBucket: "thoreson-estate.firebasestorage.app",
+    messagingSenderId: "182924616892",
+    appId: "1:182924616892:web:8153e1c69895cee665dcb9"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ── STATE ─────────────────────────────────────────────────────
+const params    = new URLSearchParams(window.location.search);
+const gameId    = params.get('id');
+let   currentMode    = 'idle';
+let   slideshowTimer = null;
+let   slideshowIdx   = 0;
+let   photos         = [];
+
+// Set game dashboard link
+if (gameId) {
+    document.getElementById('gameDashLink').href =
+        'game.html?id=' + gameId;
+}
+
+if (!gameId) {
+    console.warn('No game ID in URL — showing idle screen');
+} else {
+    bootstrap();
+}
+
+function bootstrap() {
+    // Listen for big screen mode changes
+    db.ref('games/' + gameId + '/state/bigScreen').on('value', snap => {
+        const data = snap.val() || { mode: 'idle' };
+        switchScreen(data.mode, data);
+    });
+
+    // Listen for scans (leaderboard)
+    db.ref('games/' + gameId + '/state/scans').on('value', snap => {
+        renderLeaderboard(snap.val() || {});
+    });
+
+    // Listen for active revelations (detective board)
+    db.ref('games/' + gameId + '/state/activeItems').on('value', snap => {
+        renderDetectiveBoard(snap.val() || []);
+    });
+
+    // Listen for photos (slideshow)
+    db.ref('photos').orderByChild('time').on('value', snap => {
+        photos = [];
+        snap.forEach(child => {
+            const p = child.val();
+            if (p.wallUrl) photos.push(p);
+        });
+        photos.sort((a, b) => b.time - a.time);
+        if (currentMode === 'slideshow') startSlideshow();
+    });
+}
+
+// ── SCREEN SWITCHING ──────────────────────────────────────────
+function switchScreen(mode, data) {
+    if (mode === currentMode) return;
+
+    const overlay = document.getElementById('transitionOverlay');
+    overlay.classList.add('active');
+
+    setTimeout(() => {
+        // Hide all screens
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+
+        currentMode = mode;
+
+        const screen = document.getElementById('screen-' + mode);
+        if (screen) screen.classList.add('active');
+        else document.getElementById('screen-idle').classList.add('active');
+
+        // Mode-specific setup
+        if (mode === 'slideshow') startSlideshow();
+        else stopSlideshow();
+
+        if (mode === 'video' && data && data.videoSrc) {
+            document.getElementById('bigVideo').src = data.videoSrc;
+        }
+
+        overlay.classList.remove('active');
+    }, 400);
+}
+
+// ── LEADERBOARD ───────────────────────────────────────────────
+function renderLeaderboard(scans) {
+    const el = document.getElementById('lbList');
+    const entries = Object.entries(scans).sort((a, b) => b[1] - a[1]);
+    const medals = ['🥇', '🥈', '🥉'];
+
+    if (entries.length === 0) {
+        el.innerHTML = '<div class="lb-empty">No scans yet — get investigating.</div>';
+        return;
+    }
+
+    el.innerHTML = entries.slice(0, 8).map(([player, count], i) => `
+        <div class="lb-row rank-${i + 1}">
+            <div class="lb-medal">${medals[i] || '✦'}</div>
+            <div>
+                <div class="lb-name">${player}</div>
+            </div>
+            <div>
+                <div class="lb-score">${count}</div>
+                <div class="lb-label">SCANS</div>
+            </div>
+        </div>`).join('');
+}
+
+// ── DETECTIVE BOARD ───────────────────────────────────────────
+function renderDetectiveBoard(activeItems) {
+    const el = document.getElementById('detectiveGrid');
+    if (!activeItems || activeItems.length === 0) {
+        el.innerHTML = '<div style="color:rgba(255,255,255,0.2);font-style:italic;text-align:center;grid-column:1/-1;">No evidence revealed yet.</div>';
+        return;
+    }
+
+    // Load revelations if available
+    if (typeof revelationsDatabase === 'undefined') return;
+
+    const revealed = [];
+    Object.values(revelationsDatabase).forEach(act => {
+        act.items.forEach(item => {
+            if (activeItems.includes(item.id)) revealed.push(item);
+        });
+    });
+
+    if (revealed.length === 0) {
+        el.innerHTML = '<div style="color:rgba(255,255,255,0.2);font-style:italic;text-align:center;grid-column:1/-1;">No evidence revealed yet.</div>';
+        return;
+    }
+
+    el.innerHTML = revealed.map(item => `
+        <div class="clue-card">
+            <span class="clue-type type-${item.type || 'clue'}">${(item.type || 'clue').toUpperCase()}</span>
+            <div class="clue-title">${item.title}</div>
+        </div>`).join('');
+}
+
+// ── SLIDESHOW ─────────────────────────────────────────────────
+function startSlideshow() {
+    stopSlideshow();
+    if (photos.length === 0) return;
+    showSlide(0);
+    slideshowTimer = setInterval(() => {
+        slideshowIdx = (slideshowIdx + 1) % photos.length;
+        showSlide(slideshowIdx);
+    }, 6000);
+}
+
+function stopSlideshow() {
+    if (slideshowTimer) { clearInterval(slideshowTimer); slideshowTimer = null; }
+}
+
+function showSlide(idx) {
+    const p = photos[idx];
+    if (!p) return;
+    const img = document.getElementById('slideshowImg');
+    img.style.opacity = 0;
+    setTimeout(() => {
+        img.src = p.wallUrl;
+        img.style.opacity = 1;
+    }, 300);
+    const cap = document.getElementById('slideshowCaption');
+    if (p.caption) { cap.textContent = p.caption; cap.style.display = 'block'; }
+    else cap.style.display = 'none';
+}
+</script>
+</body>
+</html>

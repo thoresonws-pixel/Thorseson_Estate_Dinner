@@ -1209,29 +1209,41 @@
 
         <div class="section-head">
             <div class="section-title">Big Screen Controls</div>
+            <a id="bigScreenLink" href="#" target="_blank" class="btn-gold" style="text-decoration:none;">
+                Open Big Screen ↗
+            </a>
         </div>
 
-        <div class="screen-options">
-            <a href="slideshow.html" target="_blank" class="screen-option">
+        <div style="font-size:14px;color:var(--fog);margin-bottom:24px;line-height:1.6;">
+            Open the Big Screen link on your laptop, drag it to the TV, and go fullscreen (F11).
+            Use the buttons below to control what's showing.
+        </div>
+
+        <div class="screen-options" id="screenOptions">
+            <div class="screen-option" onclick="setBigScreen('idle')">
+                <span class="screen-icon">✦</span>
+                <div class="screen-label">Idle / Title</div>
+                <div class="screen-desc">Thor's Murder Mysteries title screen. Use between acts.</div>
+            </div>
+            <div class="screen-option" onclick="setBigScreen('leaderboard')">
+                <span class="screen-icon">🏆</span>
+                <div class="screen-label">Leaderboard</div>
+                <div class="screen-desc">Live scan leaderboard — updates in real time as players find clues.</div>
+            </div>
+            <div class="screen-option" onclick="setBigScreen('detective')">
+                <span class="screen-icon">🔍</span>
+                <div class="screen-label">Evidence Board</div>
+                <div class="screen-desc">Shows all revealed clues and story beats so far.</div>
+            </div>
+            <div class="screen-option" onclick="setBigScreen('slideshow')">
                 <span class="screen-icon">📷</span>
                 <div class="screen-label">Photo Slideshow</div>
-                <div class="screen-desc">Live photo wall — displays guest photos as they're taken throughout the evening.</div>
-            </a>
-            <div class="screen-option" style="opacity:0.4;cursor:default;">
-                <span class="screen-icon">🔍</span>
-                <div class="screen-label">Detective Board</div>
-                <div class="screen-desc">Live evidence board — clues pin automatically as revelations are revealed. Coming soon.</div>
+                <div class="screen-desc">Rotating guest photos — cycles every 6 seconds.</div>
             </div>
-            <div class="screen-option" style="opacity:0.4;cursor:default;">
-                <span class="screen-icon">🎬</span>
-                <div class="screen-label">Video Playback</div>
-                <div class="screen-desc">Play video files to the room. Confession recordings, intro videos, and more. Coming soon.</div>
-            </div>
-            <div class="screen-option" style="opacity:0.4;cursor:default;">
-                <span class="screen-icon">🏆</span>
-                <div class="screen-label">Leaderboard Display</div>
-                <div class="screen-desc">Full-screen scan leaderboard for the room to see. Coming soon.</div>
-            </div>
+        </div>
+
+        <div style="margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--fog);">
+            CURRENTLY SHOWING: <span id="currentScreenMode" style="color:var(--accent-lt);">IDLE</span>
         </div>
 
     </div>
@@ -2186,6 +2198,43 @@ ${inviteUrl}
         const sms = `sms:${gameData.hostPhone || ''}?body=${encodeURIComponent(smsBody)}`;
         window.open(sms);
         showToast('SMS app opened — wire to Twilio for automation.', 'success');
+    }
+
+
+    // ── BIG SCREEN CONTROLS ───────────────────────────────────────
+    function initBigScreenLink() {
+        const link = document.getElementById('bigScreenLink');
+        if (link && gameId) {
+            link.href = 'bigscreen.html?id=' + gameId;
+        }
+    }
+
+    async function setBigScreen(mode) {
+        try {
+            await db.ref('games/' + gameId + '/state/bigScreen').set({
+                mode,
+                updatedAt: new Date().toISOString()
+            });
+            // Update active state on buttons
+            document.querySelectorAll('#screenOptions .screen-option').forEach(el => {
+                el.classList.remove('active-screen');
+            });
+            event.currentTarget.classList.add('active-screen');
+            document.getElementById('currentScreenMode').textContent = mode.toUpperCase();
+            showToast('Big screen → ' + mode, 'success');
+        } catch(err) {
+            showToast('Error: ' + err.message, 'error');
+        }
+    }
+
+    // Listen for current big screen mode and sync UI
+    function listenBigScreen() {
+        if (!gameId) return;
+        db.ref('games/' + gameId + '/state/bigScreen').on('value', snap => {
+            const data = snap.val();
+            if (!data) return;
+            document.getElementById('currentScreenMode').textContent = (data.mode || 'idle').toUpperCase();
+        });
     }
 
 </script>
