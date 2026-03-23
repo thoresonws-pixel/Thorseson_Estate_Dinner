@@ -108,9 +108,19 @@
 
     let routing = false; // prevent double-routing
 
+    // Known admin emails — bypass DB lookup if rules are blocking
+    const ADMIN_EMAILS = ['thoresonws@gmail.com', 'thoresonws@gmail.com'];
+
     async function routeUser(user) {
         if (routing) return;
         routing = true;
+
+        // Fast path for known admins
+        if (ADMIN_EMAILS.includes((user.email || '').toLowerCase())) {
+            window.location.href = 'admin.html';
+            return;
+        }
+
         try {
             const snap = await db.ref('users/' + user.uid).once('value');
             const data = snap.val() || {};
