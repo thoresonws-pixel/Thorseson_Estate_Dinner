@@ -343,15 +343,19 @@
     let codeCheckTimeout = null;
 
     // ── Auth state ────────────────────────────────────────────────
+    // Use getPendingToken to wait for full auth resolution before acting
     auth.onAuthStateChanged(user => {
-        document.getElementById('authLoading').style.display = 'none';
-        document.getElementById('mainContent').style.display = 'block';
-
-        if (!user || user.isAnonymous) {
-            // Not logged in — send to register
+        // user.isAnonymous = photo system session — ignore, send to register
+        // !user.email = anonymous (no email on anonymous accounts)
+        if (!user || user.isAnonymous || !user.email) {
+            document.getElementById('authLoading').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
             window.location.href = 'register.html';
             return;
         }
+
+        document.getElementById('authLoading').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'block';
 
         currentUser = user;
 

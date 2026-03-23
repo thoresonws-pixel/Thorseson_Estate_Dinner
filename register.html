@@ -329,19 +329,10 @@
     const auth = firebase.auth();
     const db   = firebase.database();
 
-    // ── Redirect if already logged in (email accounts only) ─────
-    auth.onAuthStateChanged(user => {
-        // Ignore anonymous sessions — they belong to the photo system
-        if (user && !user.isAnonymous) {
-            db.ref(`users/${user.uid}/currentGameId`).once('value').then(snap => {
-                if (snap.val()) {
-                    window.location.href = 'authenticated-dashboard.html';
-                } else {
-                    window.location.href = 'join.html';
-                }
-            });
-        }
-    });
+    // ── No auto-redirect on register page ───────────────────────
+    // Anonymous sessions from the photo system must not trigger redirects.
+    // If a real email user lands here they can use the sign-in link instead.
+    // Only redirect after a successful NEW registration (handled below).
 
     // ── Password strength indicator ──────────────────────────────
     document.getElementById('password').addEventListener('input', function() {
