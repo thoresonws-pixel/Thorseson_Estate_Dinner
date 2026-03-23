@@ -1,6 +1,6 @@
 // REVELATIONS DATABASE — Thoreson Estate Murder Mystery
 
-const revelationsDatabase = {
+var revelationsDatabase = {
 
     "act1": {
         label: "Act 1 — The Gathering",

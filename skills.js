@@ -9,7 +9,7 @@
 //   summary: Short text for dashboard Discoveries page (everyone sees this after QR unlock)
 //   expert: Full HTML analysis shown on QR page after password entry (expert reads aloud)
 
-const skillsDatabase = {
+var skillsDatabase = {
 
     "Accounting": {
         title: "Financial Ledger Analysis",

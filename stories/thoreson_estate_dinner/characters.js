@@ -26,7 +26,7 @@
 // NO pronouns anywhere. NO skill references in base backstories.
 // ============================================================
 
-const characterDatabase = {
+var characterDatabase = {
 
     // ============================================================
     // MIRANDA LONGFELLOW — Legal Manager
@@ -348,7 +348,7 @@ const characterDatabase = {
 // SKILL BACKSTORIES — Generic snippets injected at game time
 // Same text regardless of which character receives the skill
 // ============================================================
-const SKILL_BACKSTORIES = {
+var SKILL_BACKSTORIES = {
     Legal:         "You have a background in law and understand documents, contracts, and what makes a signature valid — or forged.",
     Medical:       "You have medical training. You know what the body reveals and how to read what others miss.",
     Botany:        "You have spent years studying plants — including ones most people have never encountered and would not recognize.",

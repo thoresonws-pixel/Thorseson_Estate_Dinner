@@ -28,7 +28,7 @@
 //   • Margaret's French Letter  (THORESON:French)
 // ─────────────────────────────────────────────────────────────
 
-const itemDatabase = [
+var itemDatabase = [
 
   // ── CLUES ──────────────────────────────────────────────────
   // Only props that do NOT already have a skill-check QR code
