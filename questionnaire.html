@@ -398,7 +398,7 @@
     auth.onAuthStateChanged(async user => {
         document.getElementById('authLoading').style.display = 'none';
 
-        if (!user) {
+        if (!user || user.isAnonymous) {
             window.location.href = 'register.html';
             return;
         }

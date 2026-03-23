@@ -713,7 +713,7 @@ let activeFilter    = 'all';
 // AUTH + BOOTSTRAP
 // ─────────────────────────────────────────────────────────────
 auth.onAuthStateChanged(async user => {
-    if (!user) { window.location.href = 'register.html'; return; }
+    if (!user || user.isAnonymous) { window.location.href = "register.html"; return; }
     currentUser = user;
 
     const userSnap = await db.ref(`users/${user.uid}`).once('value');

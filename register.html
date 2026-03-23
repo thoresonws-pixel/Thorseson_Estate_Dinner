@@ -329,10 +329,10 @@
     const auth = firebase.auth();
     const db   = firebase.database();
 
-    // ── Redirect if already logged in ───────────────────────────
+    // ── Redirect if already logged in (email accounts only) ─────
     auth.onAuthStateChanged(user => {
-        if (user) {
-            // Check if they're mid-onboarding or fully set up
+        // Ignore anonymous sessions — they belong to the photo system
+        if (user && !user.isAnonymous) {
             db.ref(`users/${user.uid}/currentGameId`).once('value').then(snap => {
                 if (snap.val()) {
                     window.location.href = 'authenticated-dashboard.html';

@@ -347,7 +347,7 @@
         document.getElementById('authLoading').style.display = 'none';
         document.getElementById('mainContent').style.display = 'block';
 
-        if (!user) {
+        if (!user || user.isAnonymous) {
             // Not logged in — send to register
             window.location.href = 'register.html';
             return;
