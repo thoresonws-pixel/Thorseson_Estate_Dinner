@@ -1612,32 +1612,7 @@
             <div id="gmLeaderboard" style="color:var(--fog);font-style:italic;">Loading…</div>
         </div>`;
 
-        // ── TEST MODE ─────────────────────────────────────────
-        html += `
-        <div class="gm-section">
-            <div class="gm-section-title">🧪 Test Mode</div>
-            <div class="gm-section-desc">When ON — guest devices receive no live updates. Only you see changes in real time.</div>
-            <button class="gm-action-btn" id="gmTestModeBtn" onclick="gmToggleTestMode()">Checking…</button>
-        </div>`;
-
-        // ── FORCE RELOAD ──────────────────────────────────────
-        html += `
-        <div class="gm-section">
-            <div class="gm-section-title">🔄 Force Reload All Devices</div>
-            <div class="gm-section-desc">After a code deploy, press this to reload every connected device.</div>
-            <button class="gm-action-btn" onclick="gmForceReload()">Force Reload All</button>
-        </div>`;
-
-        // ── RESET ─────────────────────────────────────────────
-        html += `
-        <div class="gm-section" style="border-color:rgba(139,26,26,0.4);">
-            <div class="gm-section-title" style="color:#e74c3c;">⚠ Game Reset</div>
-            <div class="gm-section-desc">Clears ALL revelations, skill discoveries, scan counts and popup history across every device. Use before the event to start fresh.</div>
-            <button class="gm-danger-btn" onclick="gmResetGame()">Reset & Start Fresh</button>
-        </div>`;
-
         document.getElementById('gmBody').innerHTML = html;
-        gmUpdateTestModeBtn();
     }
 
     // ── GM action functions ────────────────────────────────────────
@@ -1673,45 +1648,9 @@
         audio.play();
     }
 
-    function gmUpdateTestModeBtn() {
-        const btn = document.getElementById('gmTestModeBtn');
-        if (!btn) return;
-        gmRef('testMode').once('value').then(snap => {
-            const on = snap.val() === true;
-            btn.textContent = on ? '✓ Test Mode ON — Turn Off' : 'Test Mode OFF — Turn On';
-            btn.style.background = on ? 'rgba(201,162,39,0.2)' : '';
-            btn.style.borderColor = on ? 'var(--gold)' : '';
-        });
-    }
 
-    function gmToggleTestMode() {
-        gmRef('testMode').once('value').then(snap => {
-            gmRef('testMode').set(!(snap.val() === true)).then(gmUpdateTestModeBtn);
-        });
-    }
 
-    function gmForceReload() {
-        if (!confirm('Reload all connected devices?')) return;
-        gmRef('appVersion').set(Date.now());
-        showToast('Reload signal sent to all devices.', 'success');
-    }
 
-    function gmResetGame() {
-        if (!confirm('Reset ALL game data across every device? This cannot be undone.')) return;
-        gmRef('activeItems').set([]);
-        gmRef('discoveredSkills').set([]);
-        gmRef('memoryReset').set(Date.now());
-        gmRef('scans').remove();
-        gmRef('scanLog').remove();
-        gmRef('photos').remove();
-        try {
-            const storage = firebase.storage();
-            storage.ref('photos/wall').listAll().then(res => res.items.forEach(i => i.delete()));
-            storage.ref('photos/full').listAll().then(res => res.items.forEach(i => i.delete()));
-        } catch(e) {}
-        showToast('Game reset complete.', 'success');
-        renderGMPanel();
-    }
 
     
     // ── EDIT GAME ─────────────────────────────────────────────────

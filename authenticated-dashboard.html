@@ -1508,15 +1508,7 @@
 
             // If testMode is active, real accounts skip live listeners
             // Master and test accounts always listen
-            const isMaster = userSession && userSession.role === 'master';
-            if (!isMaster) {
-                gameRef('testMode').once('value').then(snap => {
-                    if (snap.val() === true) {
-                        console.log('⏸ Test mode active — live updates paused for guests');
-                        return;
-                    }
-                    attachFirebaseListeners();
-                });
+            attachFirebaseListeners(););
                 return;
             }
             attachFirebaseListeners();
@@ -2973,15 +2965,6 @@
 
             // Only fire notifications to test/master accounts while test mode is active.
             // Real guest accounts get nothing until test mode is OFF.
-            var isTestOrMaster = userSession && userSession.role === 'master';
-            if (!isTestOrMaster && database) {
-                gameRef('testMode').once('value').then(function(snap) {
-                    if (snap.val() === true) return; // test mode on — silence real accounts
-                    _fireNotification(title, body, tag);
-                });
-                return;
-            }
-
             _fireNotification(title, body, tag);
         }
 
