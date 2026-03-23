@@ -1231,11 +1231,9 @@
                         <label for="storySelect">Mystery / Story</label>
                         <select id="storySelect">
                             <option value="thoreson_estate_dinner">The Thoreson Estate Dinner</option>
-                    <option value="devereaux_masquerade" disabled>The Devereaux Masquerade (Coming Soon)</option>
-                    <option value="last_train_wicker_park" disabled>Last Train to Wicker Park (Coming Soon)</option>
-                        <option value="devereaux_masquerade" disabled>The Devereaux Masquerade (Coming Soon)</option>
-                        <option value="last_train_wicker_park" disabled>Last Train to Wicker Park (Coming Soon)</option>
-                            <option value="devereaux" disabled>The Devereaux Masquerade (Coming Soon)</option>
+                        <option value="devereaux_masquerade">The Devereaux Masquerade</option>
+                        <option value="last_train_wicker_park">Last Train to Wicker Park</option>
+<option value="devereaux" disabled>The Devereaux Masquerade (Coming Soon)</option>
                             <option value="wicker" disabled>Last Train to Wicker Park (Coming Soon)</option>
                         </select>
                     </div>
@@ -1503,7 +1501,7 @@
         return `
         <div class="game-card" id="card-${id}">
             <div style="height:4px;background:${STORIES[g.storyId]?.color || 'var(--gold-dk)'};border-bottom:2px solid ${STORIES[g.storyId]?.accent || 'var(--gold)'};" ></div>
-        <div class="game-card-top" onclick="window.location.href='game.html?id=${id}'" style="cursor:pointer;">
+        <div class="game-card-top">
                 <div class="game-info">
                     <div class="game-story">${g.partyName || g.storyName || 'Mystery Dinner'}</div>
                     <div style="font-family:'Special Elite',monospace;font-size:10px;letter-spacing:2px;color:var(--gold-dk);margin-top:2px;">${g.storyName || ''}</div>
@@ -1523,7 +1521,13 @@
                             <div class="player-bar-fill" style="width:${fillPct}%"></div>
                         </div>
                     </div>
-                    <div style="font-family:'Special Elite',monospace;font-size:10px;letter-spacing:2px;color:var(--gold-dk);">OPEN →</div>
+                    <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
+                        <button class="btn-gold" style="padding:7px 16px;font-size:11px;" onclick="window.location.href='game.html?id=${id}'">Open →</button>
+                        <div style="display:flex;gap:6px;">
+                            <button class="btn-ghost" style="padding:5px 10px;font-size:10px;" onclick="openEditModal('${id}');event.stopPropagation();">Edit</button>
+                            <button class="btn-danger" style="padding:5px 10px;font-size:10px;" onclick="openCancelModal('${id}','${g.partyName || g.storyName}');event.stopPropagation();">Cancel</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1557,8 +1561,6 @@
                     ${canComplete ? `<button class="btn-status btn-complete" onclick="setStatus('${id}','complete')">■ Complete</button>` : ''}
                     <button class="btn-copy" onclick="copyText('${inviteUrl}', 'invite-${id}')">Copy Invite</button>
                     <span class="copy-confirm" id="invite-${id}">Copied!</span>
-                    <button class="btn-ghost" onclick="openEditModal('${id}')">Edit</button>
-                    <button class="btn-danger" onclick="openCancelModal('${id}', '${g.partyName || g.storyName}')">Cancel Game</button>
                     ${Object.keys(g.players||{}).some(k=>k.startsWith('test_player_')) ? `<button class="btn-ghost" style="color:var(--fog);font-size:10px;" onclick="removeTestPlayers('${id}')">Remove Test Players</button>` : ''}
                 </div>
             </div>
@@ -2396,11 +2398,9 @@
                     <label for="editStory">Mystery</label>
                     <select id="editStory">
                         <option value="thoreson_estate_dinner">The Thoreson Estate Dinner</option>
-                    <option value="devereaux_masquerade" disabled>The Devereaux Masquerade (Coming Soon)</option>
-                    <option value="last_train_wicker_park" disabled>Last Train to Wicker Park (Coming Soon)</option>
-                        <option value="devereaux_masquerade" disabled>The Devereaux Masquerade (Coming Soon)</option>
-                        <option value="last_train_wicker_park" disabled>Last Train to Wicker Park (Coming Soon)</option>
-                    </select>
+                        <option value="devereaux_masquerade">The Devereaux Masquerade</option>
+                        <option value="last_train_wicker_park">Last Train to Wicker Park</option>
+</select>
                 </div>
                 <div class="form-group">
                     <label for="editDate">Date of Event</label>
