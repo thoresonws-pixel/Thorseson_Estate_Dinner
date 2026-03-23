@@ -1894,14 +1894,9 @@
             return;
         }
 
-        // Check for existing assignments
+        // Load any existing assignments (don't auto-run — let GM initiate)
         const assignSnap = await db.ref('games/' + gameId + '/state/roleAssignments').once('value');
-        if (assignSnap.exists()) {
-            genAssignments = assignSnap.val() || {};
-        } else {
-            runGeneration();
-            return;
-        }
+        genAssignments = assignSnap.exists() ? (assignSnap.val() || {}) : {};
 
         renderGenGrid();
     }
@@ -1917,39 +1912,57 @@
     // ── TEST PLAYER GENERATOR ─────────────────────────────────────
     // Populates a game with fake players covering all characters
     // so role generation can be tested without real accounts
-    const TEST_CHARACTERS = [
-        { id: 'miranda_longfellow',   name: 'Test Miranda',   score: 9 },
-        { id: 'scott_thoreson',       name: 'Test Scott',     score: 8 },
-        { id: 'walter_lippman',       name: 'Test Walter',    score: 8 },
-        { id: 'david_richardson',     name: 'Test David',     score: 7 },
-        { id: 'charlotte_waverly',    name: 'Test Charlotte', score: 6 },
-        { id: 'patricia_chamberlain', name: 'Test Patricia',  score: 6 },
-        { id: 'dorothy_wells',        name: 'Test Dorothy',   score: 5 },
-        { id: 'vivienne_ashford',     name: 'Test Vivienne',  score: 5 },
-        { id: 'eleanor_thoreson',     name: 'Test Eleanor',   score: 4 },
-        { id: 'raymond_hammond',      name: 'Test Raymond',   score: 7 },
-        { id: 'marcus_brennan',       name: 'Test Marcus',    score: 5 },
-        { id: 'victoria_ashworth',    name: 'Test Victoria',  score: 3 },
-    ];
+
+
+    // Random name pools for test players
+    const TEST_FIRST = ['James','Emma','Oliver','Sophia','Henry','Clara','Arthur','Rose','Walter','Mae','George','Iris'];
+    const TEST_LAST  = ['Fletcher','Whitmore','Caldwell','Hargrove','Sinclair','Beaumont','Langford','Mercer','Ashby','Vance'];
+
+    function randomTestName() {
+        const f = TEST_FIRST[Math.floor(Math.random() * TEST_FIRST.length)];
+        const l = TEST_LAST[Math.floor(Math.random() * TEST_LAST.length)];
+        return f + ' ' + l;
+    }
 
     async function addTestPlayers(gameId) {
         const btn = event.target;
         btn.disabled = true;
-        btn.textContent = 'Adding test players…';
+        btn.textContent = 'Adding…';
 
         try {
+            // Find which characters are already taken
+            const snap = await db.ref('games/' + gameId + '/players').once('value');
+            const takenChars = new Set();
+            snap.forEach(child => {
+                const p = child.val();
+                if (p.characterId) takenChars.add(p.characterId);
+            });
+
+            // All characters from the story
+            const allChars = Object.keys(characterDatabase || {});
+            const available = allChars.filter(id => !takenChars.has(id));
+
+            if (available.length === 0) {
+                showToast('All characters already have players.', 'error');
+                btn.disabled = false;
+                btn.textContent = '+ Test Players';
+                return;
+            }
+
+            // Fill remaining characters with random-named test players
             const writes = {};
-            TEST_CHARACTERS.forEach((tc, i) => {
-                const fakeUid = 'test_player_' + i;
-                writes[fakeUid] = {
-                    displayName: tc.name,
-                    characterId: tc.id,
-                    characterName: tc.id.replace(/_/g, ' '),
+            available.forEach((charId, i) => {
+                const uid = 'test_player_' + Date.now() + '_' + i;
+                const score = Math.floor(Math.random() * 6) + 4; // 4-9 range
+                writes[uid] = {
+                    displayName: randomTestName(),
+                    characterId: charId,
+                    characterName: charId.replace(/_/g, ' '),
                     status: 'ready',
                     joinedAt: new Date().toISOString(),
                     questionnaire: {
-                        gender: 'female',
-                        involvementScore: tc.score,
+                        gender: Math.random() > 0.5 ? 'female' : 'male',
+                        involvementScore: score,
                         secrets: 'yes',
                         completedAt: new Date().toISOString()
                     }
@@ -1957,14 +1970,13 @@
             });
 
             await db.ref('games/' + gameId + '/players').update(writes);
-            showToast('Test players added — reopening…', 'success');
-            closeGenerateModal();
-            setTimeout(() => openGenerateModal(gameId), 600);
+            showToast(available.length + ' test players added.', 'success');
 
         } catch(err) {
-            btn.disabled = false;
-            btn.textContent = '+ Add Test Players (for development)';
             showToast('Error: ' + err.message, 'error');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = '+ Test Players';
         }
     }
 
@@ -2197,13 +2209,15 @@
     async function removePlayer(gameId, uid, displayName) {
         if (!confirm('Remove ' + displayName + ' from this game?')) return;
         try {
-            // Remove from game players
             await db.ref('games/' + gameId + '/players/' + uid).remove();
-            // Clear their currentGameId so they can join a different game
-            await db.ref('users/' + uid + '/currentGameId').set(null);
+            // Only clear currentGameId for real users (not test players)
+            if (!uid.startsWith('test_player_')) {
+                await db.ref('users/' + uid + '/currentGameId').set(null);
+            }
             showToast(displayName + ' removed.', 'success');
+            // Firebase listener on allGames will update the card automatically
         } catch(err) {
-            showToast('Error removing player: ' + err.message, 'error');
+            showToast('Error: ' + err.message, 'error');
         }
     }
 
