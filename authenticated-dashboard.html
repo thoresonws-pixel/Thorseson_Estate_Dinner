@@ -1597,6 +1597,11 @@
                     document.getElementById('discoveries').style.display = 'none';
                     document.getElementById('photos').style.display = 'block';
                     loadPhotoWall();
+                    // Add logout button for greeter
+                    const logoutBtn = document.createElement('div');
+                    logoutBtn.style.cssText = 'position:fixed; top:12px; right:12px; z-index:9999;';
+                    logoutBtn.innerHTML = '<button onclick="logout()" style="background:transparent; color:#555; border:1px solid #333; padding:6px 14px; font-family:\'Playfair Display\',serif; font-size:12px; letter-spacing:1px; cursor:pointer; border-radius:2px;">Logout</button>';
+                    document.body.appendChild(logoutBtn);
                     return;
                 }
 
