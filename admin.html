@@ -1468,31 +1468,18 @@
     let currentUser = null;
 
     // ── Auth + admin check ────────────────────────────────
-    const ADMIN_EMAILS = ['thoresonws@gmail.com'];
-
     auth.onAuthStateChanged(async user => {
         if (!user || user.isAnonymous) { window.location.href = "signin.html"; return; }
 
-        // Fast path for known admins — skip DB lookup
-        if (ADMIN_EMAILS.includes((user.email || '').toLowerCase())) {
-            currentUser = user;
-            document.getElementById('topbarUser').textContent = user.displayName || user.email;
-            document.getElementById('authScreen').style.display = 'none';
-            document.getElementById('mainContent').style.display = 'block';
-            document.getElementById('gameDate').value = new Date().toISOString().split('T')[0];
-            loadGames();
-            return;
-        }
-
-        // Retry role check up to 3 times — gives Firebase time to propagate new records
+        // Retry role check up to 5 times — gives Firebase time to propagate
         let role = null;
-        for (let attempt = 0; attempt < 3; attempt++) {
+        for (let attempt = 0; attempt < 5; attempt++) {
             try {
                 const snap = await db.ref('users/' + user.uid + '/role').once('value');
                 role = snap.val();
                 if (role === 'admin') break;
             } catch(e) {}
-            if (attempt < 2) await new Promise(r => setTimeout(r, 1000));
+            await new Promise(r => setTimeout(r, 1000));
         }
         if (role !== 'admin') {
             await auth.signOut();

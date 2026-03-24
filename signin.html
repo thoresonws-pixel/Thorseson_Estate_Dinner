@@ -126,6 +126,24 @@
 
     // FirebaseUI config
     const uiConfig = {
+        callbacks: {
+            signInSuccessWithAuthResult: async function(authResult) {
+                const user = authResult.user;
+                // Ensure user record exists
+                const snap = await db.ref('users/' + user.uid).once('value');
+                if (!snap.exists()) {
+                    await db.ref('users/' + user.uid).set({
+                        displayName:   user.displayName || user.email.split('@')[0],
+                        email:         user.email,
+                        createdAt:     new Date().toISOString(),
+                        gamesPlayed:   [],
+                        currentGameId: null
+                    });
+                }
+                await routeUser(user);
+                return false;
+            }
+        },
         signInOptions: [
             firebase.auth.GoogleAuthProvider.PROVIDER_ID,
             {
@@ -133,8 +151,7 @@
                 requireDisplayName: true
             }
         ],
-        signInFlow: 'popup',
-        signInSuccessUrl: 'signin.html', // Come back here, onAuthStateChanged handles routing
+        signInFlow: 'redirect',
         tosUrl: '#',
         privacyPolicyUrl: '#'
     };
