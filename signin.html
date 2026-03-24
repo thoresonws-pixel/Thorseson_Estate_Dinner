@@ -107,7 +107,9 @@
 
     // Handle auth state — fires after any sign in including FirebaseUI redirect
     auth.onAuthStateChanged(async user => {
+        console.log('SIGNIN onAuthStateChanged:', user ? user.email : 'null');
         if (!user || user.isAnonymous) return;
+        console.log('SIGNIN routing user:', user.email);
 
         // Ensure user record exists
         const snap = await db.ref('users/' + user.uid).once('value');
