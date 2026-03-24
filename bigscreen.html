@@ -358,7 +358,7 @@ function bootstrap() {
     });
 
     // Listen for photos (slideshow)
-    db.ref('photos').orderByChild('time').on('value', snap => {
+    db.ref('games/' + gameId + '/state/photos').orderByChild('time').on('value', snap => {
         photos = [];
         snap.forEach(child => {
             const p = child.val();

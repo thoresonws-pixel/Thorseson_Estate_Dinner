@@ -55,7 +55,7 @@
   <button class="download-btn" id="downloadSpecialsBtn" onclick="downloadSet('specials')" disabled style="border-color:#8b6914; color:#8b6914;">↓ Download QR Specials (ZIP)</button>
   <div class="progress" id="progress"></div>
   <div style="margin-top:24px; padding-top:20px; border-top:1px solid rgba(201,162,39,0.2);">
-    <a href="survey.html" style="color:#c9a227; font-family:'Playfair Display',serif; font-size:15px; text-decoration:none; letter-spacing:2px;">✦ Please take our 2-minute survey ✦</a>
+    <a id="surveyLink" href="survey.html" style="color:#c9a227; font-family:'Playfair Display',serif; font-size:15px; text-decoration:none; letter-spacing:2px;">✦ Please take our 2-minute survey ✦</a>
     <div style="font-size:12px; color:#666; margin-top:6px; font-style:italic;">Your feedback helps us make the next one even better</div>
   </div>
 </div>
@@ -87,7 +87,17 @@
   var specialPhotos = [];
 
   function loadPhotos() {
-    firebase.database().ref('photos').orderByChild('time').once('value', function(snap) {
+    const _pdParams = new URLSearchParams(window.location.search);
+    (function() {
+        const _id = _pdParams.get('id');
+        const _sl = document.getElementById('surveyLink');
+        if (_sl && _id) _sl.href = 'survey.html?id=' + _id;
+    })();
+    const _pdGameId = _pdParams.get('id');
+    const _pdRef = _pdGameId
+        ? firebase.database().ref('games/' + _pdGameId + '/state/photos')
+        : firebase.database().ref('photos');
+    _pdRef.orderByChild('time').once('value', function(snap) {
     var data = snap.val();
     if (!data) {
       document.getElementById('photosGrid').innerHTML = '<div class="loading">No photos found.</div>';

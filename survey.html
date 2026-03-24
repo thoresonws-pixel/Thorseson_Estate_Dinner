@@ -303,7 +303,7 @@
   <h2>Thank You</h2>
   <p>Your feedback has been recorded. The Thoreson family appreciates your discretion regarding tonight's events.</p>
   <hr class="divider">
-  <p style="margin-top:20px;"><a href="photos-download.html" style="color:#c9a227; text-decoration:none; letter-spacing:2px;">↓ Download Photos from Tonight</a></p>
+  <p style="margin-top:20px;"><a id="photosLink" href="photos-download.html" style="color:#c9a227; text-decoration:none; letter-spacing:2px;">↓ Download Photos from Tonight</a></p>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
@@ -392,7 +392,22 @@
       time: Date.now()
     };
 
-    firebase.database().ref('survey').push(response).then(function() {
+    const _svParams = new URLSearchParams(window.location.search);
+    (function() {
+        const _id = _svParams.get('id');
+        const _pl = document.getElementById('photosLink');
+        if (_pl && _id) _pl.href = 'photos-download.html?id=' + _id;
+    })();
+    const _svGameId = _svParams.get('id');
+    const _surveyRef = _svGameId
+        ? firebase.database().ref('games/' + _svGameId + '/survey')
+        : firebase.database().ref('survey');
+    // Propagate gameId to photos link
+    const _svId = _svParams.get('id');
+    const _pLink = document.getElementById('photosLink');
+    if (_pLink && _svId) _pLink.href = 'photos-download.html?id=' + _svId;
+
+    _surveyRef.push(response).then(function() {
       document.getElementById('surveyForm').style.display = 'none';
       document.getElementById('thanks').style.display = 'block';
     }).catch(function(err) {

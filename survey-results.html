@@ -59,7 +59,12 @@
     databaseURL: "https://thoreson-estate-default-rtdb.firebaseio.com"
   });
 
-  firebase.database().ref('survey').once('value', function(snap) {
+  const _srParams = new URLSearchParams(window.location.search);
+  const _srGameId = _srParams.get('id');
+  const _srRef = _srGameId
+      ? firebase.database().ref('games/' + _srGameId + '/survey')
+      : firebase.database().ref('survey');
+  _srRef.once('value', function(snap) {
     var data = snap.val();
     var el = document.getElementById('results');
 

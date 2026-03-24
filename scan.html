@@ -122,15 +122,16 @@
 
   try {
     const session = JSON.parse(localStorage.getItem('userSession'));
-    if (session && session.username) {
-      const player = session.username;
-      const charKey = session.character || player;
+    if (session && session.username && session.currentGameId) {
+      const player   = session.username;
+      const charKey  = session.character || player;
+      const gameId   = session.currentGameId;
+      const propId   = new URLSearchParams(window.location.search).get('id') || 'unknown';
 
-      // Log the scan
-      const propId = new URLSearchParams(window.location.search).get('id') || 'unknown';
-      const scanRef = db.ref('scans/' + player);
-      scanRef.transaction(current => (current || 0) + 1);
-      db.ref('scanLog').push({ player, charKey, propId, time: Date.now() });
+      // All scan data scoped to this game
+      const base = 'games/' + gameId + '/state/';
+      db.ref(base + 'scans/' + player).transaction(c => (c || 0) + 1);
+      db.ref(base + 'scanLog').push({ player, charKey, propId, time: Date.now() });
 
       document.getElementById('status').textContent = 'Logged for ' + player;
     } else {

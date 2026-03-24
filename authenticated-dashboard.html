@@ -1441,8 +1441,8 @@
         // Falls back to root path for legacy localStorage sessions (GM shortcut)
         function gameRef(subpath) {
             const gid = userSession && userSession.currentGameId;
-            if (gid) return database.ref('games/' + gid + '/state/' + subpath);
-            return database.ref(subpath);
+            if (!gid) { console.error('gameRef called with no currentGameId:', subpath); return database.ref('_invalid/no_game'); }
+            return database.ref('games/' + gid + '/state/' + subpath);
         }
         // ── GENDER-FLUID NAME RESOLVER ────────────────────────────────
         // resolvedGenders: { "raymond_hammond": "male", ... }

@@ -149,7 +149,13 @@
   }
 
   // Listen for new photos in real time
-  db.ref('photos').orderByChild('time').on('value', snap => {
+  const _ssParams = new URLSearchParams(window.location.search);
+  const _ssGameId = _ssParams.get('id');
+  const _photosRef = _ssGameId
+      ? db.ref('games/' + _ssGameId + '/state/photos')
+      : db.ref('photos'); // legacy fallback
+
+  _photosRef.orderByChild('time').on('value', snap => {
     const data = snap.val();
     const newPhotos = data ? Object.values(data).sort((a,b) => a.time - b.time) : [];
     const hadPhotos = photos.length > 0;
@@ -159,7 +165,10 @@
   });
 
   // Live bathroom scan counter
-  db.ref('bathroomScans').on('value', snap => {
+  const _bathRef = _ssGameId
+      ? db.ref('games/' + _ssGameId + '/state/bathroomScans')
+      : db.ref('bathroomScans');
+  _bathRef.on('value', snap => {
     const count = snap.val() || 0;
     const el = document.getElementById('bathroomCount');
     if (el && count > 0) {
