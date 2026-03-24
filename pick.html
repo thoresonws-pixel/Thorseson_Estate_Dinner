@@ -604,9 +604,8 @@ function buildRoster(excludeOptional) {
         }));
 }
 
-// Build the roster — optional character included by default
-// If the game has fewer than 12 players registered, elizabeth_monroe is hidden
-let ROSTER = buildRoster(false);
+// ROSTER is built after story scripts load
+let ROSTER = [];
 
 
 // ── DYNAMIC STORY SCRIPT LOADER ──────────────────────────────
