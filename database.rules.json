@@ -24,7 +24,10 @@
     },
     "adminInvites": {
       ".read": "auth != null",
-      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin'"
+      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      "$code": {
+        ".read": true
+      }
     },
     "photos": {
       ".read": "auth != null",
