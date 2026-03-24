@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Archive Migration — March 21 Game</title>
+<style>
+    body { font-family: monospace; background: #0d1117; color: #c9d1d9; padding: 40px; max-width: 800px; margin: 0 auto; }
+    h1 { color: #c9a227; font-size: 18px; letter-spacing: 2px; }
+    .status { background: #161b22; border: 1px solid #30363d; padding: 16px; margin: 16px 0; border-radius: 4px; line-height: 1.8; }
+    .ok  { color: #3fb950; }
+    .err { color: #f85149; }
+    .warn { color: #d29922; }
+    button { background: #c9a227; color: #0d1117; border: none; padding: 12px 28px; font-family: monospace; font-size: 14px; font-weight: 700; cursor: pointer; letter-spacing: 2px; margin: 8px 8px 8px 0; }
+    button:disabled { background: #30363d; color: #666; cursor: not-allowed; }
+    button.danger { background: #f85149; color: #fff; }
+    pre { background: #161b22; padding: 12px; overflow-x: auto; font-size: 12px; border: 1px solid #30363d; }
+</style>
+</head>
+<body>
+
+<h1>⚙ MARCH 21 ARCHIVE MIGRATION</h1>
+<p style="color:#8b949e;">This tool creates an archived game record for the March 21 event and migrates root-level photo metadata into it.</p>
+
+<div class="status" id="statusBox">Ready. Click Step 1 to begin.</div>
+
+<button onclick="step1()">Step 1: Read Root Data</button>
+<button onclick="step2()" id="btn2" disabled>Step 2: Create Archive Game</button>
+<button onclick="step3()" id="btn3" disabled>Step 3: Migrate Photo Metadata</button>
+<button onclick="step4()" id="btn4" disabled class="danger">Step 4: Delete Root Nodes</button>
+
+<pre id="preview" style="display:none;"></pre>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+<script>
+    firebase.initializeApp({
+        apiKey:            "AIzaSyApHrYubqWrR4m0ihdpq6Ym40jv4HTQ5i0",
+        authDomain:        "thoreson-estate.firebaseapp.com",
+        databaseURL:       "https://thoreson-estate-default-rtdb.firebaseio.com",
+        projectId:         "thoreson-estate",
+        storageBucket:     "thoreson-estate.firebasestorage.app",
+        messagingSenderId: "182924616892",
+        appId:             "1:182924616892:web:8153e1c69895cee665dcb9"
+    });
+    const db   = firebase.database();
+    const auth = firebase.auth();
+
+    let rootData   = {};
+    let archiveId  = null;
+
+    function log(msg, cls) {
+        const el = document.getElementById('statusBox');
+        el.innerHTML += `<div class="${cls||''}">${msg}</div>`;
+    }
+    function clear() { document.getElementById('statusBox').innerHTML = ''; }
+
+    // ── STEP 1: Read all root-level legacy nodes ──────────────────
+    async function step1() {
+        clear();
+        log('Reading root-level legacy nodes…');
+
+        const nodes = ['activeItems','scans','scanLog','photos','bathroomScans',
+                       'survey','memoryReset','appVersion','testMode'];
+
+        for (const node of nodes) {
+            const snap = await db.ref(node).once('value');
+            rootData[node] = snap.val();
+            const count = rootData[node]
+                ? (Array.isArray(rootData[node])
+                    ? rootData[node].length
+                    : typeof rootData[node] === 'object'
+                        ? Object.keys(rootData[node]).length
+                        : 1)
+                : 0;
+            log(`  ${node}: ${count} ${count === 1 ? 'entry' : 'entries'}`, rootData[node] ? 'ok' : 'warn');
+        }
+
+        const photoCount = rootData.photos ? Object.keys(rootData.photos).length : 0;
+        log(`<br>Found <strong>${photoCount} photos</strong> to migrate.`, 'ok');
+
+        // Show photo preview
+        if (rootData.photos) {
+            const preview = document.getElementById('preview');
+            const sample = Object.values(rootData.photos).slice(0, 3);
+            preview.textContent = JSON.stringify(sample, null, 2);
+            preview.style.display = 'block';
+        }
+
+        document.getElementById('btn2').disabled = false;
+        log('<br>Step 1 complete. Proceed to Step 2.', 'ok');
+    }
+
+    // ── STEP 2: Create archived game record ───────────────────────
+    async function step2() {
+        log('<br>Creating archived game record…');
+
+        const user = auth.currentUser;
+        if (!user) {
+            log('Not signed in. Please sign in to admin first.', 'err');
+            return;
+        }
+
+        const archiveGame = {
+            storyId:      'thoreson_estate_dinner',
+            storyName:    'The Thoreson Estate Dinner',
+            partyName:    'Thoreson Residence — March 21',
+            partyCode:    'ARCHIVE-0321',
+            status:       'complete',
+            eventDate:    '2026-03-21',
+            eventTime:    '18:30',
+            venueName:    'Thoreson Residence',
+            venueAddress: '16920 Old Pond Dr, Dallas, TX 75248',
+            venueId:      'thoreson_residence',
+            hostEmail:    user.email,
+            hostPhone:    null,
+            notes:        'Archived from original March 21, 2026 event. Root-level data migrated.',
+            maxPlayers:   22,
+            archived:     true,
+            createdAt:    '2026-03-21T18:30:00.000Z',
+            createdBy:    user.uid
+        };
+
+        const ref = await db.ref('games').push(archiveGame);
+        archiveId = ref.key;
+
+        log(`  Created game: <strong>${archiveId}</strong>`, 'ok');
+        log(`  Party code: ARCHIVE-0321`, 'ok');
+
+        // Also add to partyCodeIndex
+        await db.ref('partyCodeIndex/ARCHIVE-0321').set({
+            gameId:       archiveId,
+            storyId:      'thoreson_estate_dinner',
+            storyName:    'The Thoreson Estate Dinner',
+            partyName:    'Thoreson Residence — March 21',
+            eventDate:    '2026-03-21',
+            eventTime:    '18:30',
+            venueName:    'Thoreson Residence',
+            venueAddress: '16920 Old Pond Dr, Dallas, TX 75248'
+        });
+        log(`  Added to partyCodeIndex`, 'ok');
+
+        document.getElementById('btn3').disabled = false;
+        log('<br>Step 2 complete. Proceed to Step 3.', 'ok');
+    }
+
+    // ── STEP 3: Migrate photo metadata + other state ──────────────
+    async function step3() {
+        log('<br>Migrating data to games/' + archiveId + '/state/…');
+
+        const writes = {};
+        const base = 'games/' + archiveId + '/state/';
+
+        // Active items
+        if (rootData.activeItems) {
+            writes[base + 'activeItems'] = rootData.activeItems;
+            log(`  activeItems → migrated`, 'ok');
+        }
+
+        // Scans (leaderboard)
+        if (rootData.scans) {
+            writes[base + 'scans'] = rootData.scans;
+            log(`  scans → migrated (${Object.keys(rootData.scans).length} players)`, 'ok');
+        }
+
+        // Scan log
+        if (rootData.scanLog) {
+            writes[base + 'scanLog'] = rootData.scanLog;
+            log(`  scanLog → migrated`, 'ok');
+        }
+
+        // Photos (database metadata — Storage files stay in place)
+        if (rootData.photos) {
+            writes[base + 'photos'] = rootData.photos;
+            const count = Object.keys(rootData.photos).length;
+            log(`  photos → migrated (${count} photo records)`, 'ok');
+            log(`  <span class="warn">Note: Storage files at photos/wall/ and photos/full/ are unchanged — they still reference the same URLs</span>`);
+        }
+
+        // Bathroom scans
+        if (rootData.bathroomScans) {
+            writes[base + 'bathroomScans'] = rootData.bathroomScans;
+            log(`  bathroomScans → migrated (${rootData.bathroomScans})`, 'ok');
+        }
+
+        // Survey → game-level (not under state)
+        if (rootData.survey) {
+            writes['games/' + archiveId + '/survey'] = rootData.survey;
+            const count = Object.keys(rootData.survey).length;
+            log(`  survey → migrated (${count} responses)`, 'ok');
+        }
+
+        // App metadata
+        if (rootData.memoryReset) writes[base + 'memoryReset'] = rootData.memoryReset;
+        if (rootData.appVersion)  writes[base + 'appVersion']  = rootData.appVersion;
+        if (rootData.testMode !== null && rootData.testMode !== undefined) {
+            writes[base + 'testMode'] = rootData.testMode;
+        }
+
+        await db.ref().update(writes);
+        log(`<br>All data written to archive game.`, 'ok');
+
+        document.getElementById('btn4').disabled = false;
+        log('<br>Step 3 complete. Verify data looks correct in Firebase console, then proceed to Step 4 to clean up root nodes.', 'warn');
+    }
+
+    // ── STEP 4: Delete root-level legacy nodes ────────────────────
+    async function step4() {
+        if (!confirm('Delete root-level legacy nodes? This cannot be undone. Make sure Step 3 data looks correct first.')) return;
+
+        log('<br>Deleting root-level legacy nodes…');
+
+        const nodes = ['activeItems','scans','scanLog','photos','bathroomScans',
+                       'survey','memoryReset','appVersion','testMode'];
+
+        for (const node of nodes) {
+            await db.ref(node).remove();
+            log(`  deleted: ${node}`, 'ok');
+        }
+
+        log('<br>✓ Migration complete. Root nodes cleaned up.', 'ok');
+        log('The March 21 game is now archived under games/' + archiveId, 'ok');
+        document.getElementById('btn4').disabled = true;
+    }
+</script>
+</body>
+</html>
