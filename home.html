@@ -351,8 +351,14 @@ let userGames   = [];
 
 auth.onAuthStateChanged(async user => {
     if (!user || user.isAnonymous) {
-        window.location.href = 'signin.html';
-        return;
+        // Brief wait — Firebase auth can be slow to restore after leaveGame clears localStorage
+        await new Promise(r => setTimeout(r, 800));
+        const refreshed = auth.currentUser;
+        if (!refreshed || refreshed.isAnonymous) {
+            window.location.href = 'signin.html';
+            return;
+        }
+        user = refreshed;
     }
     currentUser = user;
     document.getElementById('headerUser').textContent = user.displayName || user.email;
