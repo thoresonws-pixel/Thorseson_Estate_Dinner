@@ -115,13 +115,8 @@ async function route(user) {
             currentGameId: null
         });
     }
-    const data = snap.val() || {};
-    // Player routing only — admins use admin.html directly
-    if (data.currentGameId) {
-        window.location.href = 'authenticated-dashboard.html';
-    } else {
-        window.location.href = 'home.html';
-    }
+    // Always go to home — home.html handles routing based on currentGameId
+    window.location.href = 'home.html';
 }
 
 // Handle Google redirect result FIRST before anything else
