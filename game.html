@@ -1286,7 +1286,7 @@ let roleAssign   = {};
 let skillAssign  = {};
 let genPlayers      = {};
 let genAssignments  = {};
-let rolesConfig     = null;
+var rolesConfig     = null; // must be var — roles.js assigns this via dynamic script injection
 // rolesConfig loaded from stories/{storyId}/roles.js
 
 // ── AUTH ──────────────────────────────────────────────────────
@@ -1683,8 +1683,8 @@ function renderCharacters() {
                     <div class="char-slug">${slug}</div>
                 </div>
                 <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;">
-                    ${role  ? `<span class="role-badge role-${role}">${role}</span>` : ''}
-                    ${skill ? `<span class="skill-badge">${skill}</span>` : ''}
+                    ${role ? `<span class="role-badge role-${role}">${role}</span>` : ''}
+                    ${skill && role !== 'pipeline' ? `<span class="skill-badge">${skill}</span>` : ''}
                 </div>
             </div>
             ${player
