@@ -1802,7 +1802,8 @@ function renderCharacters() {
                 }
             }
 
-            // Walk backup list
+            // Walk backup list — probability-weighted, with guaranteed fallback
+            let fallbackUid = null;
             for (const backupChar of (skillCfg.backups || [])) {
                 const backupUid = charToUid[backupChar];
                 if (!backupUid) continue;
@@ -1811,6 +1812,9 @@ function renderCharacters() {
                 const assignment = genAssignments[backupUid];
                 const ineligible = assignment ? assignment.ineligibleSkills : [];
                 if (ineligible.includes(skillName)) continue;
+
+                // Track first eligible as fallback in case all probability checks fail
+                if (!fallbackUid) fallbackUid = backupUid;
 
                 // Check involvement score for skill probability
                 const player = genPlayers[backupUid];
@@ -1821,7 +1825,15 @@ function renderCharacters() {
                 genAssignments[backupUid].skill = skillName;
                 assignedSkills.add(skillName);
                 playersWithSkills.add(backupUid);
+                fallbackUid = null;
                 break;
+            }
+            // Guarantee assignment: if all probability checks failed, use first eligible backup
+            if (fallbackUid) {
+                if (!genAssignments[fallbackUid]) genAssignments[fallbackUid] = { role: null, skill: null, ineligibleSkills: [] };
+                genAssignments[fallbackUid].skill = skillName;
+                assignedSkills.add(skillName);
+                playersWithSkills.add(fallbackUid);
             }
         });
 
@@ -1843,18 +1855,20 @@ function renderGenModal() {
     const grid = document.getElementById('genModalGrid');
 
     grid.innerHTML = Object.values(genPlayers).map(player => {
-        const a    = genAssignments[player.uid] || {};
-        const char = characterDatabase?.[player.characterId];
-        const name = char?.nameVariants?.female || player.characterId;
+        const a        = genAssignments[player.uid] || {};
+        const char     = characterDatabase?.[player.characterId];
+        const charName = char?.nameVariants?.female || char?.name || player.characterId;
 
-        const roleBadge  = a.role  ? `<span style="font-family:'Special Elite',monospace;font-size:9px;padding:2px 9px;background:rgba(139,26,26,0.25);color:#e08080;border:1px solid rgba(139,26,26,0.4);letter-spacing:1px;text-transform:uppercase;">${a.role}</span>` : '';
-        const skillBadge = a.skill ? `<span style="font-family:'Special Elite',monospace;font-size:9px;padding:2px 9px;background:rgba(39,170,91,0.12);color:#7adba0;border:1px solid rgba(39,170,91,0.25);letter-spacing:1px;text-transform:uppercase;">${a.skill}</span>` : '';
+        const roleBadge  = a.role ? `<span style="font-family:'Special Elite',monospace;font-size:9px;padding:2px 9px;background:rgba(139,26,26,0.25);color:#e08080;border:1px solid rgba(139,26,26,0.4);letter-spacing:1px;text-transform:uppercase;">${a.role}</span>` : '';
+        // Suppress skill badge when role is pipeline — it's the same thing
+        const showSkill  = a.skill && a.role !== 'pipeline';
+        const skillBadge = showSkill ? `<span style="font-family:'Special Elite',monospace;font-size:9px;padding:2px 9px;background:rgba(39,170,91,0.12);color:#7adba0;border:1px solid rgba(39,170,91,0.25);letter-spacing:1px;text-transform:uppercase;">${a.skill}</span>` : '';
         const none       = (!a.role && !a.skill) ? `<span style="font-size:12px;color:var(--fog);font-style:italic;">no assignment</span>` : '';
 
         return `
         <div style="background:var(--card);border:1px solid var(--border);padding:14px 16px;">
-            <div style="font-family:'Playfair Display',serif;font-size:15px;color:var(--white);font-weight:700;margin-bottom:2px;">${player.displayName}</div>
-            <div style="font-size:12px;color:var(--gold);font-style:italic;margin-bottom:10px;">${name}</div>
+            <div style="font-family:'Playfair Display',serif;font-size:15px;color:var(--white);font-weight:700;margin-bottom:2px;">${charName}</div>
+            <div style="font-size:12px;color:var(--fog);margin-bottom:10px;">${player.displayName}</div>
             <div style="display:flex;gap:6px;flex-wrap:wrap;">${roleBadge}${skillBadge}${none}</div>
         </div>`;
     }).join('');
@@ -2574,7 +2588,7 @@ ${inviteUrl}
         <div class="tp-body">
             <div id="genModalGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-bottom:20px;"></div>
             <div class="tp-actions">
-                <button class="btn-gold" onclick="runGameGeneration()">⚄ Randomize Again</button>
+                <button class="btn-gold" onclick="runGeneration()">⚄ Randomize Again</button>
                 <button class="btn-green" id="lockGenBtn" onclick="lockGameAssignments()">✓ Lock & Apply</button>
                 <button class="btn-ghost" onclick="closeGenModal()">Cancel</button>
             </div>
