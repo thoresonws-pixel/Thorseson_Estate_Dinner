@@ -1694,6 +1694,39 @@ function renderCharacters() {
 
 
     // ── ROLE & SKILL GENERATION (platform-agnostic) ───────────────
+    function openGenerateRoles() {
+        // Build genPlayers from current players
+        genPlayers = {};
+        Object.entries(players).forEach(([uid, p]) => {
+            if (p.characterId && p.status === 'ready') {
+                genPlayers[uid] = {
+                    uid,
+                    displayName:  p.displayName || uid,
+                    characterId:  p.characterId,
+                    score:        p.questionnaire ? (p.questionnaire.involvementScore || 5) : 5
+                };
+            }
+        });
+
+        if (Object.keys(genPlayers).length === 0) {
+            showToast('No players have chosen characters yet.', 'error');
+            return;
+        }
+
+        if (typeof rolesConfig === 'undefined' || !rolesConfig) {
+            showToast('Roles config loading — try again in a moment.', 'error');
+            return;
+        }
+
+        runGeneration();
+        document.getElementById('genModalOverlay').classList.add('open');
+    }
+
+    function closeGenModal() {
+        document.getElementById('genModalOverlay').classList.remove('open');
+    }
+
+
     // Reads priorities and skills from rolesConfig (defined in roles.js)
     // Does not know story-specific names — just Priority 1, 2, 3 etc.
 
