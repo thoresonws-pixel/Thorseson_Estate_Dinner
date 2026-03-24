@@ -1468,8 +1468,18 @@
     let currentUser = null;
 
     // ── Auth + admin check ────────────────────────────────
+    // Wait for auth to be fully ready before checking
     auth.onAuthStateChanged(async user => {
-        if (!user || user.isAnonymous || !user.email) { window.location.href = "signin.html"; return; }
+        if (!user || user.isAnonymous || !user.email) {
+            // Give Firebase a moment to restore session before redirecting
+            await new Promise(r => setTimeout(r, 2000));
+            const currentUser = auth.currentUser;
+            if (!currentUser || currentUser.isAnonymous || !currentUser.email) {
+                window.location.href = "signin.html";
+                return;
+            }
+            user = currentUser;
+        }
 
         currentUser = user;
         document.getElementById('topbarUser').textContent = user.displayName || user.email;
