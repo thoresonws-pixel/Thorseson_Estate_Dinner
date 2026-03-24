@@ -1364,8 +1364,17 @@
                         <input type="tel" id="hostPhone" placeholder="(214) 555-0100" required>
                     </div>
                     <div class="form-group full">
-                        <label for="venueName">Venue Name</label>
-                        <input type="text" id="venueName" placeholder="e.g. 123 Elm Street, Dallas TX">
+                        <label for="venueSelect">Venue</label>
+                        <select id="venueSelect" onchange="handleVenueSelect('create')"
+                            style="width:100%;background:var(--panel);border:1px solid var(--border-hl);color:var(--white);font-size:14px;padding:9px 12px;font-family:inherit;">
+                            <option value="">Loading venues…</option>
+                        </select>
+                        <div id="customVenueFields" style="display:none;margin-top:10px;display:none;">
+                            <input type="text" id="customVenueName" placeholder="Venue name (e.g. Smith Residence)"
+                                style="width:100%;background:var(--panel);border:1px solid var(--border-hl);color:var(--white);font-size:14px;padding:9px 12px;margin-bottom:8px;font-family:inherit;">
+                            <input type="text" id="customVenueAddress" placeholder="Address (e.g. 123 Elm St, Dallas TX 75248)"
+                                style="width:100%;background:var(--panel);border:1px solid var(--border-hl);color:var(--white);font-size:14px;padding:9px 12px;font-family:inherit;">
+                        </div>
                     </div>
 
                     <div class="form-group full">
@@ -1565,7 +1574,8 @@
         document.getElementById('mainContent').style.display = 'block';
         document.getElementById('gameDate').value = new Date().toISOString().split('T')[0];
         loadGames();
-    updatePlayerRange();
+        loadVenues();
+        updatePlayerRange();
     }
 
     auth.onAuthStateChanged(async user => {
@@ -1596,7 +1606,8 @@
         document.getElementById('gameDate').value = new Date().toISOString().split('T')[0];
 
         loadGames();
-    updatePlayerRange();
+        loadVenues();
+        updatePlayerRange();
     });
 
     // ── Load all games (live) ─────────────────────────────
@@ -1811,7 +1822,7 @@
         const eventTime  = document.getElementById('gameTime').value;
         const maxPlayers = STORIES[storyId]?.maxPlayers || 21;
         const minPlayers = STORIES[storyId]?.minPlayers || 8;
-        const venueName  = document.getElementById('venueName').value.trim();
+        const { venueId, venueName, venueAddress } = resolveVenueFromForm('create');
         const notes      = document.getElementById('gameNotes').value.trim();
 
         const hostEmail  = document.getElementById('hostEmail').value.trim();
@@ -1856,7 +1867,9 @@
                 eventDate,
                 eventTime,
                 maxPlayers,
-                venueName:   venueName || null,
+                venueId:      venueId      || null,
+                venueName:    venueName    || null,
+                venueAddress: venueAddress || null,
                 notes:       notes || null,
                 createdAt:   new Date().toISOString(),
                 createdBy:   currentUser.uid,
@@ -1958,7 +1971,10 @@
         document.getElementById('gameTime').value    = '18:30';
         document.getElementById('playerRangeDisplay').textContent = 'Select a story first';
         document.getElementById('playerRangeDisplay').style.color = 'var(--mist)';
-        document.getElementById('venueName').value   = '';
+        document.getElementById('venueSelect').value = '';
+        document.getElementById('customVenueName').value   = '';
+        document.getElementById('customVenueAddress').value = '';
+        document.getElementById('customVenueFields').style.display = 'none';
         document.getElementById('gameNotes').value   = '';
         document.getElementById('creationResult').classList.remove('visible');
     }
@@ -2201,7 +2217,7 @@
         const editStory = STORIES[g.storyId];
         const editRange = document.getElementById('editPlayerRange');
         if (editRange && editStory) editRange.textContent = editStory.minPlayers + ' min — ' + editStory.maxPlayers + ' max';
-        document.getElementById('editVenue').value    = g.venueName  || '';
+        populateVenueSelect('edit', g.venueId, g.venueName, g.venueAddress);
         document.getElementById('editStatus').value   = g.status     || 'lobby';
         document.getElementById('editNotes').value    = g.notes      || '';
         document.getElementById('editError').style.display = 'none';
@@ -2220,7 +2236,7 @@
         const eventDate  = document.getElementById('editDate').value;
         const eventTime  = document.getElementById('editTime').value;
         const maxPlayers = STORIES[storyId]?.maxPlayers || g.maxPlayers || 21;
-        const venueName  = document.getElementById('editVenue').value.trim();
+        const { venueId, venueName, venueAddress } = resolveVenueFromForm('edit');
         const status     = document.getElementById('editStatus').value;
         const notes      = document.getElementById('editNotes').value.trim();
 
@@ -2244,7 +2260,9 @@
                 eventDate,
                 eventTime,
                 maxPlayers,
-                venueName:   venueName || null,
+                venueId:      venueId      || null,
+                venueName:    venueName    || null,
+                venueAddress: venueAddress || null,
                 status,
                 notes:       notes || null,
                 updatedAt:   new Date().toISOString()
@@ -2738,7 +2756,96 @@
         }
     }
 
-    </script>
+    
+    // ── VENUE SYSTEM ──────────────────────────────────────────────────────────
+
+    let venuesCache = {};
+
+    async function loadVenues() {
+        // Seed known venue if it doesn't exist yet
+        const snap = await db.ref('venues').once('value');
+        if (!snap.exists()) {
+            await db.ref('venues/thoreson_residence').set({
+                name: 'Thoreson Residence',
+                address: '16920 Old Pond Dr',
+                city: 'Dallas, TX 75248',
+                type: 'known'
+            });
+        }
+        venuesCache = (await db.ref('venues').once('value')).val() || {};
+        populateVenueSelects();
+    }
+
+    function populateVenueSelects() {
+        const opts = buildVenueOptions();
+        ['venueSelect', 'editVenueSelect'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = opts;
+        });
+    }
+
+    function buildVenueOptions(selectedId) {
+        let html = '<option value="">— Select a venue —</option>';
+        Object.entries(venuesCache).forEach(([id, v]) => {
+            html += `<option value="${id}" ${selectedId === id ? 'selected' : ''}>${v.name} — ${v.address}, ${v.city}</option>`;
+        });
+        html += `<option value="__custom__" ${selectedId === '__custom__' ? 'selected' : ''}>Custom venue…</option>`;
+        return html;
+    }
+
+    function handleVenueSelect(mode) {
+        const prefix   = mode === 'edit' ? 'edit' : '';
+        const selectId = mode === 'edit' ? 'editVenueSelect' : 'venueSelect';
+        const fieldsId = mode === 'edit' ? 'editCustomVenueFields' : 'customVenueFields';
+        const val = document.getElementById(selectId).value;
+        document.getElementById(fieldsId).style.display = val === '__custom__' ? 'block' : 'none';
+    }
+
+    function populateVenueSelect(mode, venueId, venueName, venueAddress) {
+        const selectId = mode === 'edit' ? 'editVenueSelect' : 'venueSelect';
+        const fieldsId = mode === 'edit' ? 'editCustomVenueFields' : 'customVenueFields';
+        const nameId   = mode === 'edit' ? 'editCustomVenueName' : 'customVenueName';
+        const addrId   = mode === 'edit' ? 'editCustomVenueAddress' : 'customVenueAddress';
+
+        if (venueId && venuesCache[venueId]) {
+            document.getElementById(selectId).innerHTML = buildVenueOptions(venueId);
+            document.getElementById(fieldsId).style.display = 'none';
+        } else if (venueName) {
+            // Legacy or custom — show custom fields
+            document.getElementById(selectId).innerHTML = buildVenueOptions('__custom__');
+            document.getElementById(nameId).value   = venueName || '';
+            document.getElementById(addrId).value   = venueAddress || '';
+            document.getElementById(fieldsId).style.display = 'block';
+        } else {
+            document.getElementById(selectId).innerHTML = buildVenueOptions();
+            document.getElementById(fieldsId).style.display = 'none';
+        }
+    }
+
+    function resolveVenueFromForm(mode) {
+        const selectId = mode === 'edit' ? 'editVenueSelect' : 'venueSelect';
+        const nameId   = mode === 'edit' ? 'editCustomVenueName' : 'customVenueName';
+        const addrId   = mode === 'edit' ? 'editCustomVenueAddress' : 'customVenueAddress';
+        const val = document.getElementById(selectId).value;
+
+        if (val === '__custom__') {
+            return {
+                venueId:      null,
+                venueName:    document.getElementById(nameId).value.trim() || null,
+                venueAddress: document.getElementById(addrId).value.trim() || null
+            };
+        } else if (val && venuesCache[val]) {
+            const v = venuesCache[val];
+            return {
+                venueId:      val,
+                venueName:    v.name,
+                venueAddress: v.address + ', ' + v.city
+            };
+        }
+        return { venueId: null, venueName: null, venueAddress: null };
+    }
+
+</script>
 
 <!-- ── GM CONTROL PANEL OVERLAY ───────────────────────────── -->
 <div class="gm-overlay" id="gmOverlay">
@@ -2801,8 +2908,17 @@
                     <input type="tel" id="editHostPhone" placeholder="(214) 555-0100">
                 </div>
                 <div class="form-group full">
-                    <label for="editVenue">Venue</label>
-                    <input type="text" id="editVenue" placeholder="Venue name and address">
+                    <label for="editVenueSelect">Venue</label>
+                    <select id="editVenueSelect" onchange="handleVenueSelect('edit')"
+                        style="width:100%;background:var(--panel);border:1px solid var(--border-hl);color:var(--white);font-size:14px;padding:9px 12px;font-family:inherit;">
+                        <option value="">Loading venues…</option>
+                    </select>
+                    <div id="editCustomVenueFields" style="display:none;margin-top:10px;">
+                        <input type="text" id="editCustomVenueName" placeholder="Venue name"
+                            style="width:100%;background:var(--panel);border:1px solid var(--border-hl);color:var(--white);font-size:14px;padding:9px 12px;margin-bottom:8px;font-family:inherit;">
+                        <input type="text" id="editCustomVenueAddress" placeholder="Address"
+                            style="width:100%;background:var(--panel);border:1px solid var(--border-hl);color:var(--white);font-size:14px;padding:9px 12px;font-family:inherit;">
+                    </div>
                 </div>
                 <div class="form-group full">
                     <label for="editStatus">Status</label>

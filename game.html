@@ -929,7 +929,7 @@
     <!-- Tabs -->
     <div class="tab-bar">
         <button class="tab-btn active" onclick="switchTab('pregame', this)">Pre-Game</button>
-
+        <button class="tab-btn" onclick="switchTab('invitation', this)">Invitation</button>
         <button class="tab-btn" onclick="switchTab('guests', this)">Guest List</button>
         <button class="tab-btn" onclick="switchTab('characters', this)">Characters</button>
         <button class="tab-btn" onclick="switchTab('monitor', this)">GM Monitor</button>
@@ -1014,6 +1014,17 @@
             </div>
         </div>
 
+    </div>
+
+    <!-- ═══ INVITATION TAB ════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-invitation">
+        <div class="section-head" style="margin-bottom:28px;">
+            <div class="section-title">Invitation</div>
+            <div style="font-size:13px;color:var(--fog);">As players will see it</div>
+        </div>
+        <div id="invitationCard" style="display:flex;justify-content:center;padding-bottom:40px;">
+            <div style="color:var(--fog);font-style:italic;">Loading…</div>
+        </div>
     </div>
 
     <!-- ═══ GAME HEALTH TAB ════════════════════════════════════ -->
@@ -1332,6 +1343,7 @@ async function bootstrap() {
 
     // Render all sections — wrapped so one failure doesn't block loading screen
     try { renderHeader(); } catch(e) { console.error('renderHeader:', e); }
+    try { renderInvitation(); } catch(e) { console.error('renderInvitation:', e); }
     try { renderChecklist(); } catch(e) { console.error('renderChecklist:', e); }
     try { renderCharacters(); } catch(e) { console.error('renderCharacters:', e); }
     try { renderRunGame(); } catch(e) { console.error('renderRunGame:', e); }
@@ -2522,6 +2534,112 @@ ${inviteUrl}
         if (!char || !char.nameVariants) return charId;
         if (gender === 'male') return char.nameVariants.male;
         return char.nameVariants.female;
+    }
+
+
+    // ── INVITATION TAB ────────────────────────────────────────────────────────
+
+    function renderInvitation() {
+        const el = document.getElementById('invitationCard');
+        if (!el || !gameData) return;
+
+        const g = gameData;
+
+        // Resolve venue display
+        let venueLine1 = g.venueName  || 'Venue TBD';
+        let venueLine2 = g.venueAddress || '';
+
+        // Format date
+        let dateStr = 'Date TBD';
+        if (g.eventDate) {
+            const d = new Date(g.eventDate + 'T12:00:00');
+            const days   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+            const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+            const ordinal = n => {
+                const s = ['th','st','nd','rd'], v = n % 100;
+                return n + (s[(v-20)%10] || s[v] || s[0]);
+            };
+            dateStr = days[d.getDay()] + ', the ' + ordinal(d.getDate()) + ' of ' + months[d.getMonth()] + '\n' + d.getFullYear();
+        }
+
+        // Format time
+        let timeLines = '';
+        if (g.eventTime) {
+            const [h, m] = g.eventTime.split(':').map(Number);
+            const fmt = (hr, mn) => {
+                const ampm = hr >= 12 ? 'O\'Clock in the Evening' : 'O\'Clock';
+                const h12  = hr > 12 ? hr - 12 : hr === 0 ? 12 : hr;
+                return mn === 0 ? `${h12} ${ampm}` : `${h12}:${String(mn).padStart(2,'0')}`;
+            };
+            timeLines = `
+                <div style="margin-bottom:6px;">Cocktails at Half Past ${h > 12 ? h-12 : h} O'Clock in the Evening</div>
+                <div style="margin-bottom:6px;">Arrive No Later Than ${fmt(h, m)}</div>
+                <div>Dinner Promptly at Half Past ${h > 12 ? h-12 : h}</div>`;
+        }
+
+        // Story-specific host name (default to generic)
+        const hostName = 'Mr. William Thoreson';
+        const storyTitle = g.storyName || 'The Estate';
+
+        el.innerHTML = `
+        <div style="
+            background: #f5f0e6;
+            color: #2a2520;
+            width: 100%;
+            max-width: 520px;
+            border: 2px solid #8b7355;
+            box-shadow: 0 0 0 1px #a08060, 0 0 0 6px #2a2520, 0 0 0 8px #8b7355, 0 20px 60px rgba(0,0,0,0.5);
+            padding: 52px 44px 44px;
+            text-align: center;
+            position: relative;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+        ">
+            <!-- Corner ornaments -->
+            <div style="position:absolute;top:12px;left:12px;width:32px;height:32px;border-top:2px solid #8b7355;border-left:2px solid #8b7355;"></div>
+            <div style="position:absolute;top:12px;right:12px;width:32px;height:32px;border-top:2px solid #8b7355;border-right:2px solid #8b7355;"></div>
+            <div style="position:absolute;bottom:12px;left:12px;width:32px;height:32px;border-bottom:2px solid #8b7355;border-left:2px solid #8b7355;"></div>
+            <div style="position:absolute;bottom:12px;right:12px;width:32px;height:32px;border-bottom:2px solid #8b7355;border-right:2px solid #8b7355;"></div>
+
+            <div style="font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#8b7355;margin-bottom:16px;">✦</div>
+
+            <div style="font-family:'Playfair Display',serif;font-size:28px;letter-spacing:3px;text-transform:uppercase;color:#2a2520;margin-bottom:10px;font-weight:700;">
+                ${storyTitle.replace('The ', '').replace(' Dinner','').toUpperCase()}
+            </div>
+
+            <div style="width:60px;height:1px;background:#8b7355;margin:0 auto 16px;"></div>
+
+            <div style="font-size:14px;letter-spacing:3px;text-transform:uppercase;color:#8b7355;margin-bottom:20px;">You Are Cordially Summoned</div>
+
+            <div style="font-size:17px;font-style:italic;line-height:1.7;color:#3a3028;margin-bottom:24px;">
+                to a dinner party at the estate.<br>
+                Mr. Thoreson has an announcement to make<br>
+                <em>that shall change everything.</em>
+            </div>
+
+            <div style="font-size:15px;font-weight:600;color:#2a2520;margin-bottom:28px;">Your presence is required.</div>
+
+            <div style="width:60px;height:1px;background:#8b7355;margin:0 auto 24px;"></div>
+
+            <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#8b7355;margin-bottom:8px;">Date</div>
+            <div style="font-size:16px;font-style:italic;line-height:1.6;color:#3a3028;margin-bottom:24px;white-space:pre-line;">${dateStr}</div>
+
+            ${timeLines ? `
+            <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#8b7355;margin-bottom:8px;">Time</div>
+            <div style="font-size:15px;line-height:1.8;color:#3a3028;margin-bottom:24px;">${timeLines}</div>` : ''}
+
+            <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#8b7355;margin-bottom:8px;">Location</div>
+            <div style="font-size:16px;color:#3a3028;margin-bottom:4px;">${venueLine1}</div>
+            ${venueLine2 ? `<div style="font-size:14px;color:#8b7355;margin-bottom:24px;">${venueLine2}</div>` : '<div style="margin-bottom:24px;"></div>'}
+
+            <div style="font-size:13px;font-style:italic;color:#8b7355;margin-bottom:24px;">1930s formal attire requested</div>
+
+            <div style="width:60px;height:1px;background:#8b7355;margin:0 auto 20px;"></div>
+
+            <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#8b7355;margin-bottom:8px;">Your Host</div>
+            <div style="font-family:'Playfair Display',serif;font-size:22px;font-style:italic;color:#2a2520;">${hostName}</div>
+
+            <div style="margin-top:24px;font-size:13px;color:#8b7355;letter-spacing:2px;">✦ &nbsp; ✦ &nbsp; ✦</div>
+        </div>`;
     }
 
 </script>
