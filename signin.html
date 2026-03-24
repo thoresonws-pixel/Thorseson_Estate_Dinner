@@ -88,8 +88,6 @@ firebase.initializeApp({
 const auth = firebase.auth();
 const db   = firebase.database();
 
-const ADMIN_EMAILS = ['thoresonws@gmail.com'];
-
 function showError(msg) {
     const el = document.getElementById('errorMsg');
     el.textContent = msg;
@@ -118,10 +116,8 @@ async function route(user) {
         });
     }
     const data = snap.val() || {};
-    const role = data.role || (await db.ref('users/' + user.uid + '/role').once('value')).val();
-    if (role === 'admin' || ADMIN_EMAILS.includes((user.email||'').toLowerCase())) {
-        window.location.href = 'admin.html';
-    } else if (data.currentGameId) {
+    // Player routing only — admins use admin.html directly
+    if (data.currentGameId) {
         window.location.href = 'authenticated-dashboard.html';
     } else {
         window.location.href = 'join.html';
