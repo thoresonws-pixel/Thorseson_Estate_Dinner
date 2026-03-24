@@ -687,6 +687,7 @@ auth.onAuthStateChanged(async user => {
                 ROSTER = buildRoster(false, genderPref_score);
                 document.getElementById('loadingScreen').style.display = 'none';
                 document.getElementById('mainContent').style.display   = 'block';
+                renderGrid(); // Render now that ROSTER is populated
 
             } else if (attempts > 20) {
                 clearInterval(waitForDB);
