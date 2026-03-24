@@ -14,6 +14,10 @@
       ".read": true,
       ".write": "auth != null"
     },
+    "venues": {
+      ".read": true,
+      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin'"
+    },
     "cancelledGames": {
       ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin'",
       ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin'"
@@ -22,17 +26,45 @@
       ".read": "auth != null",
       ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin'"
     },
-    "venues": {
-      ".read": true,
-      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin'"
-    },
     "photos": {
-      ".read": true,
-      ".write": "auth != null"
+      ".read": "auth != null",
+      ".write": false
+    },
+    "scans": {
+      ".read": "auth != null",
+      ".write": false
+    },
+    "scanLog": {
+      ".read": "auth != null",
+      ".write": false
+    },
+    "survey": {
+      ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      ".write": false
+    },
+    "activeItems": {
+      ".read": "auth != null",
+      ".write": false
+    },
+    "bathroomScans": {
+      ".read": "auth != null",
+      ".write": false
+    },
+    "memoryReset": {
+      ".read": "auth != null",
+      ".write": false
+    },
+    "appVersion": {
+      ".read": "auth != null",
+      ".write": false
+    },
+    "testMode": {
+      ".read": "auth != null",
+      ".write": false
     },
     "$other": {
-      ".read": true,
-      ".write": true
+      ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      ".write": false
     }
   }
 }
