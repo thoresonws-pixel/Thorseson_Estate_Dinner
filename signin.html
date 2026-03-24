@@ -3,49 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#c9a227">
     <title>Sign In — Thor's Murder Mysteries</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-    <!-- FirebaseUI -->
-    <script src="https://www.gstatic.com/firebasejs/ui/6.1.0/firebase-ui-auth.js"></script>
-    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.1.0/firebase-ui-auth.css"/>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Cormorant Garamond', Georgia, serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .card {
-            position: relative;
-            width: 100%;
-            max-width: 420px;
-            background: linear-gradient(145deg, #f5f0e6 0%, #e8e0d0 50%, #d4c9b5 100%);
-            border: 3px solid #8b7355;
-            box-shadow: 0 0 0 1px #a08060, 0 0 0 6px #2a2520, 0 0 0 8px #8b7355, 0 20px 60px rgba(0,0,0,0.5);
-            padding: 50px 40px 40px;
-            text-align: center;
-        }
+        body { font-family: 'Cormorant Garamond', Georgia, serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .card { position: relative; width: 100%; max-width: 420px; background: linear-gradient(145deg, #f5f0e6 0%, #e8e0d0 50%, #d4c9b5 100%); border: 3px solid #8b7355; box-shadow: 0 0 0 1px #a08060, 0 0 0 6px #2a2520, 0 0 0 8px #8b7355, 0 20px 60px rgba(0,0,0,0.5); padding: 50px 40px 40px; text-align: center; }
         .corner { position: absolute; width: 40px; height: 40px; border: 2px solid #8b7355; }
-        .corner-tl { top: 10px; left: 10px; border-right: none; border-bottom: none; }
-        .corner-tr { top: 10px; right: 10px; border-left: none; border-bottom: none; }
-        .corner-bl { bottom: 10px; left: 10px; border-right: none; border-top: none; }
-        .corner-br { bottom: 10px; right: 10px; border-left: none; border-top: none; }
-        .title { font-family: 'Playfair Display', Georgia, serif; font-size: 32px; color: #2a2520; margin-bottom: 6px; letter-spacing: 2px; }
-        .subtitle { font-size: 13px; color: #8b7355; margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase; }
-        .divider { display: flex; align-items: center; gap: 10px; margin: 18px 0 24px; }
-        .divider-line { flex: 1; height: 1px; background: #8b7355; opacity: 0.4; }
-        .divider-diamond { width: 8px; height: 8px; background: #c9a227; transform: rotate(45deg); }
-        /* Override FirebaseUI styles to match our theme */
-        .firebaseui-container { background: transparent !important; box-shadow: none !important; }
-        .firebaseui-card-content { padding: 0 !important; }
-        .mdl-button--raised.mdl-button--colored { background: #c9a227 !important; }
-        .firebaseui-id-submit { background: #c9a227 !important; color: #2a2520 !important; font-family: 'Cormorant Garamond', serif !important; }
-        #firebaseui-auth-container .firebaseui-card-header { display: none; }
+        .corner-tl { top:10px; left:10px; border-right:none; border-bottom:none; }
+        .corner-tr { top:10px; right:10px; border-left:none; border-bottom:none; }
+        .corner-bl { bottom:10px; left:10px; border-right:none; border-top:none; }
+        .corner-br { bottom:10px; right:10px; border-left:none; border-top:none; }
+        .title { font-family:'Playfair Display',serif; font-size:32px; color:#2a2520; margin-bottom:6px; letter-spacing:2px; }
+        .subtitle { font-size:13px; color:#8b7355; margin-bottom:8px; letter-spacing:1px; text-transform:uppercase; }
+        .divider { display:flex; align-items:center; gap:10px; margin:18px 0 24px; }
+        .divider-line { flex:1; height:1px; background:#8b7355; opacity:0.4; }
+        .divider-diamond { width:8px; height:8px; background:#c9a227; transform:rotate(45deg); }
+        .form-group { margin-bottom:20px; text-align:left; }
+        label { display:block; font-size:12px; color:#2a2520; margin-bottom:7px; letter-spacing:1.5px; text-transform:uppercase; font-weight:600; }
+        input { width:100%; padding:12px 14px; border:2px solid #8b7355; background:rgba(255,255,255,0.85); font-family:'Cormorant Garamond',serif; font-size:16px; color:#2a2520; border-radius:3px; }
+        input:focus { outline:none; border-color:#c9a227; }
+        .btn-google { width:100%; padding:13px; background:white; border:1px solid #dadce0; border-radius:4px; font-family:'Cormorant Garamond',serif; font-size:16px; color:#3c4043; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:6px; }
+        .btn-primary { width:100%; padding:14px; background:#c9a227; color:#2a2520; border:none; font-family:'Cormorant Garamond',serif; font-size:16px; font-weight:600; letter-spacing:2px; text-transform:uppercase; cursor:pointer; border-radius:3px; margin-top:10px; }
+        .or-divider { display:flex; align-items:center; gap:12px; margin:20px 0; color:#8b7355; font-size:13px; }
+        .or-divider::before,.or-divider::after { content:''; flex:1; height:1px; background:#c4b08c; }
+        .error-msg { display:none; color:#c0392b; font-size:14px; margin-top:14px; padding:10px 14px; background:rgba(192,57,43,0.08); border:1px solid rgba(192,57,43,0.25); border-radius:3px; }
+        .status-msg { display:none; color:#27622a; font-size:14px; margin-top:14px; padding:10px 14px; background:rgba(39,98,42,0.08); border:1px solid rgba(39,98,42,0.25); border-radius:3px; }
+        .footer-text { font-size:13px; color:#8b7355; margin-top:24px; }
+        .footer-text a { color:#c9a227; text-decoration:none; font-weight:600; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        .spinner { display:inline-block; width:16px; height:16px; border:2px solid rgba(42,37,32,0.3); border-top-color:#2a2520; border-radius:50%; animation:spin 0.7s linear infinite; vertical-align:middle; margin-right:8px; }
     </style>
 </head>
 <body>
@@ -56,110 +43,146 @@
     <div class="corner corner-br"></div>
     <h1 class="title">Sign In</h1>
     <p class="subtitle">Thor's Murder Mysteries</p>
-    <div class="divider">
-        <div class="divider-line"></div>
-        <div class="divider-diamond"></div>
-        <div class="divider-line"></div>
+    <div class="divider"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
+
+    <button class="btn-google" onclick="googleSignIn()">
+        <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/></svg>
+        Continue with Google
+    </button>
+
+    <div class="or-divider">or sign in with email</div>
+
+    <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="email" placeholder="you@example.com" autocomplete="email">
     </div>
-    <div id="firebaseui-auth-container"></div>
+    <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="password" placeholder="Your password" autocomplete="current-password">
+    </div>
+    <button class="btn-primary" onclick="emailSignIn()">Sign In</button>
+
+    <div class="error-msg" id="errorMsg"></div>
+    <div class="status-msg" id="statusMsg"></div>
+
+    <p class="footer-text" style="margin-top:16px;">
+        <a href="#" onclick="forgotPassword();return false;">Forgot password?</a>
+        &nbsp;·&nbsp;
+        New here? <a href="register.html">Create an account</a>
+    </p>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
 <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyApHrYubqWrR4m0ihdpq6Ym40jv4HTQ5i0",
-        authDomain: "thoreson-estate.firebaseapp.com",
-        databaseURL: "https://thoreson-estate-default-rtdb.firebaseio.com",
-        projectId: "thoreson-estate",
-        storageBucket: "thoreson-estate.firebasestorage.app",
-        messagingSenderId: "182924616892",
-        appId: "1:182924616892:web:8153e1c69895cee665dcb9"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db   = firebase.database();
+firebase.initializeApp({
+    apiKey: "AIzaSyApHrYubqWrR4m0ihdpq6Ym40jv4HTQ5i0",
+    authDomain: "thoreson-estate.firebaseapp.com",
+    databaseURL: "https://thoreson-estate-default-rtdb.firebaseio.com",
+    projectId: "thoreson-estate",
+    storageBucket: "thoreson-estate.firebasestorage.app",
+    messagingSenderId: "182924616892",
+    appId: "1:182924616892:web:8153e1c69895cee665dcb9"
+});
+const auth = firebase.auth();
+const db   = firebase.database();
 
-    const ADMIN_EMAILS = ['thoresonws@gmail.com'];
+const ADMIN_EMAILS = ['thoresonws@gmail.com'];
 
-    async function routeUser(user) {
-        if (ADMIN_EMAILS.includes((user.email || '').toLowerCase())) {
-            window.location.href = 'admin.html';
-            return;
-        }
-        let role = null;
-        for (let i = 0; i < 3; i++) {
-            try {
-                const snap = await db.ref('users/' + user.uid + '/role').once('value');
-                role = snap.val();
-                if (role) break;
-            } catch(e) {}
-            await new Promise(r => setTimeout(r, 800));
-        }
-        if (role === 'admin') {
-            window.location.href = 'admin.html';
+function showError(msg) {
+    const el = document.getElementById('errorMsg');
+    el.textContent = msg;
+    el.style.display = 'block';
+    document.getElementById('statusMsg').style.display = 'none';
+}
+
+function showStatus(msg) {
+    const el = document.getElementById('statusMsg');
+    el.textContent = msg;
+    el.style.display = 'block';
+    document.getElementById('errorMsg').style.display = 'none';
+}
+
+async function route(user) {
+    showStatus('Signing in...');
+    // Ensure user record exists
+    const snap = await db.ref('users/' + user.uid).once('value');
+    if (!snap.exists()) {
+        await db.ref('users/' + user.uid).set({
+            displayName: user.displayName || user.email.split('@')[0],
+            email: user.email,
+            createdAt: new Date().toISOString(),
+            gamesPlayed: [],
+            currentGameId: null
+        });
+    }
+    const data = snap.val() || {};
+    const role = data.role || (await db.ref('users/' + user.uid + '/role').once('value')).val();
+    if (role === 'admin' || ADMIN_EMAILS.includes((user.email||'').toLowerCase())) {
+        window.location.href = 'admin.html';
+    } else if (data.currentGameId) {
+        window.location.href = 'authenticated-dashboard.html';
+    } else {
+        window.location.href = 'join.html';
+    }
+}
+
+// Handle Google redirect result FIRST before anything else
+auth.getRedirectResult().then(result => {
+    if (result && result.user) {
+        route(result.user);
+    }
+}).catch(err => {
+    if (err.code !== 'auth/no-auth-event') showError(err.message);
+});
+
+async function googleSignIn() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    try {
+        // Try popup first (works on desktop)
+        const result = await auth.signInWithPopup(provider);
+        await route(result.user);
+    } catch(err) {
+        if (err.code === 'auth/popup-blocked' || err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
+            // Fall back to redirect on mobile/browsers that block popups
+            await auth.signInWithRedirect(provider);
         } else {
-            const snap = await db.ref('users/' + user.uid + '/currentGameId').once('value');
-            window.location.href = snap.val() ? 'authenticated-dashboard.html' : 'join.html';
+            showError(err.message);
         }
     }
+}
 
-    // Handle auth state — fires after any sign in including FirebaseUI redirect
-    auth.onAuthStateChanged(async user => {
-        console.log('SIGNIN onAuthStateChanged:', user ? user.email : 'null');
-        if (!user || user.isAnonymous) return;
-        console.log('SIGNIN routing user:', user.email);
-
-        // Ensure user record exists
-        const snap = await db.ref('users/' + user.uid).once('value');
-        if (!snap.exists()) {
-            await db.ref('users/' + user.uid).set({
-                displayName:   user.displayName || user.email.split('@')[0],
-                email:         user.email,
-                createdAt:     new Date().toISOString(),
-                gamesPlayed:   [],
-                currentGameId: null
-            });
+async function emailSignIn() {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    if (!email) return showError('Please enter your email.');
+    if (!password) return showError('Please enter your password.');
+    try {
+        const result = await auth.signInWithEmailAndPassword(email, password);
+        await route(result.user);
+    } catch(err) {
+        switch(err.code) {
+            case 'auth/user-not-found':
+            case 'auth/wrong-password':
+            case 'auth/invalid-credential': showError('Incorrect email or password.'); break;
+            default: showError(err.message);
         }
+    }
+}
 
-        await routeUser(user);
-    });
+async function forgotPassword() {
+    const email = document.getElementById('email').value.trim();
+    if (!email) return showError('Enter your email above first.');
+    try {
+        await auth.sendPasswordResetEmail(email);
+        showStatus('Reset email sent — check your inbox.');
+    } catch(e) {
+        showError('Could not send reset email.');
+    }
+}
 
-    // FirebaseUI config
-    const uiConfig = {
-        callbacks: {
-            signInSuccessWithAuthResult: async function(authResult) {
-                const user = authResult.user;
-                // Ensure user record exists
-                const snap = await db.ref('users/' + user.uid).once('value');
-                if (!snap.exists()) {
-                    await db.ref('users/' + user.uid).set({
-                        displayName:   user.displayName || user.email.split('@')[0],
-                        email:         user.email,
-                        createdAt:     new Date().toISOString(),
-                        gamesPlayed:   [],
-                        currentGameId: null
-                    });
-                }
-                await routeUser(user);
-                return false;
-            }
-        },
-        signInOptions: [
-            firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-            {
-                provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
-                requireDisplayName: true
-            }
-        ],
-        signInFlow: 'redirect',
-        tosUrl: '#',
-        privacyPolicyUrl: '#'
-    };
-
-    const ui = new firebaseui.auth.AuthUI(auth);
-    ui.start('#firebaseui-auth-container', uiConfig);
+document.addEventListener('keydown', e => { if (e.key === 'Enter') emailSignIn(); });
 </script>
 </body>
 </html>
