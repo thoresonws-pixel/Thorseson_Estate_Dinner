@@ -1469,23 +1469,7 @@
 
     // ── Auth + admin check ────────────────────────────────
     auth.onAuthStateChanged(async user => {
-        if (!user || user.isAnonymous) { window.location.href = "signin.html"; return; }
-
-        // Retry role check up to 5 times — gives Firebase time to propagate
-        let role = null;
-        for (let attempt = 0; attempt < 5; attempt++) {
-            try {
-                const snap = await db.ref('users/' + user.uid + '/role').once('value');
-                role = snap.val();
-                if (role === 'admin') break;
-            } catch(e) {}
-            await new Promise(r => setTimeout(r, 1000));
-        }
-        if (role !== 'admin') {
-            await auth.signOut();
-            window.location.href = 'signin.html';
-            return;
-        }
+        if (!user || user.isAnonymous || !user.email) { window.location.href = "signin.html"; return; }
 
         currentUser = user;
         document.getElementById('topbarUser').textContent = user.displayName || user.email;
