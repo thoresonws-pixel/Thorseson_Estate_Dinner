@@ -200,8 +200,6 @@
             transform: translateY(-3px);
             box-shadow: 0 16px 40px rgba(0,0,0,0.4), 0 0 30px rgba(201,162,39,0.07);
         }
-
-        /* Top colored strip by involvement */
         .char-card-strip {
             height: 4px;
             background: var(--gold-dk);
@@ -241,18 +239,6 @@
             align-items: center;
             justify-content: space-between;
         }
-
-        .involvement-tag {
-            font-family: 'Special Elite', monospace;
-            font-size: 10px;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            padding: 4px 10px;
-            border-radius: 2px;
-        }
-        .tag-light    { color: #7ab8d8; background: rgba(58,106,138,0.15); border: 1px solid rgba(58,106,138,0.3); }
-        .tag-moderate { color: var(--gold-dk); background: rgba(138,109,20,0.12); border: 1px solid rgba(138,109,20,0.25); }
-        .tag-heavy    { color: #d98080; background: rgba(139,26,26,0.15); border: 1px solid rgba(139,26,26,0.3); }
 
         .char-pick-hint {
             font-family: 'Special Elite', monospace;
@@ -801,11 +787,11 @@ function openModal(charId) {
     document.getElementById('modalRole').textContent = char.role;
     document.getElementById('modalDesc').textContent = stripTokens(char.desc);
     document.getElementById('modalStrip').className  =
-        `modal-strip${char.involvement === 'heavy' ? ' heavy' : ''}`;
+        'modal-strip';
 
     // Show warning for heavy roles
     const warning = document.getElementById('modalWarning');
-    warning.classList.toggle('visible', char.involvement === 'heavy');
+    // involvement warning removed
 
     document.getElementById('confirmBtn').disabled = false;
     document.getElementById('modalOverlay').classList.add('open');
