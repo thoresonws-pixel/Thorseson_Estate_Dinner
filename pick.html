@@ -206,9 +206,7 @@
             height: 4px;
             background: var(--gold-dk);
         }
-        .involvement-light    .char-card-strip { background: #3a6a8a; }
-        .involvement-moderate .char-card-strip { background: var(--gold-dk); }
-        .involvement-heavy    .char-card-strip { background: var(--crimson); }
+        .char-card-strip { background: var(--gold-dk); }
 
         .char-card-body { padding: 22px 20px 18px; flex: 1; }
 
@@ -517,9 +515,7 @@
     <div class="filter-bar">
         <span class="filter-label">Show:</span>
         <button class="filter-btn active" data-filter="all"       onclick="setFilter('all',this)">All Characters</button>
-        <button class="filter-btn"        data-filter="light"     onclick="setFilter('light',this)">Low-Key</button>
-        <button class="filter-btn"        data-filter="moderate"  onclick="setFilter('moderate',this)">Moderate</button>
-        <button class="filter-btn"        data-filter="heavy"     onclick="setFilter('heavy',this)">All-In</button>
+        
     </div>
 
     <div class="char-grid" id="charGrid"></div>
@@ -586,12 +582,25 @@ const db   = firebase.database();
 // characterDatabase is loaded from characters.js
 // picker metadata on each character drives this page
 // ─────────────────────────────────────────────────────────────
-function buildRoster(excludeOptional) {
+function buildRoster(excludeOptional, involvementScore) {
+    // Characters eligible for priority roles (killer/heir) are hidden from low-involvement players
+    // This is determined by whether the character is in any priority eligible list in rolesConfig
+    const priorityEligible = new Set();
+    if (typeof rolesConfig !== 'undefined' && rolesConfig.priorities) {
+        Object.values(rolesConfig.priorities).forEach(p => {
+            if (p.eligibleChars) p.eligibleChars.forEach(c => priorityEligible.add(c));
+        });
+    }
+
+    const score = involvementScore || genderPref_score || 10;
+    const showAllChars = score >= 6; // 6-10 = show all; 1-5 = hide priority-eligible
+
     return Object.entries(characterDatabase)
         .filter(([slug, char]) => {
             if (!char.picker) return false;
-            // Skip optional characters if excludeOptional is true
             if (excludeOptional && char.note && char.note.startsWith('OPTIONAL')) return false;
+            // Hide priority-eligible characters from low-involvement players
+            if (!showAllChars && priorityEligible.has(slug)) return false;
             return true;
         })
         .map(([slug, char]) => ({
@@ -599,8 +608,6 @@ function buildRoster(excludeOptional) {
             nameVariants: char.nameVariants,
             role:         char.picker.role,
             desc:         char.publicDesc,
-            involvement:  char.picker.involvement,
-            isKiller:     char.picker.isKiller
         }));
 }
 
@@ -646,6 +653,7 @@ let currentUser     = null;
 let currentGameId   = null;
 let gameData        = null;
 let genderPref      = 'any';     // from questionnaire
+let genderPref_score = 10;        // involvement score from questionnaire
 let takenCharacters = {};        // live from Firebase
 let selectedChar    = null;
 let activeFilter    = 'all';
@@ -678,6 +686,7 @@ auth.onAuthStateChanged(async user => {
 
     // Pull questionnaire gender preference
     genderPref = playerData?.questionnaire?.gender || 'any';
+    genderPref_score = playerData?.questionnaire?.involvementScore || 10;
 
     // Populate header
     document.getElementById('headerStory').textContent = gameData.storyName || 'Mystery Dinner';
@@ -695,7 +704,7 @@ auth.onAuthStateChanged(async user => {
             attempts++;
             if (typeof characterDatabase !== 'undefined' && Object.keys(characterDatabase).length > 0) {
                 clearInterval(waitForDB);
-                ROSTER = buildRoster(false);
+                ROSTER = buildRoster(false, genderPref_score);
                 document.getElementById('loadingScreen').style.display = 'none';
                 document.getElementById('mainContent').style.display   = 'block';
 
@@ -747,11 +756,9 @@ function renderGrid() {
     grid.innerHTML = ROSTER.map(char => {
         const name   = resolvedName(char);
         const taken  = !!takenCharacters[char.id];
-        const hidden = activeFilter !== 'all' && char.involvement !== activeFilter;
+        const hidden = false; // filtering now done at roster build time
 
-        const involvementLabel = { light: 'Low-Key', moderate: 'Moderate', heavy: 'All-In' };
-        const tagClass = `tag-${char.involvement}`;
-        const stripClass = `involvement-${char.involvement}`;
+        const stripClass = 'char-card-strip';
 
         return `
         <div class="char-card ${taken ? 'taken' : ''} ${hidden ? 'hidden-card' : ''} ${stripClass}"
@@ -764,7 +771,6 @@ function renderGrid() {
                 <div class="char-desc">${stripTokens(char.desc)}</div>
             </div>
             <div class="char-card-footer">
-                <span class="involvement-tag ${tagClass}">${involvementLabel[char.involvement]}</span>
                 <span class="char-pick-hint">Choose →</span>
             </div>
         </div>`;
