@@ -1468,18 +1468,33 @@
     let currentUser = null;
 
     // ── Auth + admin check ────────────────────────────────
-    // Wait for auth to be fully ready before checking
+    function debugMsg(msg) {
+        let el = document.getElementById('authDebug');
+        if (!el) {
+            el = document.createElement('div');
+            el.id = 'authDebug';
+            el.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#000;color:#0f0;font-family:monospace;font-size:12px;padding:8px;z-index:99999;';
+            document.body.appendChild(el);
+        }
+        el.innerHTML += msg + '<br>';
+    }
+
     auth.onAuthStateChanged(async user => {
+        debugMsg('onAuthStateChanged fired. user: ' + (user ? user.email : 'null'));
         if (!user || user.isAnonymous || !user.email) {
-            // Give Firebase a moment to restore session before redirecting
+            debugMsg('No user — waiting 2s for session restore...');
             await new Promise(r => setTimeout(r, 2000));
             const currentUser = auth.currentUser;
+            debugMsg('After wait — currentUser: ' + (currentUser ? currentUser.email : 'null'));
             if (!currentUser || currentUser.isAnonymous || !currentUser.email) {
+                debugMsg('Still no user — redirecting to signin');
+                await new Promise(r => setTimeout(r, 1000)); // pause so you can read it
                 window.location.href = "signin.html";
                 return;
             }
             user = currentUser;
         }
+        debugMsg('User confirmed: ' + user.email + ' — loading admin...');
 
         currentUser = user;
         document.getElementById('topbarUser').textContent = user.displayName || user.email;
