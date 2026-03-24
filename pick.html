@@ -690,15 +690,21 @@ auth.onAuthStateChanged(async user => {
     // Load story scripts then show UI
     const storyId = gameData.storyId || 'thoreson_estate_dinner';
     loadStoryScripts(storyId, function() {
-        if (typeof characterDatabase === 'undefined' || Object.keys(characterDatabase).length === 0) {
-            document.getElementById('loadingScreen').innerHTML = '<p style="color:#c9a227;font-family:serif;font-size:16px;padding:40px;">Error loading characters. Please refresh the page.</p>';
-            return;
-        }
-        ROSTER = buildRoster(false);
+        // Poll until characterDatabase is available (scripts may still be executing)
+        let attempts = 0;
+        const waitForDB = setInterval(() => {
+            attempts++;
+            if (typeof characterDatabase !== 'undefined' && Object.keys(characterDatabase).length > 0) {
+                clearInterval(waitForDB);
+                ROSTER = buildRoster(false);
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('mainContent').style.display   = 'block';
 
-        // Show UI
-        document.getElementById('loadingScreen').style.display = 'none';
-        document.getElementById('mainContent').style.display   = 'block';
+            } else if (attempts > 20) {
+                clearInterval(waitForDB);
+                document.getElementById('loadingScreen').innerHTML = '<p style="color:#c9a227;font-family:serif;font-size:16px;padding:40px;text-align:center;">Error loading characters.<br>Please refresh the page.</p>';
+            }
+        }, 200);
 
         // Live listener for taken characters
         db.ref(`games/${currentGameId}/players`).on('value', snap => {
