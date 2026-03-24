@@ -20,7 +20,7 @@
         }
         body {
             font-family: 'Cormorant Garamond', Georgia, serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background: linear-gradient(135deg, var(--story-primary, #1a2a4a) 0%, var(--story-surface, #0f1a2e) 100%);
             min-height: 100vh;
             color: #e8e8e8;
         }
@@ -32,7 +32,7 @@
             left: 0;
             right: 0;
             background: linear-gradient(180deg, rgba(26, 26, 46, 0.98) 0%, rgba(26, 26, 46, 0.95) 100%);
-            border-bottom: 2px solid #c9a227;
+            border-bottom: 2px solid var(--story-accent, #c9a227);
             padding: 15px 0;
             z-index: 1000;
             backdrop-filter: blur(10px);
@@ -82,8 +82,8 @@
             box-shadow: 0 0 10px rgba(201, 162, 39, 0.3);
         }
         .mobile-nav select option {
-            background: #1a1a2e;
-            color: #c9a227;
+            background: var(--story-primary, #1a2a4a);
+            color: var(--story-accent, #c9a227);
             padding: 10px;
         }
         .mobile-nav button {
@@ -112,7 +112,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background: linear-gradient(135deg, var(--story-primary, #1a2a4a) 0%, var(--story-surface, #0f1a2e) 100%);
         }
         
         .section-title {
@@ -982,8 +982,8 @@
             <li><a href="#discoveries" onclick="return navigateAuth('#discoveries')">Discoveries</a></li>
             <li><a href="#photos" onclick="return navigateAuth('#photos')">Photos</a></li>
             <li id="scanNav" style="display:none;"><a href="#" onclick="openScanner(); return false;">Scan</a></li>
-            <li id="slideshowNav" style="display:none;"><a href="slideshow.html" target="_blank">Slideshow</a></li>
-            <li><a href="#" onclick="logout(); return false;">Logout</a></li>
+            <li><a href="#" onclick="leaveGame(); return false;">Leave Game</a></li>
+            <li><a href="#" onclick="logout(); return false;">Sign Out</a></li>
         </ul>
     </nav>
 
@@ -1646,7 +1646,8 @@
                 if (!user || user.isAnonymous || !user.email) {
                     if (legacySession) {
                         userSession = JSON.parse(legacySession);
-                        loadStoryScripts('thoreson_estate_dinner', initializeAuthenticatedView);
+                        applyStoryTheme('thoreson_estate_dinner');
+                    loadStoryScripts('thoreson_estate_dinner', initializeAuthenticatedView);
                     } else {
                         document.getElementById('invitation').style.display = 'block';
                     }
@@ -1706,6 +1707,7 @@
                     } catch(e) { /* use default */ }
 
                     // Load story-specific scripts, then init
+                    applyStoryTheme(storyId);
                     loadStoryScripts(storyId, initializeAuthenticatedView);
 
                 } catch(err) {
@@ -1714,6 +1716,41 @@
                 }
             });
         })();
+
+
+        // ── STORY THEMES ─────────────────────────────────────────────
+        const STORY_THEMES = {
+            thoreson_estate_dinner: {
+                '--story-primary':   '#1a2a4a',
+                '--story-accent':    '#c9a227',
+                '--story-accent-dk': '#8a6d14',
+                '--story-surface':   '#0f1a2e',
+            },
+            devereaux_masquerade: {
+                '--story-primary':   '#1a0a2a',
+                '--story-accent':    '#c0392b',
+                '--story-accent-dk': '#8b1a1a',
+                '--story-surface':   '#0f0518',
+            },
+            last_train_wicker_park: {
+                '--story-primary':   '#0a1a0a',
+                '--story-accent':    '#2ecc71',
+                '--story-accent-dk': '#1a7a42',
+                '--story-surface':   '#050f05',
+            },
+            thors_asgard: {
+                '--story-primary':   '#1a1400',
+                '--story-accent':    '#f0c040',
+                '--story-accent-dk': '#a08020',
+                '--story-surface':   '#0f0c00',
+            }
+        };
+
+        function applyStoryTheme(storyId) {
+            const theme = STORY_THEMES[storyId] || STORY_THEMES['thoreson_estate_dinner'];
+            const root  = document.documentElement;
+            Object.entries(theme).forEach(([key, val]) => root.style.setProperty(key, val));
+        }
 
         function initializeAuthenticatedView() {
             try {
@@ -1730,7 +1767,6 @@
                 }
 
                 if (userSession.role === 'master' || userSession.role === 'greeter') {
-                    document.getElementById('slideshowNav').style.display = 'block';
                 }
 
                 // Greeter mode — only show photo wall
@@ -2890,8 +2926,17 @@
             });
         }
 
+        function leaveGame() {
+            // Clear current game and go to home — stays signed in
+            if (database && userSession && userSession.firebaseUid) {
+                database.ref('users/' + userSession.firebaseUid + '/currentGameId').set(null);
+            }
+            localStorage.removeItem('userSession');
+            window.location.href = 'home.html';
+        }
+
         function logout() {
-            if (confirm('Logout?')) {
+            if (confirm('Sign out?')) {
                 localStorage.removeItem('userSession');
                 localStorage.removeItem('shownMemories');
                 localStorage.removeItem('personalDiscoveries');
