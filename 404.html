@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script>
+    const path = window.location.pathname.replace(/^\//, '').replace(/\/$/, '');
+    const routes = {
+        'admin':  '/admin.html',
+        'game':   '/game.html',
+        'join':   '/join.html',
+        'signin': '/signin.html',
+        'login':  '/signin.html',
+        'home':   '/home.html',
+        'invite': '/invite.html',
+    };
+    const dest = routes[path.toLowerCase()];
+    if (dest) {
+        window.location.replace(dest + window.location.search);
+    } else {
+        window.location.replace('/home.html');
+    }
+</script>
+</head>
+<body></body>
+</html>
