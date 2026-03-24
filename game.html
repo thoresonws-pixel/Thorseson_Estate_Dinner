@@ -1748,7 +1748,7 @@ function renderCharacters() {
                 const player = players.find(p => p.characterId === roleCfg.assignTo);
                 if (player) {
                     genAssignments[player.uid] = {
-                        priority: roleCfg.label,
+                        role: roleCfg.label,
                         skill: null,
                         ineligibleSkills: roleCfg.ineligibleSkills || []
                     };
@@ -1768,7 +1768,7 @@ function renderCharacters() {
             if (eligible.length > 0) {
                 const chosen = weightedPickByScore(eligible, hiWeights);
                 genAssignments[chosen.uid] = {
-                    priority: roleCfg.label,
+                    role: roleCfg.label,
                     skill: null,
                     ineligibleSkills: roleCfg.ineligibleSkills || []
                 };
@@ -1794,7 +1794,7 @@ function renderCharacters() {
                 const assignment = genAssignments[primaryUid];
                 const ineligible = assignment ? assignment.ineligibleSkills : [];
                 if (!ineligible.includes(skillName)) {
-                    if (!genAssignments[primaryUid]) genAssignments[primaryUid] = { priority: null, skill: null, ineligibleSkills: [] };
+                    if (!genAssignments[primaryUid]) genAssignments[primaryUid] = { role: null, skill: null, ineligibleSkills: [] };
                     genAssignments[primaryUid].skill = skillName;
                     assignedSkills.add(skillName);
                     playersWithSkills.add(primaryUid);
@@ -1817,7 +1817,7 @@ function renderCharacters() {
                 const score  = player ? Math.min(10, Math.max(1, player.score)) : 5;
                 if (Math.random() > (skillWeights[score] || 0)) continue;
 
-                if (!genAssignments[backupUid]) genAssignments[backupUid] = { priority: null, skill: null, ineligibleSkills: [] };
+                if (!genAssignments[backupUid]) genAssignments[backupUid] = { role: null, skill: null, ineligibleSkills: [] };
                 genAssignments[backupUid].skill = skillName;
                 assignedSkills.add(skillName);
                 playersWithSkills.add(backupUid);
@@ -1841,13 +1841,44 @@ function renderCharacters() {
 
 function renderGenModal() {
     const grid = document.getElementById('genModalGrid');
+
+    // Build a map of characterId → eligible role labels from rolesConfig
+    const charEligibleRoles = {};
+    Object.values(rolesConfig.priorities || {}).forEach(roleCfg => {
+        if (roleCfg.assignTo) {
+            charEligibleRoles[roleCfg.assignTo] = charEligibleRoles[roleCfg.assignTo] || [];
+            charEligibleRoles[roleCfg.assignTo].push(roleCfg.label);
+        } else {
+            (roleCfg.eligibleChars || []).forEach(cid => {
+                charEligibleRoles[cid] = charEligibleRoles[cid] || [];
+                charEligibleRoles[cid].push(roleCfg.label);
+            });
+        }
+    });
+
+    // Derive skill list from rolesConfig.skills keys
+    const allSkills = Object.keys(rolesConfig.skills || {});
+
+    // Build current role assignments map (role → uid) for duplicate checking
+    const roleTaken = {};
+    Object.entries(genAssignments).forEach(([uid, a]) => {
+        if (a.role) roleTaken[a.role] = uid;
+    });
+
     grid.innerHTML = Object.values(genPlayers).map(player => {
         const a    = genAssignments[player.uid] || {};
         const char = characterDatabase?.[player.characterId];
         const name = char?.nameVariants?.female || player.characterId;
-        const roleOptions = ['(no role)', 'killer', 'heir', 'pipeline'].map(r =>
-            `<option value="${r}" ${a.role === r ? 'selected' : ''}>${r}</option>`).join('');
-        const skillOptions = ['(no skill)', ...(rolesConfig.skillPool || [])].map(s =>
+
+        // Only show role options this character is eligible for
+        const eligibleRoles = charEligibleRoles[player.characterId] || [];
+        const roleOptions = ['(no role)', ...eligibleRoles].map(r => {
+            // Disable role if already taken by someone else
+            const takenByOther = r !== '(no role)' && roleTaken[r] && roleTaken[r] !== player.uid;
+            return `<option value="${r}" ${a.role === r ? 'selected' : ''} ${takenByOther ? 'disabled' : ''}>${r}${takenByOther ? ' (taken)' : ''}</option>`;
+        }).join('');
+
+        const skillOptions = ['(no skill)', ...allSkills].map(s =>
             `<option value="${s}" ${a.skill === s ? 'selected' : ''}>${s}</option>`).join('');
         return `
         <div style="background:var(--card);border:1px solid var(--border);padding:14px 16px;">
@@ -1859,11 +1890,11 @@ function renderGenModal() {
                 ${!a.role && !a.skill ? `<span style="font-size:12px;color:var(--fog);font-style:italic;">no assignment</span>` : ''}
             </div>
             <select onchange="overrideGenRole('${player.uid}','role',this.value)"
-                style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(201,162,39,0.2);color:var(--white);font-family:'Cormorant Garamond',serif;font-size:13px;padding:6px 8px;margin-bottom:6px;">
+                style="width:100%;background:#1c2128;border:1px solid rgba(201,162,39,0.2);color:var(--white);font-family:'Cormorant Garamond',serif;font-size:13px;padding:6px 8px;margin-bottom:6px;">
                 ${roleOptions}
             </select>
             <select onchange="overrideGenRole('${player.uid}','skill',this.value)"
-                style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(201,162,39,0.2);color:var(--white);font-family:'Cormorant Garamond',serif;font-size:13px;padding:6px 8px;">
+                style="width:100%;background:#1c2128;border:1px solid rgba(201,162,39,0.2);color:var(--white);font-family:'Cormorant Garamond',serif;font-size:13px;padding:6px 8px;">
                 ${skillOptions}
             </select>
         </div>`;
@@ -1871,8 +1902,17 @@ function renderGenModal() {
 }
 
 function overrideGenRole(uid, field, value) {
-    if (!genAssignments[uid]) genAssignments[uid] = { role: null, skill: null };
-    genAssignments[uid][field] = (value === '(no role)' || value === '(no skill)') ? null : value;
+    if (!genAssignments[uid]) genAssignments[uid] = { role: null, skill: null, ineligibleSkills: [] };
+    const newVal = (value === '(no role)' || value === '(no skill)') ? null : value;
+
+    // If assigning a role, clear it from anyone else who has it
+    if (field === 'role' && newVal) {
+        Object.entries(genAssignments).forEach(([otherUid, a]) => {
+            if (otherUid !== uid && a.role === newVal) a.role = null;
+        });
+    }
+
+    genAssignments[uid][field] = newVal;
     renderGenModal();
 }
 
@@ -1888,8 +1928,8 @@ async function lockGameAssignments() {
         Object.entries(genAssignments).forEach(([uid, a]) => {
             const p = genPlayers[uid];
             if (!p) return;
-            if (a.skill)     skillMap[p.characterId] = a.skill;
-            if (a.priority)  roleMap[p.characterId]  = a.priority;
+            if (a.skill)  skillMap[p.characterId] = a.skill;
+            if (a.role)   roleMap[p.characterId]  = a.role;
         });
         await db.ref('games/' + gameId + '/state/skillAssignments').set(skillMap);
         await db.ref('games/' + gameId + '/state/characterRoles').set(roleMap);
