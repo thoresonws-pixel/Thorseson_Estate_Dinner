@@ -1,0 +1,30 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+    "games": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "cancelledGames": {
+      ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin'"
+    },
+    "adminInvites": {
+      ".read": "auth != null",
+      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin'"
+    },
+    "photos": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+    "$other": {
+      ".read": true,
+      ".write": true
+    }
+  }
+}
