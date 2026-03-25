@@ -41,6 +41,11 @@ var characterDatabase = {
             hobby:        "Reads extensively — history and law, mostly. Has a small but carefully chosen library.",
             family:       "Unmarried. No children. No family she mentions.",
             knowsWilliam: "Has worked for the Thoreson family for nearly ten years. William trusted her with everything."
+            quiz: {
+                question: "What does Miranda do for the Thoreson family?",
+                correct:  "Manages all their legal affairs",
+                options:  ["Manages all their legal affairs", "Handles their investments", "Runs the household staff", "Works as their personal accountant"]
+            },
         },
         publicDesc: "The Thoreson estate's legal manager for nearly ten years. Professional, precise, and discreet. Has been present for every significant family moment — and most of the significant paperwork.",
         hiddenSkills: [],
@@ -70,6 +75,11 @@ var characterDatabase = {
             hobby:        "Woodworking. Keeps a small workshop behind the house.",
             family:       "Married to Clara for six years. No children yet.",
             knowsWilliam: "His father. Closest thing to a business partner William ever had."
+            quiz: {
+                question: "What is Scott's profession?",
+                correct:  "Attorney",
+                options:  ["Army officer", "Attorney", "Journalist", "Banker"]
+            },
         },
         publicDesc: "William Thoreson's eldest child. Has spent years learning the family business from the inside — operations, relationships, the day-to-day of keeping Thoreson Toys running.",
         hiddenSkills: [],
@@ -104,6 +114,11 @@ var characterDatabase = {
             hobby:        "Photography. Has a good eye for things other people overlook.",
             family:       "Unmarried.",
             knowsWilliam: "William personally invited him tonight. Said the evening concerned him specifically."
+            quiz: {
+                question: "What does Walter cover at the Dallas Herald?",
+                correct:  "Business and society",
+                options:  ["International affairs", "Crime and politics", "Business and society", "Sports"]
+            },
         },
         publicDesc: "A journalist for the Dallas Herald covering business and society. Known for thorough, honest reporting. Personally invited by William Thoreson Sr.",
         hiddenSkills: [],
@@ -138,6 +153,11 @@ var characterDatabase = {
             hobby:        "Jazz. Goes to the clubs on Commerce Street most weekends.",
             family:       "Divorced. One daughter, lives with her mother.",
             knowsWilliam: "A cousin on the Thoreson side. Saw William at family gatherings over the years."
+            quiz: {
+                question: "What does David do for a living?",
+                correct:  "Private investigator",
+                options:  ["Police detective", "Lawyer", "Insurance adjuster", "Private investigator"]
+            },
         },
         publicDesc: "A licensed private investigator and a cousin on the Thoreson side. The moment William died, the calls started.",
         hiddenSkills: [],
@@ -171,6 +191,11 @@ var characterDatabase = {
             hobby:        "Gardening. Has a well-known rose garden.",
             family:       "Widowed. Husband Edward passed in 1929. Two adult children in Memphis.",
             knowsWilliam: "Met through charity work in the early 1910s. A family acquaintance of twenty-odd years."
+            quiz: {
+                question: "How does Patricia spend most of her time?",
+                correct:  "Charitable work and Dallas society",
+                options:  ["Teaching at a school", "Charitable work and Dallas society", "Managing her late husband's estate", "Running a business"]
+            },
         },
         publicDesc: "A longtime family friend and person of means. Perceptive, composed, and doesn't suffer fools. William specifically asked her to come tonight.",
         hiddenSkills: [],
@@ -202,6 +227,11 @@ var characterDatabase = {
             hobby:        "Correspondence. Writes letters to people all over the country, every week.",
             family:       "Widowed. Husband George passed in 1921. Three children, seven grandchildren.",
             knowsWilliam: "Has known William Thoreson since he was a young man with ambition and a partner nobody talks about anymore."
+            quiz: {
+                question: "What did Dorothy do for most of her working life?",
+                correct:  "Taught at Dallas public schools",
+                options:  ["Ran a boarding house", "Managed a dress shop", "Taught at Dallas public schools", "Worked in banking"]
+            },
         },
         publicDesc: "One of the most well-connected people in Dallas. Has been watching this city for longer than most guests have been alive.",
         hiddenSkills: [],
@@ -238,6 +268,11 @@ var characterDatabase = {
             hobby:        "Painting. Has a small collection of her own work she calls embarrassing and refuses to show anyone.",
             family:       "Unmarried. No children.",
             knowsWilliam: "Her uncle on her mother's side. Grew up spending holidays at the Thoreson home."
+            quiz: {
+                question: "Where has Vivienne been living until recently?",
+                correct:  "Abroad — Paris and London",
+                options:  ["New Orleans", "San Francisco", "Abroad \u2014 Paris and London", "New York City"]
+            },
         },
         publicDesc: "{{scott_thoreson}}'s cousin on the mother's side. Recently returned from years living abroad. Sees this family with the slight detachment of someone who has lived somewhere else.",
         hiddenSkills: [],
@@ -269,6 +304,11 @@ var characterDatabase = {
             hobby:        "Chess. Plays in a weekly club on Elm Street.",
             family:       "Married to Helen for twelve years. Two children, ages ten and seven.",
             knowsWilliam: "Hired by William in 1920. Worked closely with him for fifteen years — or thought he did."
+            quiz: {
+                question: "What is Raymond's role at Thoreson Toys?",
+                correct:  "Business Manager — operations and staffing",
+                options:  ["Business Manager \u2014 operations and staffing", "Company accountant", "Factory floor supervisor", "Head of sales"]
+            },
         },
         publicDesc: "Business Manager at Thoreson Toys for fifteen years. Handles the operational side of the company. Knows where every body is buried — figuratively speaking.",
         hiddenSkills: [],
@@ -304,6 +344,11 @@ var characterDatabase = {
             hobby:        "Amateur photography. Has a darkroom at home.",
             family:       "Widowed. Spouse passed in 1928. One child who lives in Houston.",
             knowsWilliam: "Met when William walked into the bank in 1902 looking for a business loan. Closest friend of over thirty years."
+            quiz: {
+                question: "What did Charles do before retiring?",
+                correct:  "Banker — VP of Commercial Lending at First National",
+                options:  ["Railroad company executive", "Lawyer specializing in business law", "Banker \u2014 VP of Commercial Lending at First National", "Cotton merchant"]
+            },
         },
         publicDesc: "An old friend of William's and a retired Dallas banker. Known, trusted, and one of the few people William ever truly confided in.",
         hiddenSkills: [],
@@ -338,6 +383,11 @@ var characterDatabase = {
             hobby:        "Golf. Plays at Dallas Country Club most Saturday mornings.",
             family:       "Married to Ruth for fourteen years. Three children.",
             knowsWilliam: "Became an investor in Thoreson Toys four years ago after William made a personal pitch. The returns were excellent until they weren't."
+            quiz: {
+                question: "How does Marcus know William Thoreson?",
+                correct:  "He invested in Thoreson Toys four years ago",
+                options:  ["They grew up together in Dallas", "He was William's attorney", "They served together in the war", "He invested in Thoreson Toys four years ago"]
+            },
         },
         publicDesc: "A Dallas businessman with a significant stake in Thoreson Toys. Analytical, measured, and not someone who loses money quietly.",
         hiddenSkills: [],
@@ -371,6 +421,11 @@ var characterDatabase = {
             hobby:        "Bridge. Hosts a weekly game and considers it serious business.",
             family:       "Unmarried.",
             knowsWilliam: "Has been a Thoreson Toys shareholder for six years. Knew William through the investor circle."
+            quiz: {
+                question: "How long has Victoria been a Thoreson Toys shareholder?",
+                correct:  "Six years",
+                options:  ["Two years", "Fifteen years", "Six years", "Since the company started"]
+            },
         },
         publicDesc: "A sharp businessperson and Thoreson Toys investor. Active in Dallas society with a keen eye for detail.",
         hiddenSkills: [],
@@ -405,6 +460,11 @@ var characterDatabase = {
             hobby:        "Hosting. Considers the dinner party an art form.",
             family:       "Married to Harold for twenty-eight years. No children.",
             knowsWilliam: "Social acquaintance of many years. Moved in the same circles as the Thoresons throughout Dallas society."
+            quiz: {
+                question: "Where is Elizabeth originally from?",
+                correct:  "New Orleans",
+                options:  ["Atlanta", "Houston", "Memphis", "New Orleans"]
+            },
         },
         publicDesc: "A fixture of Dallas society. Knows everyone, remembers everything, and makes it all look effortless.",
         hiddenSkills: [],

@@ -2282,10 +2282,9 @@
                     const isDone = q.completed;
                     // Extract target character from quest id (e.g. "scott_asks_walter" → "walter_lippman")
                     // Quest text contains the character name already via token resolution
-                    // Try to find cocktailProfile for target character
+                    // Build a natural prose blurb from cocktailProfile
                     let profileHtml = '';
                     if (typeof characterDatabase !== 'undefined') {
-                        // Find character whose name appears in quest text
                         const targetChar = Object.entries(characterDatabase).find(([slug, char]) => {
                             return q.text && q.text.includes(char.name);
                         });
@@ -2293,25 +2292,27 @@
                             const [slug, char] = targetChar;
                             const p = char.cocktailProfile;
                             if (p) {
-                                profileHtml = `
-                                <div style="margin-top:14px;padding:12px 14px;background:rgba(201,162,39,0.05);border:1px solid rgba(201,162,39,0.15);border-radius:3px;">
-                                    <div style="font-family:'Special Elite',monospace;font-size:9px;letter-spacing:3px;color:rgba(201,162,39,0.5);text-transform:uppercase;margin-bottom:10px;">Find out about them</div>
-                                    <div style="display:flex;flex-direction:column;gap:6px;">
-                                        <div style="font-size:14px;color:#aaa;"><span style="color:#c9a227;">From</span> — ${p.from}</div>
-                                        <div style="font-size:14px;color:#aaa;"><span style="color:#c9a227;">Career</span> — ${p.career}</div>
-                                        <div style="font-size:14px;color:#aaa;"><span style="color:#c9a227;">Hobby</span> — ${p.hobby}</div>
-                                        <div style="font-size:14px;color:#aaa;"><span style="color:#c9a227;">Family</span> — ${p.family}</div>
-                                        <div style="font-size:14px;color:#aaa;"><span style="color:#c9a227;">William</span> — ${p.knowsWilliam}</div>
-                                    </div>
-                                </div>`;
+                                profileHtml = `<div style="margin-top:12px;font-size:15px;line-height:1.75;color:rgba(196,196,212,0.6);font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;">${p.from} ${p.career} ${p.family} ${p.knowsWilliam}</div>`;
                             }
                         }
                     }
+                    // Find quiz for this quest
+                    let quizData = null;
+                    if (typeof characterDatabase !== 'undefined') {
+                        const tChar = Object.entries(characterDatabase).find(([s,c]) => q.text && q.text.includes(c.name));
+                        if (tChar && tChar[1].cocktailProfile && tChar[1].cocktailProfile.quiz) {
+                            quizData = tChar[1].cocktailProfile.quiz;
+                        }
+                    }
+                    const quizAttr = quizData ? ` data-quiz='${JSON.stringify(quizData).replace(/'/g,"&#39;")}'` : '';
+
                     assignmentsHtml += `
-                        <div style="background:rgba(0,0,0,0.3);border-left:3px solid ${isDone ? '#3fb950' : '#c9a227'};margin-bottom:16px;border-radius:3px;padding:16px 18px;opacity:${isDone ? '0.6' : '1'};">
+                        <div style="background:rgba(0,0,0,0.3);border-left:3px solid ${isDone ? '#3fb950' : '#c9a227'};margin-bottom:16px;border-radius:3px;padding:16px 18px;opacity:${isDone ? '0.7' : '1'};" id="quest-${q.id}">
                             <div style="font-size:17px;line-height:1.6;color:${isDone ? '#888' : '#f0e6c8'};font-family:'Playfair Display',serif;font-weight:600;">${q.text}</div>
-                            ${!isDone ? profileHtml : ''}
-                            ${!isDone ? `<button onclick="completeQuest('${q.id}')" style="margin-top:14px;background:transparent;color:#c9a227;border:1px solid #c9a227;padding:7px 18px;cursor:pointer;font-family:'Playfair Display',serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;">✓ Mark Complete</button>` : '<div style="margin-top:8px;font-size:12px;color:#3fb950;letter-spacing:1px;">✓ Completed</div>'}
+                            ${isDone
+                                ? `<div style="margin-top:8px;font-size:12px;color:#3fb950;letter-spacing:1px;">✓ Completed</div>`
+                                : `<button onclick="startQuestQuiz('${q.id}', this)"${quizAttr} style="margin-top:14px;background:transparent;color:#c9a227;border:1px solid #c9a227;padding:7px 18px;cursor:pointer;font-family:'Playfair Display',serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;">✓ Mark Complete</button>`
+                            }
                         </div>`;
                 });
             }
@@ -2328,16 +2329,81 @@
             document.getElementById('discoveriesContent').innerHTML = html;
         }
 
-        async function completeQuest(questId) {
+        async function completeQuest(questId, correct) {
             if (!userSession || !userSession.currentGameId || !userSession.firebaseUid) return;
             const questsRef = database.ref(
                 'games/' + userSession.currentGameId + '/players/' + userSession.firebaseUid + '/cocktailQuests'
             );
             const snap = await questsRef.once('value');
             const quests = snap.val() || [];
-            const updated = quests.map(q => q.id === questId ? { ...q, completed: true } : q);
+            const updated = quests.map(q => q.id === questId ? { ...q, completed: true, quizCorrect: correct } : q);
             await questsRef.set(updated);
-            // myQuests updated via listener — no manual reload needed
+
+            // Award bonus scan point if correct
+            if (correct && userSession.currentGameId && userSession.firebaseUid) {
+                const scanRef = database.ref('games/' + userSession.currentGameId + '/state/scans/' + (userSession.displayName || 'Player'));
+                const scanSnap = await scanRef.once('value');
+                await scanRef.set((scanSnap.val() || 0) + 1);
+            }
+        }
+
+        function startQuestQuiz(questId, btn) {
+            const quizData = JSON.parse(btn.getAttribute('data-quiz') || 'null');
+            if (!quizData) {
+                completeQuest(questId, false);
+                return;
+            }
+
+            // Replace button with quiz UI
+            const card = document.getElementById('quest-' + questId);
+            if (!card) return;
+
+            const optionsHtml = quizData.options.map((opt, i) => `
+                <button onclick="submitQuestAnswer('${questId}', this, ${JSON.stringify(opt) === JSON.stringify(quizData.correct)})"
+                    data-correct="${opt === quizData.correct}"
+                    style="display:block;width:100%;text-align:left;background:rgba(255,255,255,0.04);border:1px solid rgba(201,162,39,0.2);color:#ccc;padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:15px;font-family:'Cormorant Garamond',Georgia,serif;border-radius:3px;transition:background 0.2s;">
+                    ${opt}
+                </button>`).join('');
+
+            card.innerHTML += `
+                <div id="quiz-${questId}" style="margin-top:16px;border-top:1px solid rgba(201,162,39,0.15);padding-top:14px;">
+                    <div style="font-family:'Special Elite',monospace;font-size:9px;letter-spacing:3px;color:rgba(201,162,39,0.5);text-transform:uppercase;margin-bottom:12px;">Quick check — ${quizData.question}</div>
+                    ${optionsHtml}
+                    <div id="quiz-feedback-${questId}" style="min-height:20px;"></div>
+                </div>`;
+
+            // Hide the mark complete button
+            btn.style.display = 'none';
+        }
+
+        async function submitQuestAnswer(questId, btn, isCorrect) {
+            const quizEl = document.getElementById('quiz-' + questId);
+            const feedback = document.getElementById('quiz-feedback-' + questId);
+
+            // Disable all options
+            quizEl.querySelectorAll('button').forEach(b => b.disabled = true);
+
+            if (isCorrect) {
+                btn.style.background = 'rgba(63,185,80,0.15)';
+                btn.style.borderColor = '#3fb950';
+                btn.style.color = '#3fb950';
+                feedback.innerHTML = '<div style="font-size:13px;color:#3fb950;margin-top:4px;letter-spacing:1px;">✓ Correct — +1 point</div>';
+            } else {
+                btn.style.background = 'rgba(192,57,43,0.15)';
+                btn.style.borderColor = '#c0392b';
+                btn.style.color = '#c0392b';
+                // Highlight correct answer
+                quizEl.querySelectorAll('button').forEach(b => {
+                    if (b.dataset.correct === 'true') {
+                        b.style.background = 'rgba(63,185,80,0.1)';
+                        b.style.borderColor = '#3fb950';
+                        b.style.color = '#3fb950';
+                    }
+                });
+                feedback.innerHTML = '<div style="font-size:13px;color:#c0392b;margin-top:4px;letter-spacing:1px;">✗ Not quite — see the correct answer above</div>';
+            }
+
+            await completeQuest(questId, isCorrect);
         }
 
         function buildDiscoveryCard(item, borderColor) {
