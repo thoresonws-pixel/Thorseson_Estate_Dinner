@@ -97,3 +97,6 @@
 35. **Legacy game storyId** — Existing games with `storyId: 'thoreson'` need updating to `'thoreson_estate_dinner'` in Firebase, or use the normalizer already in game.html.
 
 36. **characters.js.bak** — Backup file committed to repo. Remove before commercial launch.
+
+## PROP IDEAS
+- **Period phone as PI delivery mechanism** — Replace the DJ/PI player role and text message delivery with a physical vintage rotary or candlestick phone mounted on the wall. When the GM hits the trigger on the dashboard, the phone rings mid-investigation. A player answers it and hears a pre-recorded Pinkerton agent delivering the act's clue hint and the code challenge prompt. This is dramatically superior to a text popup and removes the awkward information asymmetry of the PI role. Implementation: wireless doorbell module hidden inside the phone body, triggered by a Firebase flag; three short recorded "Hargrove, Pinkerton Agency" calls, one per act; `ringPhone` button on GM dashboard activates both the bell and the code challenge overlay on all player phones simultaneously. The PI character becomes the voice on the phone rather than a player at the table.
