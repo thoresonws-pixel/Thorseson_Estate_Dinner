@@ -904,6 +904,7 @@
     </div>
     <div class="topbar-right">
         <div class="status-pill status-lobby" id="topbarStatus">Lobby</div>
+        <a id="bigScreenLink" href="#" target="_blank" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;background:var(--accent-dk);color:var(--white);border:none;padding:7px 14px;cursor:pointer;text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='var(--accent)'" onmouseout="this.style.background='var(--accent-dk)'">📺 Big Screen ↗</a>
         <button class="btn-signout" onclick="handleSignOut()">Sign Out</button>
     </div>
 </div>
@@ -932,7 +933,6 @@
         <button class="tab-btn" onclick="switchTab('guests', this)">Guest List</button>
         <button class="tab-btn" onclick="switchTab('characters', this)">Characters</button>
         <button class="tab-btn" onclick="switchTab('monitor', this)">GM Monitor</button>
-        <button class="tab-btn" onclick="switchTab('screen', this)">Big Screen</button>
     </div>
 </div>
 
@@ -1002,10 +1002,7 @@
                     <span class="quick-card-icon">⚄</span>
                     <span class="quick-card-label">Generate Roles</span>
                 </a>
-                <a onclick="switchTab('screen', document.querySelector('[onclick*=\"screen\"]'))" class="quick-card">
-                    <span class="quick-card-icon">📺</span>
-                    <span class="quick-card-label">Big Screen</span>
-                </a>
+
                 <a onclick="copyInviteLink()" class="quick-card">
                     <span class="quick-card-icon">🔗</span>
                     <span class="quick-card-label">Copy Invite Link</span>
@@ -1201,50 +1198,6 @@
         </div>
         <div class="panel">
             <div id="leaderboard" style="color:var(--fog);font-style:italic;">No scans yet.</div>
-        </div>
-
-    </div>
-
-    <!-- ═══ BIG SCREEN TAB ═════════════════════════════════════ -->
-    <div class="tab-panel" id="tab-screen">
-
-        <div class="section-head">
-            <div class="section-title">Big Screen Controls</div>
-            <a id="bigScreenLink" href="#" target="_blank" class="btn-gold" style="text-decoration:none;">
-                Open Big Screen ↗
-            </a>
-        </div>
-
-        <div style="font-size:14px;color:var(--fog);margin-bottom:24px;line-height:1.6;">
-            Open the Big Screen link on your laptop, drag it to the TV, and go fullscreen (F11).
-            Use the buttons below to control what's showing.
-        </div>
-
-        <div class="screen-options" id="screenOptions">
-            <div class="screen-option" onclick="setBigScreen('idle')">
-                <span class="screen-icon">✦</span>
-                <div class="screen-label">Idle / Title</div>
-                <div class="screen-desc">Thor's Murder Mysteries title screen. Use between acts.</div>
-            </div>
-            <div class="screen-option" onclick="setBigScreen('leaderboard')">
-                <span class="screen-icon">🏆</span>
-                <div class="screen-label">Leaderboard</div>
-                <div class="screen-desc">Live scan leaderboard — updates in real time as players find clues.</div>
-            </div>
-            <div class="screen-option" onclick="setBigScreen('detective')">
-                <span class="screen-icon">🔍</span>
-                <div class="screen-label">Evidence Board</div>
-                <div class="screen-desc">Shows all revealed clues and story beats so far.</div>
-            </div>
-            <div class="screen-option" onclick="setBigScreen('slideshow')">
-                <span class="screen-icon">📷</span>
-                <div class="screen-label">Photo Slideshow</div>
-                <div class="screen-desc">Rotating guest photos — cycles every 6 seconds.</div>
-            </div>
-        </div>
-
-        <div style="margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--fog);">
-            CURRENTLY SHOWING: <span id="currentScreenMode" style="color:var(--accent-lt);">IDLE</span>
         </div>
 
     </div>
