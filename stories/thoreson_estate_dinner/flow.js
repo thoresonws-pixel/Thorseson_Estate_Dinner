@@ -43,7 +43,7 @@ const gameFlow = {
             icon:        "🥂",
             description: "Guests arrive, get in character, complete social missions. William is alive.",
             advance:     "manual",
-            minMinutes:  45,
+            minMinutes:  60,
             maxMinutes:  75,
             revelations: null,
             // What fires automatically when this phase starts
