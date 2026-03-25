@@ -2101,6 +2101,10 @@ function renderRunGame() {
                     <span class="rev-type" style="background:#3a8fd4;color:white;">DJ</span>
                     <span style="font-size:12px;opacity:0.8;">${djSent ? '✕' : '✓'}</span>
                 </span>
+            </button>
+            <button class="rev-btn off" onclick="activateCodeChallenge('${actKey}')" style="border-color:rgba(201,162,39,0.3);">
+                <span class="rev-label">🔐 Activate Code Challenge</span>
+                <span class="rev-meta"><span class="rev-type" style="background:rgba(201,162,39,0.2);color:#c9a227;">CODE</span></span>
             </button>`;
         }
 
@@ -2136,6 +2140,15 @@ function renderLeaderboard() {
             <span class="lb-name">${medals[i]||'✦'} ${player}</span>
             <span class="lb-count">${count}</span>
         </div>`).join('');
+}
+
+async function activateCodeChallenge(actKey) {
+    await db.ref('games/' + gameId + '/state/codeChallenge').set({
+        active: true,
+        solved: false,
+        actKey: actKey,
+    });
+    showToast('🔐 Code challenge activated on all phones', 'success');
 }
 
 async function toggleRevelation(itemId) {
