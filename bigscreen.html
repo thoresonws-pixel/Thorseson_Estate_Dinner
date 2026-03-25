@@ -644,6 +644,7 @@
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
 <script>
     firebase.initializeApp({
         apiKey:            "AIzaSyApHrYubqWrR4m0ihdpq6Ym40jv4HTQ5i0",
@@ -654,7 +655,8 @@
         messagingSenderId: "182924616892",
         appId:             "1:182924616892:web:8153e1c69895cee665dcb9"
     });
-    const db = firebase.database();
+    const db   = firebase.database();
+    const auth = firebase.auth();
 
     // ── STATE ─────────────────────────────────────────────────
     const params     = new URLSearchParams(window.location.search);
@@ -676,8 +678,11 @@
             return;
         }
 
-        // Load story scripts for revelations data
-        loadStory().then(bootstrap);
+        // Sign in anonymously so Firebase rules allow game reads
+        auth.signInAnonymously()
+            .then(() => loadStory())
+            .then(bootstrap)
+            .catch(err => console.error('Auth failed:', err));
     });
 
     function loadStory() {
