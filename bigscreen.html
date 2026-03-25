@@ -119,6 +119,7 @@
         flex: 1;
         position: relative;
         overflow: hidden;
+        margin-right: 220px;
         background:
             radial-gradient(ellipse 80% 60% at 50% 50%, rgba(40,25,10,0.35) 0%, transparent 70%),
             repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(101,67,33,0.035) 39px, rgba(101,67,33,0.035) 40px),
@@ -228,14 +229,18 @@
     /* ── LEADERBOARD CORNER ──────────────────────────────────── */
     #leaderboardCorner {
         position: fixed;
-        bottom: 24px;
-        right: 24px;
+        top: 64px;
+        right: 0;
+        bottom: 0;
         width: 220px;
-        background: rgba(6,4,10,0.92);
-        border: 1px solid rgba(201,162,39,0.12);
-        padding: 14px 16px;
+        background: rgba(6,4,10,0.88);
+        border-left: 1px solid rgba(201,162,39,0.08);
+        padding: 20px 16px;
         z-index: 50;
-        backdrop-filter: blur(8px);
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        overflow: hidden;
     }
 
     .lb-corner-title {
@@ -1307,24 +1312,24 @@
     // Fixed clue positions relative to board (fraction of W/H)
     // Spread across the full board in a natural-looking scatter
     const CLUE_LAYOUT = {
-        // Act 1 clues
-        newspaper:        { x: 0.08, y: 0.12, r: -4  },
-        letterhead:       { x: 0.72, y: 0.08, r:  3  },
-        incorporation:    { x: 0.60, y: 0.62, r: -5  },
-        forgedDocs:       { x: 0.18, y: 0.65, r:  6  },
+        // Act 1 clues — spread across center of board
+        newspaper:        { x: 0.10, y: 0.12, r: -4 },
+        letterhead:       { x: 0.55, y: 0.08, r:  3 },
+        incorporation:    { x: 0.50, y: 0.68, r: -5 },
+        forgedDocs:       { x: 0.12, y: 0.62, r:  6 },
         // Act 2 clues
-        ledger:           { x: 0.10, y: 0.10, r: -3  },
-        margaretsLetter:  { x: 0.70, y: 0.12, r:  5  },
-        birthCertificate: { x: 0.78, y: 0.58, r: -4  },
-        margaretDeath:    { x: 0.08, y: 0.60, r:  4  },
-        will:             { x: 0.42, y: 0.72, r: -6  },
+        ledger:           { x: 0.10, y: 0.10, r: -3 },
+        margaretsLetter:  { x: 0.58, y: 0.10, r:  5 },
+        birthCertificate: { x: 0.60, y: 0.65, r: -4 },
+        margaretDeath:    { x: 0.10, y: 0.60, r:  4 },
+        will:             { x: 0.35, y: 0.72, r: -6 },
         // Act 3 clues
-        coroner:          { x: 0.15, y: 0.15, r: -5  },
-        travelJournal:    { x: 0.65, y: 0.15, r:  4  },
-        backgroundCheck:  { x: 0.42, y: 0.65, r: -3  },
-        // Standalones
-        bradfordLetter:   { x: 0.85, y: 0.35, r:  7  },
-        bankStatement:    { x: 0.85, y: 0.62, r: -5  },
+        coroner:          { x: 0.15, y: 0.12, r: -5 },
+        travelJournal:    { x: 0.55, y: 0.12, r:  4 },
+        backgroundCheck:  { x: 0.35, y: 0.65, r: -3 },
+        // Standalones — far corners, clearly separate
+        bradfordLetter:   { x: 0.62, y: 0.72, r:  7 },
+        bankStatement:    { x: 0.62, y: 0.45, r: -5 },
     };
 
     function seededPos(id) {
@@ -1335,80 +1340,74 @@
 
     function renderDetectiveBoard() {
         if (typeof revelationsDatabase === 'undefined') return;
-        const board  = document.getElementById('corkboard');
-        const svgEl  = document.getElementById('corkSvg');
+        const board = document.getElementById('corkboard');
+        const svg   = document.getElementById('corkSvg');
         const W = board.offsetWidth, H = board.offsetHeight;
         if (!W || !H) { setTimeout(renderDetectiveBoard, 200); return; }
 
-        // Determine current act — first revelation not yet revealed
-        const solvedRevs   = ACT_REVELATIONS.filter(r => activeItems.includes(r.id));
-        const currentRev   = ACT_REVELATIONS.find(r => !activeItems.includes(r.id));
-        const currentClues = currentRev ? currentRev.clues.filter(id => activeItems.includes(id)) : [];
-        const standalones  = STANDALONE_CLUES.filter(id => activeItems.includes(id));
+        const solvedRevs  = ACT_REVELATIONS.filter(r => activeItems.includes(r.id));
+        const currentRev  = ACT_REVELATIONS.find(r => !activeItems.includes(r.id));
+        const currentClues = currentRev
+            ? currentRev.clues.filter(id => activeItems.includes(id))
+            : [];
+        const standalones = STANDALONE_CLUES.filter(id => activeItems.includes(id));
 
-        // No evidence yet
         const hasAnything = currentClues.length > 0 || standalones.length > 0 || solvedRevs.length > 0;
         if (!hasAnything) {
             board.innerHTML = '<svg class="cork-svg" id="corkSvg" xmlns="http://www.w3.org/2000/svg"></svg><div class="board-empty-msg">No evidence yet</div>';
             return;
         }
 
-        // Ensure SVG exists
         if (!board.querySelector('.cork-svg')) {
             const s = document.createElementNS('http://www.w3.org/2000/svg','svg');
-            s.classList.add('cork-svg'); s.id = 'corkSvg';
-            board.prepend(s);
+            s.classList.add('cork-svg'); s.id = 'corkSvg'; board.prepend(s);
         }
-        const svg = document.getElementById('corkSvg');
-        svg.innerHTML = '';
+        const svgEl = document.getElementById('corkSvg');
+        svgEl.innerHTML = '';
 
         // ── SOLVED REVELATIONS — stacked top-left ────────────────────────────
+        // Remove old solved cards first
+        board.querySelectorAll('[data-rev-solved]').forEach(c => c.remove());
         solvedRevs.forEach((rev, i) => {
-            let card = board.querySelector('[data-rev="' + rev.id + '"]');
-            if (!card) {
-                card = document.createElement('div');
-                card.className = 'rev-card rev-card-solved';
-                card.dataset.rev = rev.id;
-                board.appendChild(card);
-            }
+            // Also remove any active card for this rev
+            const old = board.querySelector('[data-rev-active="' + rev.id + '"]');
+            if (old) old.remove();
+
+            const card = document.createElement('div');
+            card.className = 'rev-card rev-card-solved';
+            card.dataset.revSolved = rev.id;
             card.innerHTML = `<div class="rev-card-label">${rev.label}</div><div class="rev-card-title">${rev.title}</div>`;
-            card.style.cssText = `left: 12px; top: ${12 + i * 74}px; width: 170px; z-index: 4; transform: none;`;
+            card.style.cssText = `left:12px; top:${12 + i * 74}px; width:170px; z-index:4; transform:none;`;
+            board.appendChild(card);
+
+            // Draw strings from solved clues → solved card (in gold, subtle)
+            const cRect = card.getBoundingClientRect();
+            const bRect = board.getBoundingClientRect();
+            const rx = cRect.left - bRect.left + cRect.width;
+            const ry = cRect.top  - bRect.top  + cRect.height / 2;
+            rev.clues.forEach(id => {
+                const clueCard = board.querySelector('[data-id="' + id + '"]');
+                if (!clueCard) return;
+                const cr = clueCard.getBoundingClientRect();
+                const cx = cr.left - bRect.left + cr.width / 2;
+                const cy = cr.top  - bRect.top  + cr.height / 2;
+                const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+                line.setAttribute('x1',cx); line.setAttribute('y1',cy);
+                line.setAttribute('x2',rx); line.setAttribute('y2',ry);
+                line.setAttribute('stroke','rgba(201,162,39,0.2)');
+                line.setAttribute('stroke-width','1');
+                line.setAttribute('stroke-dasharray','3 5');
+                svgEl.appendChild(line);
+            });
         });
 
-        // Remove solved cards no longer in list
-        board.querySelectorAll('[data-rev]').forEach(c => {
-            const revId = c.dataset.rev;
-            if (!solvedRevs.find(r => r.id === revId)) {
-                // This is the active/center revelation — handled below
-            }
-        });
-
-        // ── ACTIVE REVELATION — center of board ──────────────────────────────
-        if (currentRev) {
-            let revCard = board.querySelector('[data-rev-active]');
-            if (!revCard) {
-                revCard = document.createElement('div');
-                revCard.className = 'rev-card rev-card-center';
-                revCard.dataset.revActive = currentRev.id;
-                board.appendChild(revCard);
-            } else if (revCard.dataset.revActive !== currentRev.id) {
-                revCard.dataset.revActive = currentRev.id;
-                revCard.className = 'rev-card rev-card-center';
-            }
-            revCard.innerHTML = `<div class="rev-card-pin"></div><div class="rev-card-label rev-card-label-hidden">?</div><div class="rev-card-title rev-card-title-hidden">?</div>`;
-            const cx = W / 2 - 90, cy = H / 2 - 44;
-            revCard.style.cssText = `left:${cx}px; top:${cy}px; width:180px; z-index:4;`;
-        }
-
-        // ── CURRENT ACT CLUES + STANDALONES ──────────────────────────────────
+        // ── CLUES — current act + standalones ────────────────────────────────
         const displayClues = [...currentClues, ...standalones];
         const newItems_local = activeItems.filter(id => !_prevActive.includes(id));
 
-        // Remove polaroids for clues not in current display
+        // Remove polaroids no longer relevant
         board.querySelectorAll('[data-id]').forEach(c => {
-            if (!displayClues.includes(c.dataset.id)) {
-                c.remove();
-            }
+            if (!displayClues.includes(c.dataset.id)) c.remove();
         });
 
         displayClues.forEach(id => {
@@ -1427,37 +1426,8 @@
             board.appendChild(card);
         });
 
-        // ── DRAW RED STRINGS from clues → center revelation ──────────────────
-        if (currentRev) {
-            const revCard = board.querySelector('[data-rev-active]');
-            if (revCard) {
-                const rRect = revCard.getBoundingClientRect();
-                const bRect = board.getBoundingClientRect();
-                const rx = rRect.left - bRect.left + rRect.width / 2;
-                const ry = rRect.top  - bRect.top  + rRect.height / 2;
-
-                currentClues.forEach(id => {
-                    const clueCard = board.querySelector('[data-id="' + id + '"]');
-                    if (!clueCard) return;
-                    const cr = clueCard.getBoundingClientRect();
-                    const cx = cr.left - bRect.left + cr.width / 2;
-                    const cy = cr.top  - bRect.top  + cr.height / 2;
-
-                    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
-                    line.setAttribute('x1', cx); line.setAttribute('y1', cy);
-                    line.setAttribute('x2', rx); line.setAttribute('y2', ry);
-                    line.setAttribute('stroke','rgba(139,26,26,0.5)');
-                    line.setAttribute('stroke-width','1.5');
-                    line.setAttribute('stroke-dasharray','5 4');
-                    svg.appendChild(line);
-
-                    const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
-                    dot.setAttribute('cx', cx); dot.setAttribute('cy', cy);
-                    dot.setAttribute('r','3'); dot.setAttribute('fill','rgba(139,26,26,0.5)');
-                    svg.appendChild(dot);
-                });
-            }
-        }
+        // ── NO center card or strings until revelation is actually revealed ──
+        // (Nothing shown in the center until the GM unlocks the story beat)
     }
 
     // ── LEADERBOARD CORNER ────────────────────────────────────
