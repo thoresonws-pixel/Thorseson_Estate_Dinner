@@ -1337,6 +1337,7 @@ async function bootstrap() {
     try { renderRunGame(); } catch(e) { console.error('renderRunGame:', e); }
     try { renderGuests(); } catch(e) { console.error('renderGuests:', e); }
     try { refreshHealth(); } catch(e) { console.error('refreshHealth:', e); }
+    try { initBigScreenLink(); } catch(e) { console.error('initBigScreenLink:', e); }
 
     // Live listeners
     db.ref('games/' + gameId + '/state/activeItems').on('value', snap => {
