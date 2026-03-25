@@ -3,33 +3,15 @@
 // Story: The Thoreson Estate Dinner
 // ============================================================
 //
-// Quests are social missions assigned to players at cocktail
-// hour start. They get people talking, in character, and
-// suspicious of each other before the murder even happens.
-//
-// QUEST TYPES:
-//   "targeted"  — Directed at a specific character. Only fires
-//                 if that character is in the game.
-//   "generic"   — No character dependency. Always available.
-//   "discovery" — Ask any guest something specific. Always available.
+// Quests are short, specific social missions. One clear ask,
+// one natural conversation. The quest gives you a reason to
+// approach someone — the conversation does the rest.
 //
 // ASSIGNMENT:
-//   Each player receives 2-3 quests. The system:
-//   1. Assigns one targeted quest if a match is available
-//   2. Fills remaining slots with generic/discovery quests
-//   3. Never assigns a quest back at the player themselves
-//   4. Avoids duplicate quests across players where possible
-//
-// REWARD:
-//   Completing a quest (player taps Complete) earns bonus scan
-//   points and unlocks a flavor memory on their device.
-//
-// WRITING RULES:
-//   - Written in second person
-//   - In character — it's 1935, you are your character
-//   - Short and actionable — one clear mission per quest
-//   - Do not reveal plot. Seed suspicion, not answers.
-//   - Use {{slug}} tokens for character names
+//   Each player receives 4 quests:
+//   1. One targeted quest (directed at a specific character)
+//   2. Three generic/discovery quests
+//   Never assigned back at the player themselves.
 //
 // ============================================================
 
@@ -37,163 +19,181 @@ const questsDatabase = {
 
     cocktail: [
 
-        // ── TARGETED — requires specific character in game ────────
+        // ── TARGETED ─────────────────────────────────────────────
 
         {
-            id:       "find_pi",
-            type:     "targeted",
-            requires: ["david_richardson"],
-            giveTo:   "any",
-            exclude:  ["david_richardson"],
-            text:     "Find {{david_richardson}} before the evening begins. Rumor has it there is a private investigator at the party tonight. Find out why.",
-            complete: "You introduced yourself to {{david_richardson}}. Something about the way {{david_richardson}} looked at you suggested this would not be your last conversation tonight."
-        },
-
-        {
-            id:       "find_journalist",
-            type:     "targeted",
-            requires: ["walter_lippman"],
-            giveTo:   "any",
-            exclude:  ["walter_lippman"],
-            text:     "Introduce yourself to {{walter_lippman}} and find out what story brought a journalist to a private dinner party. William did not invite people without reason.",
-            complete: "{{walter_lippman}} was cagey about the invitation. Said William had reached out personally. That is worth remembering."
-        },
-
-        {
-            id:       "find_legal_manager",
-            type:     "targeted",
-            requires: ["miranda_longfellow"],
-            giveTo:   "any",
-            exclude:  ["miranda_longfellow"],
-            text:     "Find {{miranda_longfellow}} — the person who manages all the Thoreson legal affairs. Ask what William has been working on lately. Legal managers always know more than they say.",
-            complete: "{{miranda_longfellow}} said everything was routine. Said it with a perfectly straight face. You are not sure you believed it."
-        },
-
-        {
-            id:       "find_banker",
+            id:       "ask_charles_degree",
             type:     "targeted",
             requires: ["charles_sterling"],
             giveTo:   "any",
             exclude:  ["charles_sterling"],
-            text:     "Seek out {{charles_sterling}}. An old friend of William's with decades in Dallas banking. Ask what they know about the company's recent financial troubles.",
-            complete: "{{charles_sterling}} chose words carefully. Said the European situation was complicated. Said William had been under unusual pressure. Did not say more."
+            text:     "Find {{charles_sterling}} and ask what they studied at university.",
+            complete: "One question. A whole career came out of it."
         },
 
         {
-            id:       "find_cousin",
-            type:     "targeted",
-            requires: ["vivienne_ashford"],
-            giveTo:   "any",
-            exclude:  ["vivienne_ashford"],
-            text:     "Find {{vivienne_ashford}} — just returned from years abroad. Ask what brought someone home after so long. People who leave and come back always have a reason.",
-            complete: "{{vivienne_ashford}} said something about family obligation. Then changed the subject. The way {{vivienne_ashford}} looked at the house suggested more than that."
-        },
-
-        {
-            id:       "find_investor",
-            type:     "targeted",
-            requires: ["marcus_brennan"],
-            giveTo:   "any",
-            exclude:  ["marcus_brennan"],
-            text:     "Find {{marcus_brennan}} and ask about the investment in Thoreson Toys. The European deal collapse cost people real money. Find out how angry they actually are.",
-            complete: "{{marcus_brennan}} said losing money was one thing. Said being lied to was another. Said tonight was supposed to be about answers."
-        },
-
-        {
-            id:       "find_elder",
+            id:       "ask_dorothy_dallas",
             type:     "targeted",
             requires: ["dorothy_wells"],
             giveTo:   "any",
             exclude:  ["dorothy_wells"],
-            text:     "Introduce yourself to {{dorothy_wells}}. The most senior person in the room, with the longest memory in Dallas. Ask what {{dorothy_wells}} remembers about the early days of Thoreson Toys.",
-            complete: "{{dorothy_wells}} smiled and said the early days were interesting ones. Said there had been another name involved, once. Did not say which."
+            text:     "Find {{dorothy_wells}} and ask how long they have lived in Dallas.",
+            complete: "Longer than the company has existed. That is worth remembering."
         },
 
         {
-            id:       "find_victoria",
+            id:       "ask_miranda_job",
+            type:     "targeted",
+            requires: ["miranda_longfellow"],
+            giveTo:   "any",
+            exclude:  ["miranda_longfellow"],
+            text:     "Find {{miranda_longfellow}} and ask what their job actually involves day to day.",
+            complete: "Contracts. Filings. Records going back decades. All of it passing through their hands."
+        },
+
+        {
+            id:       "ask_walter_beat",
+            type:     "targeted",
+            requires: ["walter_lippman"],
+            giveTo:   "any",
+            exclude:  ["walter_lippman"],
+            text:     "Find {{walter_lippman}} and ask what they cover at the Dallas Herald.",
+            complete: "Business history. The kind of story that takes months and starts with a single old document."
+        },
+
+        {
+            id:       "ask_raymond_role",
+            type:     "targeted",
+            requires: ["raymond_hammond"],
+            giveTo:   "any",
+            exclude:  ["raymond_hammond"],
+            text:     "Find {{raymond_hammond}} and ask what a business manager at Thoreson Toys actually does.",
+            complete: "Fifteen years of operations. Payroll. Accounts. Ledgers going back further than their tenure."
+        },
+
+        {
+            id:       "ask_david_work",
+            type:     "targeted",
+            requires: ["david_richardson"],
+            giveTo:   "any",
+            exclude:  ["david_richardson"],
+            text:     "Find {{david_richardson}} and ask what kind of work a private investigator takes on.",
+            complete: "Background checks. Missing persons. Old records. Said most of the interesting ones start with something someone buried a long time ago."
+        },
+
+        {
+            id:       "ask_marcus_investment",
+            type:     "targeted",
+            requires: ["marcus_brennan"],
+            giveTo:   "any",
+            exclude:  ["marcus_brennan"],
+            text:     "Find {{marcus_brennan}} and ask how they first got involved with Thoreson Toys.",
+            complete: "William made a personal pitch. Said the company was built on solid ground. Said it had a history worth investing in."
+        },
+
+        {
+            id:       "ask_victoria_investment",
             type:     "targeted",
             requires: ["victoria_ashworth"],
             giveTo:   "any",
             exclude:  ["victoria_ashworth"],
-            text:     "Find {{victoria_ashworth}} and take the measure of the room's most analytical mind. Ask what {{victoria_ashworth}} makes of tonight's gathering. Investors notice things other people miss.",
-            complete: "{{victoria_ashworth}} said William had been evasive for months. Said that was unusual for a man who prided himself on directness. Said something felt off about tonight before anything happened."
+            text:     "Find {{victoria_ashworth}} and ask what drew them to investing in Thoreson Toys.",
+            complete: "The story. William told it well. A self-made man, a company built from nothing. It was compelling."
         },
 
-        // ── GENERIC — no character dependency ─────────────────────
+        {
+            id:       "ask_vivienne_away",
+            type:     "targeted",
+            requires: ["vivienne_ashford"],
+            giveTo:   "any",
+            exclude:  ["vivienne_ashford"],
+            text:     "Find {{vivienne_ashford}} and ask where they have been living — and how long they were gone.",
+            complete: "Years abroad. Said distance gives you perspective. Said some things look very different from far away."
+        },
 
         {
-            id:       "introduce_character",
+            id:       "ask_patricia_william",
+            type:     "targeted",
+            requires: ["patricia_chamberlain"],
+            giveTo:   "any",
+            exclude:  ["patricia_chamberlain"],
+            text:     "Find {{patricia_chamberlain}} and ask how they know William.",
+            complete: "Family friend for many years. Said William had changed lately. More anxious. More eager to set things right."
+        },
+
+        // ── GENERIC ──────────────────────────────────────────────
+
+        {
+            id:       "ask_company_name",
             type:     "generic",
             requires: [],
             giveTo:   "any",
-            text:     "Introduce yourself to three people you have not spoken to yet — in character. You are not yourself tonight. Tell them who you are, how you know William, and why you are here.",
-            complete: "Three conversations. Three new faces. The evening is beginning to take shape."
+            text:     "Ask two different guests what the company is actually called — and if it has always had that name.",
+            complete: "Thoreson Toys. Both said it without hesitation. Neither mentioned any other name."
         },
 
         {
-            id:       "william_impression",
+            id:       "ask_founding_year",
             type:     "generic",
             requires: [],
             giveTo:   "any",
-            text:     "Ask two different guests what they think of William Thoreson. Not the official version — the honest one. People tell you things at parties they would not say anywhere else.",
-            complete: "Two perspectives. Neither of them simple. William Thoreson was clearly not a simple man."
+            text:     "Ask two guests when Thoreson Toys was founded and how it got started.",
+            complete: "1902. William came to Dallas and built it himself. That is the story everyone tells."
         },
 
         {
-            id:       "announcement_rumor",
+            id:       "ask_william_lately",
             type:     "generic",
             requires: [],
             giveTo:   "any",
-            text:     "William told several people he had an important announcement tonight. Find someone who knows what it was. Start asking questions — carefully.",
-            complete: "Nobody seems to know exactly what the announcement was. But everyone seems to have a theory."
+            text:     "Ask someone who knows William well: has he seemed different lately? More distracted, more emotional, more urgent about something?",
+            complete: "Yes. Something has been weighing on him for months. Nobody knows quite what."
         },
 
         {
-            id:       "european_deal",
+            id:       "ask_announcement",
             type:     "generic",
             requires: [],
             giveTo:   "any",
-            text:     "The European distribution deal collapse has been the talk of Dallas business circles for months. Find out who in this room was affected — and how angry they still are.",
-            complete: "More people than you expected had skin in that deal. The money was one thing. The silence from William afterward was another."
+            text:     "Ask two people what they think William's big announcement was going to be about tonight.",
+            complete: "Two theories. Nobody actually knows. Everyone has been wondering since the invitation arrived."
         },
 
-        // ── DISCOVERY — open-ended social missions ─────────────────
-
         {
-            id:       "find_secret",
-            type:     "discovery",
+            id:       "ask_who_invited",
+            type:     "generic",
             requires: [],
             giveTo:   "any",
-            text:     "By the end of cocktail hour, find out one thing about another guest that they probably did not intend to reveal. Every party has loose lips if you know how to listen.",
-            complete: "You found something. File it away. Tonight is young."
+            text:     "Ask two guests how William reached out to invite them — and whether anything about the invitation seemed unusual.",
+            complete: "Both said the wording was more serious than a dinner invitation usually warranted. William wanted them there specifically."
+        },
+
+        {
+            id:       "ask_european_deal",
+            type:     "generic",
+            requires: [],
+            giveTo:   "any",
+            text:     "The European distribution deal collapse has been the talk of Dallas business circles. Ask someone in the room what happened.",
+            complete: "A deal with Hamburg distributors fell through last spring. Money was lost. William went quiet afterward. Nobody got a proper explanation."
+        },
+
+        {
+            id:       "introduce_yourself",
+            type:     "generic",
+            requires: [],
+            giveTo:   "any",
+            text:     "Introduce yourself to three people you have not spoken to yet — in character. Tell them who you are and how you know William.",
+            complete: "Three introductions. Three connections made. The evening is taking shape."
         },
 
         {
             id:       "find_ally",
-            type:     "discovery",
+            type:     "generic",
             requires: [],
             giveTo:   "any",
-            text:     "Identify one person in this room you think you can trust. You may need allies before the night is over. Choose carefully.",
-            complete: "You have a candidate. Whether that trust is earned remains to be seen."
+            text:     "By the end of cocktail hour, identify one person in this room you think you can trust. You may need allies before the night is over.",
+            complete: "You have someone in mind. Whether that trust holds remains to be seen."
         },
-
-        {
-            id:       "find_suspect",
-            type:     "discovery",
-            requires: [],
-            giveTo:   "any",
-            text:     "By the end of cocktail hour, identify one person in this room who makes you uneasy. You cannot explain it yet. Trust the instinct.",
-            complete: "You have someone in mind. Whether you are right is a different question entirely."
-        },
-
-        {
-            id:       "william_last_seen",
-            type:     "discovery",
-            requires: [],
-            giveTo:   "any",
-            text:     "Try to establish where William was in the last hour before dinner was to be served. Who spoke to him? Who saw him? When was he last seen alive?",
-            complete: "A picture is beginning to form. Imperfect. But a beginning."
-        }
 
     ]
 
