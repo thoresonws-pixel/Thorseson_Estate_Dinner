@@ -1221,10 +1221,10 @@
 
     // Clue → revelation mapping
     const CLUE_CLUSTERS = {
-        stolenCompany:    { clues: ['newspaper','letterhead','incorporation','forgedDocs','bradfordLetter'], label: 'Revelation', title: 'The Stolen Company', cx: 0.25, cy: 0.42 },
-        secretHeir:       { clues: ['ledger','margaretsLetter','birthCertificate','margaretDeath','bankStatement','will'], label: 'Revelation', title: 'The Secret Heir', cx: 0.50, cy: 0.38 },
-        wolfsbane:        { clues: ['coroner','travelJournal'], label: 'Method of Murder', title: 'The Poison', cx: 0.75, cy: 0.42 },
-        mirandasIdentity: { clues: ['backgroundCheck','travelJournal','wolfsbane'], label: 'Revelation', title: 'The Killer Unmasked', cx: 0.75, cy: 0.70 },
+        stolenCompany:    { clues: ['newspaper','letterhead','incorporation','forgedDocs'], label: 'Revelation', title: 'The Stolen Company', cx: 0.22, cy: 0.45 },
+        secretHeir:       { clues: ['ledger','margaretsLetter','birthCertificate','margaretDeath','will'], label: 'Revelation', title: 'The Secret Heir', cx: 0.50, cy: 0.45 },
+        wolfsbane:        { clues: ['coroner','travelJournal'], label: 'Method of Murder', title: 'The Poison', cx: 0.72, cy: 0.35 },
+        mirandasIdentity: { clues: ['backgroundCheck','bankStatement'], label: 'Revelation', title: 'The Killer Unmasked', cx: 0.72, cy: 0.70 },
     };
 
     // Short polaroid captions per clue
@@ -1252,28 +1252,51 @@
         coroner:'🔬', travelJournal:'📓', backgroundCheck:'🔍',
     };
 
-    // Seeded pseudo-random positions per clue (so they don't jump on re-render)
+    // Place clues in a ring around their revelation card
     const CLUE_POSITIONS = {};
     const CLUE_ROTATIONS = {};
+
+    // Standalone clues (not linked to any revelation) get their own spots
+    const STANDALONE_POSITIONS = {
+        bradfordLetter: { x: 0.08, y: 0.10 },
+        bankStatement:  { x: 0.08, y: 0.55 },
+    };
+
+    function computeCluePositions() {
+        // For each cluster, spread clues in a ring around the revelation center
+        Object.entries(CLUE_CLUSTERS).forEach(([revId, cluster]) => {
+            const count = cluster.clues.length;
+            cluster.clues.forEach((clueid, i) => {
+                if (CLUE_POSITIONS[clueid]) return;
+                // Arrange in an arc above/around the revelation center
+                const angle = (Math.PI * 1.4) * (i / Math.max(count - 1, 1)) - Math.PI * 0.7;
+                const radius = 0.16 + (i % 2) * 0.04; // slight variation
+                CLUE_POSITIONS[clueid] = {
+                    x: cluster.cx + Math.sin(angle) * radius * 1.4,
+                    y: cluster.cy - 0.28 + Math.cos(angle) * 0.08 + (i % 3) * 0.06,
+                };
+                // Seed rotation from id hash
+                let h = 0; for (const c of clueid) h = (h * 31 + c.charCodeAt(0)) & 0xffffffff;
+                CLUE_ROTATIONS[clueid] = (((h >> 4) & 0xff) / 255) * 12 - 6;
+            });
+        });
+        // Standalone clues
+        Object.entries(STANDALONE_POSITIONS).forEach(([id, pos]) => {
+            if (!CLUE_POSITIONS[id]) {
+                CLUE_POSITIONS[id] = pos;
+                let h = 0; for (const c of id) h = (h * 31 + c.charCodeAt(0)) & 0xffffffff;
+                CLUE_ROTATIONS[id] = (((h >> 4) & 0xff) / 255) * 10 - 5;
+            }
+        });
+    }
+
     function seededPos(id) {
-        if (CLUE_POSITIONS[id]) return CLUE_POSITIONS[id];
-        // Simple hash
-        let h = 0; for (const c of id) h = (h * 31 + c.charCodeAt(0)) & 0xffffffff;
-        const zones = [
-            [0.04,0.08],[0.18,0.08],[0.34,0.08],[0.50,0.08],[0.66,0.08],[0.82,0.08],
-            [0.04,0.28],[0.18,0.28],[0.34,0.28],[0.50,0.28],[0.66,0.28],[0.82,0.28],
-            [0.04,0.60],[0.18,0.60],[0.34,0.60],[0.50,0.60],[0.66,0.60],[0.82,0.60],
-        ];
-        const zone = zones[Math.abs(h) % zones.length];
-        CLUE_POSITIONS[id] = {
-            x: zone[0] + (((h >> 8) & 0xff) / 255) * 0.10,
-            y: zone[1] + (((h >> 16) & 0xff) / 255) * 0.12,
-        };
-        CLUE_ROTATIONS[id] = (((h >> 4) & 0xff) / 255) * 14 - 7;
-        return CLUE_POSITIONS[id];
+        if (!CLUE_POSITIONS[id]) computeCluePositions();
+        return CLUE_POSITIONS[id] || { x: 0.5, y: 0.5 };
     }
 
     let _prevActive = [];
+    computeCluePositions();
 
     function renderDetectiveBoard() {
         if (typeof revelationsDatabase === 'undefined') return;
