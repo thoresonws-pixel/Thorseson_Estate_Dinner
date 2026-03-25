@@ -3065,7 +3065,7 @@
         // Loads all players from the current game in Firebase.
         // Falls back to characterDatabase publicDesc if available.
         async function loadGuests() {
-            const container = document.getElementById('guestsContent');
+            const container = document.getElementById('guestList');
             if (!container) return;
 
             // Legacy session — use hardcoded list
@@ -3112,7 +3112,15 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', loadGuests);
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGuests();
+            // Re-listen when game players change
+            if (userSession && userSession.currentGameId) {
+                database.ref('games/' + userSession.currentGameId + '/players').on('value', () => {
+                    loadGuests();
+                });
+            }
+        });
     </script>
     <!-- Firebase configured -->
 
