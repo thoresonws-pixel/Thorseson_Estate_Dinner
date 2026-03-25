@@ -2618,6 +2618,17 @@ ${inviteUrl}
             }, 20000);
         }, WARNING_DELAY);
 
+        // At 60 min: automatically start the game (reveal Will's death)
+        setTimeout(async () => {
+            const snap = await db.ref('games/' + gameId + '/state/activeItems').once('value');
+            const items = snap.val() || [];
+            if (!items.includes('willsDeath')) {
+                const newItems = [...items, 'willsDeath'];
+                await db.ref('games/' + gameId + '/state/activeItems').set(newItems);
+                showToast('🕯 Cocktail hour ended — game started automatically', 'success');
+            }
+        }, COCKTAIL_DURATION_MS);
+
         // Also add a manual fire button to the cocktail panel
         const panel = document.getElementById('cocktailPanel');
         if (panel) {
