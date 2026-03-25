@@ -2690,44 +2690,29 @@ ${inviteUrl}
         const presentChars = new Set(Object.keys(charToUid));
         const allQuests    = questsDatabase.cocktail || [];
 
-        // Filter to eligible quests
-        const eligible = allQuests.filter(q =>
-            q.requires.every(r => presentChars.has(r))
-        );
+        // Build per-character quest lists using giveTo directed assignment
+        const questsByChar = {}; // charId → [quest, ...]
+        Object.keys(charToUid).forEach(c => { questsByChar[c] = []; });
 
-        const targeted  = eligible.filter(q => q.type === 'targeted');
-        const generic   = eligible.filter(q => q.type === 'generic');
-        const discovery = eligible.filter(q => q.type === 'discovery');
+        allQuests.forEach(q => {
+            // Check all required characters are present
+            if (!q.requires.every(r => presentChars.has(r))) return;
+
+            if (q.giveTo && Array.isArray(q.giveTo)) {
+                // Directed assignment — give only to specified characters
+                q.giveTo.forEach(charId => {
+                    if (charToUid[charId] && questsByChar[charId]) {
+                        const resolved = resolveQuestTokens(q.text, charToUid);
+                        questsByChar[charId].push({ id: q.id, text: resolved, type: q.type, completed: false });
+                    }
+                });
+            }
+            // Generic quests (no giveTo) are ignored now — all quests are directed
+        });
 
         const writes = {};
-        const resolvedGenderWrites = {};
-        const usedQuestIds = new Set();
-
         Object.entries(charToUid).forEach(([charId, uid]) => {
-            const playerQuests = [];
-
-            // 1 targeted quest if available and not excluded
-            const myTargeted = targeted.filter(q =>
-                !usedQuestIds.has(q.id) &&
-                !(q.exclude || []).includes(charId)
-            );
-            if (myTargeted.length > 0) {
-                const pick = myTargeted[Math.floor(Math.random() * myTargeted.length)];
-                // Resolve {{slug}} tokens
-                const resolved = resolveQuestTokens(pick.text, charToUid);
-                playerQuests.push({ id: pick.id, text: resolved, type: 'targeted', completed: false });
-                usedQuestIds.add(pick.id);
-            }
-
-            // 1-2 generic/discovery quests
-            const pool = [...generic, ...discovery].filter(q => !usedQuestIds.has(q.id));
-            const shuffled = pool.sort(() => Math.random() - 0.5);
-            const needed = 3 - playerQuests.length;
-            shuffled.slice(0, needed).forEach(q => {
-                playerQuests.push({ id: q.id, text: q.text, type: q.type, completed: false });
-            });
-
-            writes['games/' + gameId + '/players/' + uid + '/cocktailQuests'] = playerQuests;
+            writes['games/' + gameId + '/players/' + uid + '/cocktailQuests'] = questsByChar[charId] || [];
         });
 
         await db.ref().update(writes);
