@@ -1,485 +1,834 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Big Screen — Thor's Murder Mysteries</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Special+Elite&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Big Screen — Thor's Murder Mysteries</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Cormorant+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body {
-            font-family: 'Cormorant Garamond', Georgia, serif;
-            background: #06040a;
-            color: #f5f0e6;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-        }
+    body {
+        background: #06040a;
+        color: #f5f0e6;
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        overflow: hidden;
+        width: 100vw;
+        height: 100vh;
+    }
 
-        /* ── SCREENS ─────────────────────────────────────────── */
-        .screen {
-            position: absolute;
-            inset: 0;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .screen.active { display: flex; }
+    /* ── SCREENS ─────────────────────────────────────────────── */
+    .screen {
+        position: absolute;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+    .screen.active { display: flex; }
 
-        /* ── IDLE SCREEN ─────────────────────────────────────── */
-        #screen-idle {
-            background: radial-gradient(ellipse at center, #1a1128 0%, #06040a 70%);
-        }
-        .idle-logo {
-            font-family: 'Playfair Display', Georgia, serif;
-            font-size: 72px;
-            font-weight: 700;
-            color: #c9a227;
-            letter-spacing: 4px;
-            text-align: center;
-            margin-bottom: 16px;
-        }
-        .idle-sub {
-            font-family: 'Special Elite', monospace;
-            font-size: 16px;
-            letter-spacing: 6px;
-            color: rgba(201,162,39,0.4);
-            text-transform: uppercase;
-            text-align: center;
-        }
-        .idle-ornament {
-            color: rgba(201,162,39,0.2);
-            font-size: 48px;
-            margin: 24px 0;
-        }
+    /* ── IDLE ────────────────────────────────────────────────── */
+    #screen-idle {
+        background: radial-gradient(ellipse at center, #0d0d1a 0%, #06040a 100%);
+        flex-direction: column;
+        gap: 16px;
+    }
+    .idle-ornament {
+        font-size: 48px;
+        color: rgba(201,162,39,0.15);
+        animation: pulse 3s ease-in-out infinite;
+    }
+    .idle-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 52px;
+        font-weight: 700;
+        color: rgba(201,162,39,0.2);
+        letter-spacing: 8px;
+        text-transform: uppercase;
+    }
+    .idle-sub {
+        font-family: 'Special Elite', monospace;
+        font-size: 12px;
+        letter-spacing: 6px;
+        color: rgba(201,162,39,0.1);
+        text-transform: uppercase;
+    }
+    @keyframes pulse {
+        0%, 100% { opacity: 0.3; }
+        50% { opacity: 0.8; }
+    }
 
-        /* ── LEADERBOARD SCREEN ──────────────────────────────── */
-        #screen-leaderboard {
-            background: radial-gradient(ellipse at center, #0f0b14 0%, #06040a 80%);
-            padding: 60px;
-        }
-        .lb-title {
-            font-family: 'Playfair Display', Georgia, serif;
-            font-size: 48px;
-            font-weight: 700;
-            color: #c9a227;
-            letter-spacing: 3px;
-            text-align: center;
-            margin-bottom: 8px;
-        }
-        .lb-subtitle {
-            font-family: 'Special Elite', monospace;
-            font-size: 13px;
-            letter-spacing: 4px;
-            color: rgba(201,162,39,0.4);
-            text-align: center;
-            margin-bottom: 48px;
-            text-transform: uppercase;
-        }
-        .lb-list {
-            width: 100%;
-            max-width: 800px;
-        }
-        .lb-row {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-            padding: 18px 28px;
-            margin-bottom: 12px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(201,162,39,0.12);
-            border-left: 4px solid transparent;
-            transition: all 0.4s ease;
-        }
-        .lb-row.rank-1 { border-left-color: #c9a227; background: rgba(201,162,39,0.06); }
-        .lb-row.rank-2 { border-left-color: #aaaaaa; }
-        .lb-row.rank-3 { border-left-color: #cd7f32; }
-        .lb-medal { font-size: 32px; width: 48px; text-align: center; }
-        .lb-name {
-            font-family: 'Playfair Display', Georgia, serif;
-            font-size: 28px;
-            color: #f5f0e6;
-            flex: 1;
-        }
-        .lb-char {
-            font-size: 16px;
-            color: rgba(201,162,39,0.6);
-            font-style: italic;
-        }
-        .lb-score {
-            font-family: 'Playfair Display', Georgia, serif;
-            font-size: 42px;
-            font-weight: 700;
-            color: #c9a227;
-            min-width: 80px;
-            text-align: right;
-        }
-        .lb-label {
-            font-family: 'Special Elite', monospace;
-            font-size: 11px;
-            letter-spacing: 2px;
-            color: rgba(201,162,39,0.4);
-            text-align: right;
-        }
-        .lb-empty {
-            font-family: 'Playfair Display', serif;
-            font-size: 28px;
-            color: rgba(255,255,255,0.2);
-            font-style: italic;
-            text-align: center;
-        }
+    /* ── DETECTIVE BOARD ─────────────────────────────────────── */
+    #screen-detective {
+        background:
+            radial-gradient(ellipse 120% 80% at 50% 0%, rgba(139,90,43,0.06) 0%, transparent 60%),
+            radial-gradient(ellipse at center, #0a080e 0%, #06040a 100%);
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0;
+        overflow: hidden;
+    }
 
-        /* ── PHOTO SLIDESHOW SCREEN ──────────────────────────── */
-        #screen-slideshow {
-            background: #06040a;
-            flex-direction: row;
-            flex-wrap: wrap;
-            gap: 0;
-            align-items: stretch;
-            justify-content: flex-start;
-        }
-        .slideshow-single {
-            width: 100vw;
-            height: 100vh;
-            object-fit: contain;
-            transition: opacity 0.8s ease;
-        }
-        .slideshow-caption {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-family: 'Playfair Display', serif;
-            font-size: 22px;
-            color: rgba(255,255,255,0.8);
-            background: rgba(0,0,0,0.5);
-            padding: 10px 24px;
-            text-align: center;
-            max-width: 80vw;
-        }
+    .board-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 48px 16px;
+        border-bottom: 1px solid rgba(201,162,39,0.08);
+        flex-shrink: 0;
+    }
 
-        /* ── DETECTIVE BOARD SCREEN (placeholder) ────────────── */
-        #screen-detective {
-            background: radial-gradient(ellipse at center, #0a0f1e 0%, #06040a 80%);
-            padding: 60px;
-        }
-        .detective-title {
-            font-family: 'Playfair Display', Georgia, serif;
-            font-size: 48px;
-            font-weight: 700;
-            color: #c9a227;
-            text-align: center;
-            margin-bottom: 8px;
-        }
-        .detective-sub {
-            font-family: 'Special Elite', monospace;
-            font-size: 13px;
-            letter-spacing: 4px;
-            color: rgba(201,162,39,0.4);
-            text-align: center;
-            margin-bottom: 48px;
-            text-transform: uppercase;
-        }
-        .detective-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 16px;
-            width: 100%;
-            max-width: 1200px;
-            overflow-y: auto;
-            max-height: calc(100vh - 200px);
-        }
-        .clue-card {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(201,162,39,0.15);
-            padding: 18px 20px;
-            animation: clueReveal 0.5s ease;
-        }
-        @keyframes clueReveal {
-            from { opacity: 0; transform: translateY(10px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        .clue-type {
-            font-family: 'Special Elite', monospace;
-            font-size: 10px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            padding: 2px 8px;
-            border-radius: 2px;
-            margin-bottom: 8px;
-            display: inline-block;
-        }
-        .type-clue  { background: #c9a227; color: #06040a; }
-        .type-story { background: #8b7355; color: white; }
-        .clue-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 18px;
-            color: #f5f0e6;
-            font-weight: 700;
-        }
+    .board-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 28px;
+        font-weight: 700;
+        color: #c9a227;
+        letter-spacing: 2px;
+    }
 
-        /* ── VIDEO SCREEN ────────────────────────────────────── */
-        #screen-video {
-            background: #000;
-        }
-        #bigVideo {
-            width: 100vw;
-            height: 100vh;
-            object-fit: contain;
-        }
+    .board-subtitle {
+        font-family: 'Special Elite', monospace;
+        font-size: 10px;
+        letter-spacing: 4px;
+        color: rgba(201,162,39,0.35);
+        text-transform: uppercase;
+        margin-top: 2px;
+    }
 
-        /* ── GAME LINK OVERLAY ───────────────────────────────── */
-        .game-link {
-            position: fixed;
-            bottom: 16px;
-            right: 16px;
-            font-family: 'Special Elite', monospace;
-            font-size: 10px;
-            letter-spacing: 2px;
-            color: rgba(201,162,39,0.25);
-            text-decoration: none;
-            z-index: 999;
-            transition: color 0.3s;
-        }
-        .game-link:hover { color: rgba(201,162,39,0.7); }
+    .board-case-number {
+        font-family: 'Special Elite', monospace;
+        font-size: 11px;
+        letter-spacing: 3px;
+        color: rgba(201,162,39,0.2);
+        text-transform: uppercase;
+        text-align: right;
+    }
 
-        /* ── TRANSITION OVERLAY ──────────────────────────────── */
-        .transition-overlay {
-            position: fixed;
-            inset: 0;
-            background: #06040a;
-            z-index: 100;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.4s ease;
-        }
-        .transition-overlay.active { opacity: 1; }
-    </style>
+    .board-body {
+        flex: 1;
+        display: flex;
+        gap: 0;
+        overflow: hidden;
+        padding: 24px 32px 24px;
+        gap: 20px;
+    }
+
+    /* Act columns */
+    .act-column {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        min-width: 0;
+    }
+
+    .act-label {
+        font-family: 'Special Elite', monospace;
+        font-size: 9px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: rgba(201,162,39,0.3);
+        margin-bottom: 4px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid rgba(201,162,39,0.08);
+    }
+
+    .act-divider {
+        width: 1px;
+        background: linear-gradient(to bottom, transparent, rgba(139,26,26,0.2) 20%, rgba(139,26,26,0.2) 80%, transparent);
+        flex-shrink: 0;
+    }
+
+    /* Clue cards on board */
+    .board-card {
+        background: rgba(245,240,230,0.03);
+        border: 1px solid rgba(201,162,39,0.1);
+        border-left: 2px solid rgba(201,162,39,0.3);
+        padding: 10px 14px;
+        position: relative;
+        animation: cardDrop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        transform-origin: top center;
+    }
+
+    @keyframes cardDrop {
+        from { opacity: 0; transform: translateY(-12px) rotate(-0.5deg); }
+        to   { opacity: 1; transform: translateY(0) rotate(0deg); }
+    }
+
+    .board-card.type-story {
+        border-left-color: rgba(139,26,26,0.6);
+        background: rgba(139,26,26,0.04);
+    }
+
+    .board-card-type {
+        font-family: 'Special Elite', monospace;
+        font-size: 8px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: rgba(201,162,39,0.5);
+        margin-bottom: 4px;
+    }
+
+    .board-card.type-story .board-card-type {
+        color: rgba(192,57,43,0.6);
+    }
+
+    .board-card-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 13px;
+        font-weight: 700;
+        color: #f5f0e6;
+        line-height: 1.3;
+    }
+
+    .board-empty {
+        font-family: 'Special Elite', monospace;
+        font-size: 11px;
+        letter-spacing: 3px;
+        color: rgba(255,255,255,0.06);
+        text-transform: uppercase;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    /* Red string connecting cards — decorative */
+    .board-card::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: -20px;
+        width: 19px;
+        height: 1px;
+        background: rgba(139,26,26,0.2);
+    }
+
+    /* ── LEADERBOARD CORNER ──────────────────────────────────── */
+    #leaderboardCorner {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        width: 220px;
+        background: rgba(6,4,10,0.92);
+        border: 1px solid rgba(201,162,39,0.12);
+        padding: 14px 16px;
+        z-index: 50;
+        backdrop-filter: blur(8px);
+    }
+
+    .lb-corner-title {
+        font-family: 'Special Elite', monospace;
+        font-size: 9px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: rgba(201,162,39,0.4);
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid rgba(201,162,39,0.08);
+    }
+
+    .lb-corner-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 5px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+
+    .lb-corner-rank {
+        font-family: 'Special Elite', monospace;
+        font-size: 10px;
+        color: rgba(201,162,39,0.4);
+        width: 18px;
+        flex-shrink: 0;
+    }
+
+    .lb-corner-name {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 14px;
+        color: #c4c4d4;
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .lb-corner-score {
+        font-family: 'Special Elite', monospace;
+        font-size: 12px;
+        color: #c9a227;
+        flex-shrink: 0;
+    }
+
+    .lb-corner-empty {
+        font-size: 12px;
+        color: rgba(255,255,255,0.15);
+        font-style: italic;
+        text-align: center;
+        padding: 8px 0;
+    }
+
+    /* ── CLUE SPOTLIGHT ──────────────────────────────────────── */
+    #clueSpotlight {
+        position: fixed;
+        inset: 0;
+        background: rgba(6,4,10,0.96);
+        z-index: 200;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.5s ease;
+    }
+
+    #clueSpotlight.visible {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    .spotlight-eyebrow {
+        font-family: 'Special Elite', monospace;
+        font-size: 11px;
+        letter-spacing: 6px;
+        text-transform: uppercase;
+        color: #c9a227;
+        margin-bottom: 24px;
+        opacity: 0.6;
+    }
+
+    .spotlight-type {
+        font-family: 'Special Elite', monospace;
+        font-size: 11px;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        padding: 4px 16px;
+        margin-bottom: 20px;
+    }
+    .spotlight-type.type-clue  { background: rgba(201,162,39,0.15); color: #c9a227; border: 1px solid rgba(201,162,39,0.3); }
+    .spotlight-type.type-story { background: rgba(139,26,26,0.15); color: #e08080; border: 1px solid rgba(139,26,26,0.3); }
+
+    .spotlight-title {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(36px, 5vw, 64px);
+        font-weight: 700;
+        color: #f5f0e6;
+        text-align: center;
+        max-width: 900px;
+        line-height: 1.2;
+        margin-bottom: 24px;
+    }
+
+    .spotlight-rule {
+        width: 80px;
+        height: 1px;
+        background: rgba(201,162,39,0.4);
+        margin-bottom: 24px;
+    }
+
+    .spotlight-summary {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(18px, 2vw, 24px);
+        font-style: italic;
+        color: rgba(196,196,212,0.85);
+        text-align: center;
+        max-width: 800px;
+        line-height: 1.6;
+    }
+
+    .spotlight-timer {
+        position: absolute;
+        bottom: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 200px;
+        height: 2px;
+        background: rgba(255,255,255,0.08);
+    }
+
+    .spotlight-timer-bar {
+        height: 100%;
+        background: #c9a227;
+        width: 100%;
+        transform-origin: left;
+        transition: transform linear;
+    }
+
+    /* ── LEADERBOARD FULL SCREEN ─────────────────────────────── */
+    #screen-leaderboard {
+        background: radial-gradient(ellipse at center, #0d0818 0%, #06040a 100%);
+        flex-direction: column;
+        gap: 0;
+        padding: 60px 80px;
+        align-items: stretch;
+    }
+
+    .lb-full-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 42px;
+        font-weight: 700;
+        color: #c9a227;
+        margin-bottom: 6px;
+        text-align: center;
+    }
+
+    .lb-full-sub {
+        font-family: 'Special Elite', monospace;
+        font-size: 11px;
+        letter-spacing: 4px;
+        color: rgba(201,162,39,0.3);
+        text-align: center;
+        margin-bottom: 40px;
+        text-transform: uppercase;
+    }
+
+    .lb-full-row {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        padding: 18px 24px;
+        border-bottom: 1px solid rgba(255,255,255,0.04);
+        transition: background 0.2s;
+    }
+
+    .lb-full-row:nth-child(1) { background: rgba(201,162,39,0.06); }
+
+    .lb-full-medal { font-size: 28px; width: 40px; text-align: center; flex-shrink: 0; }
+
+    .lb-full-name {
+        font-family: 'Playfair Display', serif;
+        font-size: 26px;
+        color: #f5f0e6;
+        flex: 1;
+    }
+
+    .lb-full-score {
+        font-family: 'Special Elite', monospace;
+        font-size: 32px;
+        color: #c9a227;
+        flex-shrink: 0;
+    }
+
+    .lb-full-label {
+        font-family: 'Special Elite', monospace;
+        font-size: 9px;
+        letter-spacing: 2px;
+        color: rgba(201,162,39,0.3);
+        text-transform: uppercase;
+    }
+
+    /* ── SLIDESHOW ───────────────────────────────────────────── */
+    #screen-slideshow { background: #000; }
+
+    .slideshow-single {
+        width: 100vw;
+        height: 100vh;
+        object-fit: contain;
+        transition: opacity 0.6s ease;
+    }
+
+    .slideshow-caption {
+        position: fixed;
+        bottom: 32px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: 'Playfair Display', serif;
+        font-size: 22px;
+        font-style: italic;
+        color: rgba(245,240,230,0.8);
+        text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+        text-align: center;
+        max-width: 80vw;
+    }
+
+    /* ── VIDEO ───────────────────────────────────────────────── */
+    #screen-video { background: #000; }
+    #bigVideo { width: 100vw; height: 100vh; object-fit: contain; }
+
+    /* ── TRANSITION ──────────────────────────────────────────── */
+    .transition-overlay {
+        position: fixed;
+        inset: 0;
+        background: #06040a;
+        z-index: 300;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.35s ease;
+    }
+    .transition-overlay.active { opacity: 1; }
+
+    /* ── PARTY CODE WATERMARK ────────────────────────────────── */
+    .watermark {
+        position: fixed;
+        bottom: 14px;
+        left: 20px;
+        font-family: 'Special Elite', monospace;
+        font-size: 9px;
+        letter-spacing: 3px;
+        color: rgba(201,162,39,0.12);
+        text-transform: uppercase;
+        z-index: 10;
+    }
+</style>
 </head>
 <body>
 
-<!-- Idle -->
+<!-- ── IDLE ───────────────────────────────────────────────────── -->
 <div class="screen active" id="screen-idle">
     <div class="idle-ornament">✦</div>
-    <div class="idle-logo">Thor's Murder Mysteries</div>
-    <div class="idle-sub">An Evening of Intrigue</div>
-    <div class="idle-ornament">✦</div>
+    <div class="idle-title">Thor's Murder Mysteries</div>
+    <div class="idle-sub">The evening begins shortly</div>
 </div>
 
-<!-- Leaderboard -->
-<div class="screen" id="screen-leaderboard">
-    <div class="lb-title">🔎 Scan Leaderboard</div>
-    <div class="lb-subtitle">Evidence Discovered</div>
-    <div class="lb-list" id="lbList">
-        <div class="lb-empty">No scans yet — get investigating.</div>
+<!-- ── DETECTIVE BOARD ────────────────────────────────────────── -->
+<div class="screen" id="screen-detective">
+    <div class="board-header">
+        <div>
+            <div class="board-title">Evidence Board</div>
+            <div class="board-subtitle">Active Investigation</div>
+        </div>
+        <div class="board-case-number" id="boardCaseNumber">Case No. ——</div>
+    </div>
+    <div class="board-body" id="boardBody">
+        <!-- Act columns injected here -->
     </div>
 </div>
 
-<!-- Slideshow -->
+<!-- ── LEADERBOARD FULL ───────────────────────────────────────── -->
+<div class="screen" id="screen-leaderboard">
+    <div class="lb-full-title">Investigation Leaderboard</div>
+    <div class="lb-full-sub">Evidence discovered this evening</div>
+    <div id="lbFullList"></div>
+</div>
+
+<!-- ── SLIDESHOW ──────────────────────────────────────────────── -->
 <div class="screen" id="screen-slideshow">
     <img id="slideshowImg" class="slideshow-single" src="" alt="">
     <div class="slideshow-caption" id="slideshowCaption" style="display:none;"></div>
 </div>
 
-<!-- Detective Board -->
-<div class="screen" id="screen-detective">
-    <div class="detective-title">🔍 Evidence Board</div>
-    <div class="detective-sub">What We Know So Far</div>
-    <div class="detective-grid" id="detectiveGrid">
-        <div style="color:rgba(255,255,255,0.2);font-style:italic;text-align:center;grid-column:1/-1;">No evidence revealed yet.</div>
-    </div>
-</div>
-
-<!-- Video -->
+<!-- ── VIDEO ──────────────────────────────────────────────────── -->
 <div class="screen" id="screen-video">
     <video id="bigVideo" controls autoplay></video>
 </div>
 
-<!-- Game Dashboard link -->
-<a class="game-link" id="gameDashLink" href="#" target="_blank">← Game Dashboard</a>
+<!-- ── LEADERBOARD CORNER (always visible on detective) ──────── -->
+<div id="leaderboardCorner" style="display:none;">
+    <div class="lb-corner-title">Leaderboard</div>
+    <div id="lbCornerList"></div>
+</div>
 
-<!-- Transition overlay -->
+<!-- ── CLUE SPOTLIGHT ─────────────────────────────────────────── -->
+<div id="clueSpotlight">
+    <div class="spotlight-eyebrow">New Evidence Discovered</div>
+    <div class="spotlight-type" id="spotlightType"></div>
+    <div class="spotlight-title" id="spotlightTitle"></div>
+    <div class="spotlight-rule"></div>
+    <div class="spotlight-summary" id="spotlightSummary"></div>
+    <div class="spotlight-timer">
+        <div class="spotlight-timer-bar" id="spotlightTimerBar"></div>
+    </div>
+</div>
+
+<!-- ── WATERMARK ──────────────────────────────────────────────── -->
+<div class="watermark" id="watermark"></div>
+
+<!-- ── TRANSITION OVERLAY ────────────────────────────────────── -->
 <div class="transition-overlay" id="transitionOverlay"></div>
 
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
-
 <script>
-const firebaseConfig = {
-    apiKey: "AIzaSyApHrYubqWrR4m0ihdpq6Ym40jv4HTQ5i0",
-    authDomain: "thoreson-estate.firebaseapp.com",
-    databaseURL: "https://thoreson-estate-default-rtdb.firebaseio.com",
-    projectId: "thoreson-estate",
-    storageBucket: "thoreson-estate.firebasestorage.app",
-    messagingSenderId: "182924616892",
-    appId: "1:182924616892:web:8153e1c69895cee665dcb9"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-// ── STATE ─────────────────────────────────────────────────────
-const params    = new URLSearchParams(window.location.search);
-const gameId    = params.get('id');
-let   currentMode    = 'idle';
-let   slideshowTimer = null;
-let   slideshowIdx   = 0;
-let   photos         = [];
-
-// Set game dashboard link
-if (gameId) {
-    document.getElementById('gameDashLink').href =
-        'game.html?id=' + gameId;
-}
-
-if (!gameId) {
-    console.warn('No game ID in URL — showing idle screen');
-} else {
-    bootstrap();
-}
-
-function bootstrap() {
-    // Listen for big screen mode changes
-    db.ref('games/' + gameId + '/state/bigScreen').on('value', snap => {
-        const data = snap.val() || { mode: 'idle' };
-        switchScreen(data.mode, data);
+    firebase.initializeApp({
+        apiKey:            "AIzaSyApHrYubqWrR4m0ihdpq6Ym40jv4HTQ5i0",
+        authDomain:        "thoreson-estate.firebaseapp.com",
+        databaseURL:       "https://thoreson-estate-default-rtdb.firebaseio.com",
+        projectId:         "thoreson-estate",
+        storageBucket:     "thoreson-estate.firebasestorage.app",
+        messagingSenderId: "182924616892",
+        appId:             "1:182924616892:web:8153e1c69895cee665dcb9"
     });
+    const db = firebase.database();
 
-    // Listen for scans (leaderboard)
-    db.ref('games/' + gameId + '/state/scans').on('value', snap => {
-        renderLeaderboard(snap.val() || {});
-    });
+    // ── STATE ─────────────────────────────────────────────────
+    const params     = new URLSearchParams(window.location.search);
+    const gameId     = params.get('id');
 
-    // Listen for active revelations (detective board)
-    db.ref('games/' + gameId + '/state/activeItems').on('value', snap => {
-        renderDetectiveBoard(snap.val() || []);
-    });
+    let currentMode  = 'idle';
+    let activeItems  = [];
+    let scans        = {};
+    let photos       = [];
+    let slideshowTimer = null;
+    let slideshowIdx   = 0;
+    let spotlightQueue = [];
+    let spotlightActive = false;
 
-    // Listen for photos (slideshow)
-    db.ref('games/' + gameId + '/state/photos').orderByChild('time').on('value', snap => {
-        photos = [];
-        snap.forEach(child => {
-            const p = child.val();
-            if (p.wallUrl) photos.push(p);
-        });
-        photos.sort((a, b) => b.time - a.time);
-        if (currentMode === 'slideshow') startSlideshow();
-    });
-}
-
-// ── SCREEN SWITCHING ──────────────────────────────────────────
-function switchScreen(mode, data) {
-    if (mode === currentMode) return;
-
-    const overlay = document.getElementById('transitionOverlay');
-    overlay.classList.add('active');
-
-    setTimeout(() => {
-        // Hide all screens
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-
-        currentMode = mode;
-
-        const screen = document.getElementById('screen-' + mode);
-        if (screen) screen.classList.add('active');
-        else document.getElementById('screen-idle').classList.add('active');
-
-        // Mode-specific setup
-        if (mode === 'slideshow') startSlideshow();
-        else stopSlideshow();
-
-        if (mode === 'video' && data && data.videoSrc) {
-            document.getElementById('bigVideo').src = data.videoSrc;
+    // ── BOOT ──────────────────────────────────────────────────
+    window.addEventListener('DOMContentLoaded', () => {
+        if (!gameId) {
+            document.getElementById('screen-idle').classList.add('active');
+            return;
         }
 
-        overlay.classList.remove('active');
-    }, 400);
-}
-
-// ── LEADERBOARD ───────────────────────────────────────────────
-function renderLeaderboard(scans) {
-    const el = document.getElementById('lbList');
-    const entries = Object.entries(scans).sort((a, b) => b[1] - a[1]);
-    const medals = ['🥇', '🥈', '🥉'];
-
-    if (entries.length === 0) {
-        el.innerHTML = '<div class="lb-empty">No scans yet — get investigating.</div>';
-        return;
-    }
-
-    el.innerHTML = entries.slice(0, 8).map(([player, count], i) => `
-        <div class="lb-row rank-${i + 1}">
-            <div class="lb-medal">${medals[i] || '✦'}</div>
-            <div>
-                <div class="lb-name">${player}</div>
-            </div>
-            <div>
-                <div class="lb-score">${count}</div>
-                <div class="lb-label">SCANS</div>
-            </div>
-        </div>`).join('');
-}
-
-// ── DETECTIVE BOARD ───────────────────────────────────────────
-function renderDetectiveBoard(activeItems) {
-    const el = document.getElementById('detectiveGrid');
-    if (!activeItems || activeItems.length === 0) {
-        el.innerHTML = '<div style="color:rgba(255,255,255,0.2);font-style:italic;text-align:center;grid-column:1/-1;">No evidence revealed yet.</div>';
-        return;
-    }
-
-    // Load revelations if available
-    if (typeof revelationsDatabase === 'undefined') return;
-
-    const revealed = [];
-    Object.values(revelationsDatabase).forEach(act => {
-        act.items.forEach(item => {
-            if (activeItems.includes(item.id)) revealed.push(item);
-        });
+        // Load story scripts for revelations data
+        loadStory().then(bootstrap);
     });
 
-    if (revealed.length === 0) {
-        el.innerHTML = '<div style="color:rgba(255,255,255,0.2);font-style:italic;text-align:center;grid-column:1/-1;">No evidence revealed yet.</div>';
-        return;
+    function loadStory() {
+        return new Promise(resolve => {
+            db.ref('games/' + gameId).once('value').then(snap => {
+                const g = snap.val();
+                if (!g) { resolve(); return; }
+
+                // Watermark with party code
+                document.getElementById('watermark').textContent =
+                    'Thor\'s Murder Mysteries  ·  ' + (g.partyCode || '');
+                document.getElementById('boardCaseNumber').textContent =
+                    'Case No. ' + (g.partyCode || '——');
+
+                const storyId = g.storyId || 'thoreson_estate_dinner';
+                const files   = ['characters.js','skills.js','revelations.js','items.js','roles.js','flow.js','facts.js','quests.js','menu.js'];
+                let loaded = 0;
+                files.forEach(f => {
+                    const s = document.createElement('script');
+                    s.src = 'stories/' + storyId + '/' + f + '?v=' + Date.now();
+                    s.onload = s.onerror = () => { if (++loaded === files.length) resolve(); };
+                    document.head.appendChild(s);
+                });
+            });
+        });
     }
 
-    el.innerHTML = revealed.map(item => `
-        <div class="clue-card">
-            <span class="clue-type type-${item.type || 'clue'}">${(item.type || 'clue').toUpperCase()}</span>
-            <div class="clue-title">${item.title}</div>
-        </div>`).join('');
-}
+    function bootstrap() {
+        // Mode changes
+        db.ref('games/' + gameId + '/state/bigScreen').on('value', snap => {
+            const data = snap.val() || { mode: 'detective' };
+            switchScreen(data.mode, data);
+        });
 
-// ── SLIDESHOW ─────────────────────────────────────────────────
-function startSlideshow() {
-    stopSlideshow();
-    if (photos.length === 0) return;
-    showSlide(0);
-    slideshowTimer = setInterval(() => {
-        slideshowIdx = (slideshowIdx + 1) % photos.length;
-        showSlide(slideshowIdx);
-    }, 6000);
-}
+        // Scans → leaderboard
+        db.ref('games/' + gameId + '/state/scans').on('value', snap => {
+            scans = snap.val() || {};
+            renderLeaderboardCorner();
+            renderLeaderboardFull();
+        });
 
-function stopSlideshow() {
-    if (slideshowTimer) { clearInterval(slideshowTimer); slideshowTimer = null; }
-}
+        // Active items → detective board + spotlight new ones
+        db.ref('games/' + gameId + '/state/activeItems').on('value', snap => {
+            const newItems = snap.val() || [];
+            // Find newly added items
+            const added = newItems.filter(id => !activeItems.includes(id));
+            activeItems = newItems;
+            renderDetectiveBoard();
 
-function showSlide(idx) {
-    const p = photos[idx];
-    if (!p) return;
-    const img = document.getElementById('slideshowImg');
-    img.style.opacity = 0;
-    setTimeout(() => {
-        img.src = p.wallUrl;
-        img.style.opacity = 1;
-    }, 300);
-    const cap = document.getElementById('slideshowCaption');
-    if (p.caption) { cap.textContent = p.caption; cap.style.display = 'block'; }
-    else cap.style.display = 'none';
-}
+            // Queue spotlight for each new item (skip willsDeath — GM announces that)
+            added.filter(id => id !== 'willsDeath').forEach(id => {
+                const item = findItem(id);
+                if (item) queueSpotlight(item);
+            });
+        });
+
+        // Photos → slideshow
+        db.ref('games/' + gameId + '/state/photos').orderByChild('time').on('value', snap => {
+            photos = [];
+            snap.forEach(child => {
+                const p = child.val();
+                if (p.wallUrl) photos.push(p);
+            });
+            photos.sort((a, b) => b.time - a.time);
+            if (currentMode === 'slideshow') startSlideshow();
+        });
+    }
+
+    // ── SCREEN SWITCHING ──────────────────────────────────────
+    function switchScreen(mode, data) {
+        if (mode === currentMode) return;
+
+        const overlay = document.getElementById('transitionOverlay');
+        overlay.classList.add('active');
+
+        setTimeout(() => {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+
+            currentMode = mode;
+
+            const screen = document.getElementById('screen-' + mode);
+            if (screen) screen.classList.add('active');
+            else document.getElementById('screen-idle').classList.add('active');
+
+            // Leaderboard corner only on detective board
+            document.getElementById('leaderboardCorner').style.display =
+                (mode === 'detective') ? 'block' : 'none';
+
+            if (mode === 'slideshow') startSlideshow();
+            else stopSlideshow();
+
+            if (mode === 'video' && data?.videoSrc) {
+                document.getElementById('bigVideo').src = data.videoSrc;
+            }
+            if (mode === 'detective') renderDetectiveBoard();
+
+            overlay.classList.remove('active');
+        }, 350);
+    }
+
+    // ── HELPER: find item in revelations ──────────────────────
+    function findItem(id) {
+        if (typeof revelationsDatabase === 'undefined') return null;
+        for (const act of Object.values(revelationsDatabase)) {
+            const item = act.items.find(i => i.id === id);
+            if (item) return item;
+        }
+        return null;
+    }
+
+    // ── DETECTIVE BOARD ───────────────────────────────────────
+    function renderDetectiveBoard() {
+        if (typeof revelationsDatabase === 'undefined') return;
+
+        const body = document.getElementById('boardBody');
+
+        // Build act columns
+        const actKeys = Object.keys(revelationsDatabase);
+        body.innerHTML = actKeys.map((actKey, idx) => {
+            const act = revelationsDatabase[actKey];
+            const items = act.items.filter(i => activeItems.includes(i.id));
+
+            const cards = items.length === 0
+                ? `<div class="board-empty">— No evidence yet —</div>`
+                : items.map(item => `
+                    <div class="board-card type-${item.type || 'clue'}">
+                        <div class="board-card-type">${(item.type || 'clue').replace('story','revelation')}</div>
+                        <div class="board-card-title">${item.title}</div>
+                    </div>`).join('');
+
+            const divider = idx < actKeys.length - 1 ? '<div class="act-divider"></div>' : '';
+
+            return `
+                <div class="act-column">
+                    <div class="act-label">${act.label}</div>
+                    ${cards}
+                </div>
+                ${divider}`;
+        }).join('');
+    }
+
+    // ── LEADERBOARD CORNER ────────────────────────────────────
+    function renderLeaderboardCorner() {
+        const el  = document.getElementById('lbCornerList');
+        const entries = Object.entries(scans).sort((a, b) => b[1] - a[1]).slice(0, 6);
+        const medals  = ['🥇','🥈','🥉'];
+
+        if (entries.length === 0) {
+            el.innerHTML = '<div class="lb-corner-empty">No scans yet</div>';
+            return;
+        }
+
+        el.innerHTML = entries.map(([player, count], i) => `
+            <div class="lb-corner-row">
+                <div class="lb-corner-rank">${medals[i] || (i+1)}</div>
+                <div class="lb-corner-name">${player}</div>
+                <div class="lb-corner-score">${count}</div>
+            </div>`).join('');
+    }
+
+    // ── LEADERBOARD FULL SCREEN ───────────────────────────────
+    function renderLeaderboardFull() {
+        const el      = document.getElementById('lbFullList');
+        const entries = Object.entries(scans).sort((a, b) => b[1] - a[1]);
+        const medals  = ['🥇','🥈','🥉'];
+
+        if (entries.length === 0) {
+            el.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,0.2);font-style:italic;padding:40px;">No scans yet — get investigating.</div>';
+            return;
+        }
+
+        el.innerHTML = entries.map(([player, count], i) => `
+            <div class="lb-full-row">
+                <div class="lb-full-medal">${medals[i] || '✦'}</div>
+                <div class="lb-full-name">${player}</div>
+                <div>
+                    <div class="lb-full-score">${count}</div>
+                    <div class="lb-full-label">SCANS</div>
+                </div>
+            </div>`).join('');
+    }
+
+    // ── CLUE SPOTLIGHT ────────────────────────────────────────
+    function queueSpotlight(item) {
+        spotlightQueue.push(item);
+        if (!spotlightActive) processSpotlightQueue();
+    }
+
+    function processSpotlightQueue() {
+        if (spotlightQueue.length === 0) { spotlightActive = false; return; }
+        spotlightActive = true;
+        const item = spotlightQueue.shift();
+        showSpotlight(item);
+    }
+
+    function showSpotlight(item) {
+        const duration = 12000; // 12 seconds
+
+        document.getElementById('spotlightType').textContent    = (item.type || 'clue').replace('story','revelation').toUpperCase();
+        document.getElementById('spotlightType').className      = 'spotlight-type type-' + (item.type || 'clue');
+        document.getElementById('spotlightTitle').textContent   = item.title;
+        document.getElementById('spotlightSummary').textContent = item.summary || '';
+
+        const spotlight = document.getElementById('clueSpotlight');
+        const bar       = document.getElementById('spotlightTimerBar');
+
+        // Reset and show
+        bar.style.transition = 'none';
+        bar.style.transform  = 'scaleX(1)';
+        spotlight.classList.add('visible');
+
+        // Start countdown bar
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                bar.style.transition = `transform ${duration}ms linear`;
+                bar.style.transform  = 'scaleX(0)';
+            });
+        });
+
+        // Hide after duration
+        setTimeout(() => {
+            spotlight.classList.remove('visible');
+            // Small gap between spotlights
+            setTimeout(processSpotlightQueue, 600);
+        }, duration);
+    }
+
+    // ── SLIDESHOW ─────────────────────────────────────────────
+    function startSlideshow() {
+        stopSlideshow();
+        if (photos.length === 0) return;
+        showSlide(0);
+        slideshowTimer = setInterval(() => {
+            slideshowIdx = (slideshowIdx + 1) % photos.length;
+            showSlide(slideshowIdx);
+        }, 6000);
+    }
+
+    function stopSlideshow() {
+        if (slideshowTimer) { clearInterval(slideshowTimer); slideshowTimer = null; }
+    }
+
+    function showSlide(idx) {
+        const p = photos[idx];
+        if (!p) return;
+        const img = document.getElementById('slideshowImg');
+        img.style.opacity = 0;
+        setTimeout(() => {
+            img.src = p.wallUrl;
+            img.style.opacity = 1;
+        }, 300);
+        const cap = document.getElementById('slideshowCaption');
+        if (p.caption) { cap.textContent = p.caption; cap.style.display = 'block'; }
+        else cap.style.display = 'none';
+    }
 </script>
 </body>
 </html>
