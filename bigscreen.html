@@ -1309,6 +1309,20 @@
         coroner:'🔬', travelJournal:'📓', backgroundCheck:'🔍',
     };
 
+    const CLUE_THUMBS = {
+        newspaper:        'clue-thumbs/newspaper.jpg',
+        letterhead:       'clue-thumbs/letterhead.jpg',
+        forgedDocs:       'clue-thumbs/forgedDocs.jpg',
+        ledger:           'clue-thumbs/ledger.jpg',
+        margaretsLetter:  'clue-thumbs/margaretsLetter.jpg',
+        birthCertificate: 'clue-thumbs/birthCertificate.jpg',
+        margaretDeath:    'clue-thumbs/margaretDeath.jpg',
+        will:             'clue-thumbs/will.jpg',
+        coroner:          'clue-thumbs/coroner.jpg',
+        travelJournal:    'clue-thumbs/travelJournal.jpg',
+        bankStatement:    'clue-thumbs/bankStatement.jpg',
+    };
+
     // Fixed clue positions relative to board (fraction of W/H)
     // Spread across the full board in a natural-looking scatter
     const CLUE_LAYOUT = {
@@ -1419,9 +1433,13 @@
             card.className = 'polaroid' + (newItems_local.includes(id) ? ' new' : '');
             card.dataset.id = id;
             card.style.cssText = `left:${x}px; top:${y}px; --r:${rot}deg; transform:rotate(${rot}deg);`;
+            const thumb = CLUE_THUMBS[id];
+            const photoContent = thumb
+                ? `<img src="${thumb}" style="width:100%;height:100%;object-fit:cover;display:block;" alt="">`
+                : `<div class="polaroid-photo-icon">${CLUE_ICONS[id] || '📄'}</div>`;
             card.innerHTML = `
                 <div class="polaroid-pin"></div>
-                <div class="polaroid-photo"><div class="polaroid-photo-icon">${CLUE_ICONS[id] || '📄'}</div></div>
+                <div class="polaroid-photo">${photoContent}</div>
                 <div class="polaroid-caption"><div class="polaroid-title">${CLUE_CAPTIONS[id] || id}</div></div>`;
             board.appendChild(card);
         });
