@@ -942,6 +942,193 @@
             opacity: 0.5;
         }
 
+
+        /* ── DETECTIVE BOARD ─────────────────────────────────── */
+        .detective-board {
+            margin-top: 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            position: relative;
+        }
+
+        .detective-board::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0; bottom: 0;
+            width: 1px;
+            background: linear-gradient(to bottom,
+                transparent,
+                rgba(139,26,26,0.3) 5%,
+                rgba(139,26,26,0.3) 95%,
+                transparent);
+            transform: translateX(-50%);
+        }
+
+        @media (max-width: 768px) {
+            .detective-board::before { display: none; }
+        }
+
+        .board-step {
+            display: grid;
+            grid-template-columns: 1fr 80px 1fr;
+            gap: 0;
+            align-items: center;
+            padding: 40px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .board-step-flip {
+            /* photo on right, note on left */
+        }
+
+        @media (max-width: 768px) {
+            .board-step,
+            .board-step-flip {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .board-string { display: none; }
+            .board-step-flip .board-note { order: -1; }
+        }
+
+        /* The string/connector in the middle */
+        .board-string {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .board-string::before {
+            content: '';
+            position: absolute;
+            left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(to right,
+                transparent,
+                rgba(139,26,26,0.5),
+                rgba(139,26,26,0.5),
+                transparent);
+        }
+        .board-string::after {
+            content: '✦';
+            font-size: 10px;
+            color: rgba(139,26,26,0.6);
+            background: var(--deep);
+            padding: 4px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Photo placeholder (polaroid style) */
+        .board-photo {
+            position: relative;
+            padding: 0 24px;
+        }
+
+        .photo-pin {
+            width: 12px;
+            height: 12px;
+            background: radial-gradient(circle at 35% 35%, #e8c55a, #8a6d14);
+            border-radius: 50%;
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            z-index: 2;
+        }
+
+        .photo-placeholder {
+            background: var(--charcoal);
+            border: 1px solid rgba(201,162,39,0.15);
+            aspect-ratio: 4/3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .photo-placeholder::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 10px,
+                    rgba(255,255,255,0.01) 10px,
+                    rgba(255,255,255,0.01) 20px
+                );
+        }
+
+        .photo-label {
+            font-family: 'Cinzel', serif;
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: var(--fog);
+            text-align: center;
+            padding: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .photo-caption {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 12px;
+            font-style: italic;
+            color: var(--fog);
+            text-align: center;
+            margin-top: 8px;
+            padding: 0 8px;
+        }
+
+        /* Case note / description */
+        .board-note {
+            padding: 24px 28px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+        }
+
+        .board-note::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 3px;
+            height: 100%;
+            background: var(--crimson);
+            opacity: 0.4;
+        }
+
+        .note-number {
+            font-family: 'Cinzel', serif;
+            font-size: 10px;
+            letter-spacing: 3px;
+            color: var(--crimson-lt);
+            margin-bottom: 8px;
+            opacity: 0.7;
+        }
+
+        .note-title {
+            font-family: 'Cinzel', serif;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .note-body {
+            font-family: 'EB Garamond', Georgia, serif;
+            font-size: 16px;
+            color: var(--fog);
+            line-height: 1.7;
+        }
+
     </style>
 </head>
 <body>
@@ -951,7 +1138,7 @@
     <a href="#" class="nav-brand" onclick="showPage('home');return false;">Thor's Murder Mysteries</a>
     <ul class="nav-links">
         <li><a href="#" onclick="showPage('home');return false;" data-navlink="home" class="nav-active">Home</a></li>
-        <li><a href="#" onclick="showPage('how');return false;"  data-navlink="how">How It Works</a></li>
+        <li><a href="#" onclick="showPage('mystery');return false;" data-navlink="mystery">The Mystery</a></li>
         <li><a href="#" onclick="showPage('stories');return false;" data-navlink="stories">Stories</a></li>
         <li><a href="#" onclick="showPage('pricing');return false;" data-navlink="pricing">Pricing</a></li>
         <li><a href="#" onclick="showPage('book');return false;" data-navlink="book">Book an Event</a></li>
@@ -961,7 +1148,7 @@
     <!-- Mobile nav -->
     <div class="mobile-nav" id="mobileNav">
         <button onclick="showPage('home');return false;"   data-mobilelink="home"    class="nav-active">Home</button>
-        <button onclick="showPage('how');return false;"    data-mobilelink="how">How It Works</button>
+        <button onclick="showPage('mystery');return false;" data-mobilelink="mystery">The Mystery</button>
         <button onclick="showPage('stories');return false;" data-mobilelink="stories">Stories</button>
         <button onclick="showPage('pricing');return false;" data-mobilelink="pricing">Pricing</button>
         <button onclick="showPage('book');return false;"   data-mobilelink="book">Book</button>
@@ -992,53 +1179,112 @@
 </section>
 
 <!-- ── HOW IT WORKS ───────────────────────────────────────── -->
-<section class="how-section" id="how-it-works" data-page="how">
+<section class="how-section" id="how-it-works" data-page="mystery" style="display:none;">
     <div class="section-inner">
-        <div class="section-eyebrow">The Experience</div>
+        <div class="section-eyebrow">The Mystery</div>
         <h2 class="section-title">How the Evening Unfolds</h2>
         <div class="section-rule"></div>
-        <p class="section-lead">
-            Every guest arrives as a character. Every character has a secret. 
-            Over cocktails and dinner, the truth comes out — one revelation at a time.
-        </p>
+        <p class="section-lead">Every guest arrives as a character. Every character has a secret. Over cocktails and dinner, the truth comes out — one revelation at a time.</p>
 
-        <div class="steps-grid">
-            <div class="step">
-                <span class="step-number">01</span>
-                <span class="step-icon">📜</span>
-                <div class="step-title">The Invitation</div>
-                <p class="step-body">Guests receive a period-accurate invitation with their character backstory before the event. By the time they arrive, they're already in character.</p>
+        <!-- Detective Board -->
+        <div class="detective-board">
+
+            <div class="board-step">
+                <div class="board-photo">
+                    <div class="photo-pin"></div>
+                    <div class="photo-placeholder">
+                        <span class="photo-label">📜 The Invitation</span>
+                    </div>
+                    <div class="photo-caption">Guests arrive already in character</div>
+                </div>
+                <div class="board-string"></div>
+                <div class="board-note">
+                    <div class="note-number">01</div>
+                    <div class="note-title">The Invitation</div>
+                    <p class="note-body">Guests receive a period-accurate invitation with their character backstory before the event. By the time they arrive, they're already in character.</p>
+                </div>
             </div>
-            <div class="step">
-                <span class="step-number">02</span>
-                <span class="step-icon">🥂</span>
-                <div class="step-title">Cocktail Hour</div>
-                <p class="step-body">A fully stocked bar, period cocktails, and social missions to complete. Meet the suspects, plant seeds of suspicion, and find your footing in 1935.</p>
+
+            <div class="board-step board-step-flip">
+                <div class="board-note">
+                    <div class="note-number">02</div>
+                    <div class="note-title">Cocktail Hour</div>
+                    <p class="note-body">A fully stocked bar, period cocktails, and social missions to complete. Meet the suspects, plant seeds of suspicion, and find your footing.</p>
+                </div>
+                <div class="board-string"></div>
+                <div class="board-photo">
+                    <div class="photo-pin"></div>
+                    <div class="photo-placeholder">
+                        <span class="photo-label">🥂 Cocktail Hour</span>
+                    </div>
+                    <div class="photo-caption">Suspects mingle before the storm</div>
+                </div>
             </div>
-            <div class="step">
-                <span class="step-number">03</span>
-                <span class="step-icon">💀</span>
-                <div class="step-title">The Murder</div>
-                <p class="step-body">Someone is dead. The investigation begins. QR-coded clues, skill-gated evidence, and real-time reveals push the story forward — act by act.</p>
+
+            <div class="board-step">
+                <div class="board-photo">
+                    <div class="photo-pin"></div>
+                    <div class="photo-placeholder">
+                        <span class="photo-label">💀 The Murder</span>
+                    </div>
+                    <div class="photo-caption">Someone is dead. Who did it?</div>
+                </div>
+                <div class="board-string"></div>
+                <div class="board-note">
+                    <div class="note-number">03</div>
+                    <div class="note-title">The Murder</div>
+                    <p class="note-body">Someone is dead. The investigation begins. QR-coded clues, skill-gated evidence, and real-time reveals push the story forward — act by act.</p>
+                </div>
             </div>
-            <div class="step">
-                <span class="step-number">04</span>
-                <span class="step-icon">🔍</span>
-                <div class="step-title">The Investigation</div>
-                <p class="step-body">Each character has a unique skill — Legal, Medical, Botany, and more — that unlocks evidence only they can interpret. Collaboration is essential.</p>
+
+            <div class="board-step board-step-flip">
+                <div class="board-note">
+                    <div class="note-number">04</div>
+                    <div class="note-title">The Investigation</div>
+                    <p class="note-body">Each character has a unique skill — Legal, Medical, Botany, and more — that unlocks evidence only they can interpret. Collaboration is essential.</p>
+                </div>
+                <div class="board-string"></div>
+                <div class="board-photo">
+                    <div class="photo-pin"></div>
+                    <div class="photo-placeholder">
+                        <span class="photo-label">🔍 The Investigation</span>
+                    </div>
+                    <div class="photo-caption">The evidence mounts</div>
+                </div>
             </div>
-            <div class="step">
-                <span class="step-number">05</span>
-                <span class="step-icon">⚖️</span>
-                <div class="step-title">The Accusation</div>
-                <p class="step-body">Three acts of revelation. One killer. When the confession is read aloud, the room will never be the same.</p>
+
+            <div class="board-step">
+                <div class="board-photo">
+                    <div class="photo-pin"></div>
+                    <div class="photo-placeholder">
+                        <span class="photo-label">⚖️ The Accusation</span>
+                    </div>
+                    <div class="photo-caption">The room decides who did it</div>
+                </div>
+                <div class="board-string"></div>
+                <div class="board-note">
+                    <div class="note-number">05</div>
+                    <div class="note-title">The Accusation</div>
+                    <p class="note-body">Three acts of revelation. One killer. When the confession is read aloud, the room will never be the same.</p>
+                </div>
             </div>
-            <div class="step">
-                <span class="step-number">06</span>
-                <span class="step-icon">📱</span>
-                <div class="step-title">The App</div>
-                <p class="step-body">Our custom platform delivers character sheets, clues, memories, and story beats to every player's phone in real time. No printed packets. No confusion.</p>
+
+            <div class="board-step board-step-flip">
+                <div class="board-note">
+                    <div class="note-number">06</div>
+                    <div class="note-title">The App</div>
+                    <p class="note-body">Our custom platform delivers character sheets, clues, memories, and story beats to every player's phone in real time. No printed packets. No confusion.</p>
+                </div>
+                <div class="board-string"></div>
+                <div class="board-photo">
+                    <div class="photo-pin"></div>
+                    <div class="photo-placeholder">
+                        <span class="photo-label">📱 The App</span>
+                    </div>
+                    <div class="photo-caption">Every clue. Every memory. In your pocket.</div>
+                </div>
             </div>
+
         </div>
     </div>
 </section>
@@ -1106,7 +1352,7 @@
 </section>
 
 <!-- ── EXPERIENCE STATS ───────────────────────────────────── -->
-<section class="experience-section" data-page="how">
+<section class="experience-section" data-page="mystery" style="display:none;">
     <div class="section-inner">
         <div class="section-eyebrow">Why Thor's</div>
         <h2 class="section-title">This Isn't a Kit.<br>It's a Production.</h2>
@@ -1230,10 +1476,10 @@
 </section>
 
 <!-- ── TESTIMONIALS ───────────────────────────────────────── -->
-<section class="testimonials-section" id="testimonials" data-page="book">
+<section class="testimonials-section" id="testimonials" data-page="mystery" style="display:none;">
     <div class="section-inner">
-        <div class="section-eyebrow">From the Guests</div>
-        <h2 class="section-title">What People Are Saying</h2>
+        <div class="section-eyebrow">Witness Statements</div>
+        <h2 class="section-title">From the Evening</h2>
         <div class="section-rule"></div>
 
         <div class="testimonials-grid">
@@ -1440,7 +1686,7 @@
 
     // Check hash on load
     const hash = window.location.hash.replace('#','');
-    const validPages = ['home','how','stories','pricing','book','login'];
+    const validPages = ['home','mystery','stories','pricing','book','login'];
     if (hash && validPages.includes(hash)) {
         showPage(hash);
     }
