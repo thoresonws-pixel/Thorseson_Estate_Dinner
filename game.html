@@ -2598,15 +2598,25 @@ ${inviteUrl}
         btn.style.cursor = 'default';
         showToast('🥂 Cocktail hour started — quests distributed to all players', 'success');
 
-        // Fire quiz on all phones 5 minutes before end (at 40 min mark)
-        // For now: fire quiz automatically after 40 minutes
         const COCKTAIL_DURATION_MS = 60 * 60 * 1000;
-        const QUIZ_BEFORE_END_MS   =  0 * 60 * 1000;
-        const quizDelay = COCKTAIL_DURATION_MS - QUIZ_BEFORE_END_MS;
+        const WARNING_DELAY = COCKTAIL_DURATION_MS - (15 * 60 * 1000); // 45 min mark
+
+        // At 45 min: fire warning on bigscreen + quiz on phones
         cocktailQuizTimer = setTimeout(async () => {
+            // Fire quiz on all player phones
             await db.ref('games/' + gameId + '/state/cocktailQuiz').set({ active: true, firedAt: Date.now() });
-            showToast('📋 Quiz fired on all player phones — 5 min left in cocktail hour', 'success');
-        }, quizDelay);
+            // Send 15-min warning to bigscreen
+            await db.ref('games/' + gameId + '/state/bigScreen').set({
+                mode: 'cocktail-warning', manual: false, updatedAt: new Date().toISOString()
+            });
+            showToast('📋 Quiz fired — 15 min warning on big screen', 'success');
+            // After 20 seconds, return bigscreen to slideshow
+            setTimeout(async () => {
+                await db.ref('games/' + gameId + '/state/bigScreen').set({
+                    mode: 'slideshow', manual: false, updatedAt: new Date().toISOString()
+                });
+            }, 20000);
+        }, WARNING_DELAY);
 
         // Also add a manual fire button to the cocktail panel
         const panel = document.getElementById('cocktailPanel');
