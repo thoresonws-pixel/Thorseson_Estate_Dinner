@@ -481,6 +481,35 @@
     <div class="idle-sub">The evening begins shortly</div>
 </div>
 
+<!-- ── OPENING CARD ──────────────────────────────────────────── -->
+<div class="screen" id="screen-opening">
+    <div class="opening-card">
+        <div class="opening-top">
+            <div class="opening-eyebrow">Thor's Murder Mysteries</div>
+            <div class="opening-title">The Investigation Begins</div>
+            <div class="opening-rule"></div>
+        </div>
+        <div class="opening-body">
+            <div class="opening-col">
+                <div class="opening-section-head">The Situation</div>
+                <p class="opening-para">William Thoreson Sr. is dead. He was found earlier this evening before dinner could be served. The authorities have been contacted but are unable to respond. No one leaves until we understand what happened.</p>
+                <div class="opening-section-head" style="margin-top:24px;">How This Works</div>
+                <p class="opening-para">We investigate in phases. After each phase, everyone gathers to share what they've found. Some rooms are open now — others will open as the evening progresses.</p>
+                <p class="opening-para">Blue tape marks personal items that are off limits. Respect them.</p>
+            </div>
+            <div class="opening-divider"></div>
+            <div class="opening-col">
+                <div class="opening-section-head">Your Skills</div>
+                <p class="opening-para">Some of you have particular expertise. If you find a document you can't interpret, find the person who can. Some evidence is locked behind specific knowledge — Legal, Medical, Botany, Accounting, French, Banking.</p>
+                <p class="opening-para">QR codes on documents require the right skill to unlock. Check your character profile.</p>
+                <div class="opening-section-head" style="margin-top:24px;">The Goal</div>
+                <p class="opening-para">Find out what happened to William Thoreson. Start with his business, his dealings, anything that might explain why someone in this room wanted him dead.</p>
+                <div class="opening-ornament">✦ &nbsp; BEGIN &nbsp; ✦</div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- ── DETECTIVE BOARD ────────────────────────────────────────── -->
 <div class="screen" id="screen-detective">
     <div class="board-header">
@@ -602,10 +631,44 @@
     }
 
     function bootstrap() {
-        // Mode changes
+        // Auto-mode: listen to currentPhase and drive bigscreen automatically
+        db.ref('games/' + gameId + '/state/currentPhase').on('value', snap => {
+            const phase = snap.val();
+            if (!phase) return;
+            if (phase.id === 'cocktail') {
+                switchScreen('slideshow', {});
+            }
+            // opening and detective handled by willsDeath / manualBigScreen
+        });
+
+        // Listen to activeItems — when willsDeath added, switch to opening card
+        db.ref('games/' + gameId + '/state/activeItems').on('value', snap => {
+            const items = snap.val() || [];
+            const wasAdded = items.includes('willsDeath') && !activeItems.includes('willsDeath');
+            
+            // Find newly added items for spotlight
+            const added = items.filter(id => !activeItems.includes(id));
+            activeItems = items;
+            renderDetectiveBoard();
+
+            if (wasAdded) {
+                // Switch to opening card first
+                switchScreen('opening', {});
+                // After 30 seconds auto-advance to detective board
+                setTimeout(() => switchScreen('detective', {}), 30000);
+            }
+
+            // Queue spotlight for each new item (skip willsDeath)
+            added.filter(id => id !== 'willsDeath').forEach(id => {
+                const item = findItem(id);
+                if (item) queueSpotlight(item);
+            });
+        });
+
+        // Manual GM override still works
         db.ref('games/' + gameId + '/state/bigScreen').on('value', snap => {
-            const data = snap.val() || { mode: 'detective' };
-            switchScreen(data.mode, data);
+            const data = snap.val();
+            if (data && data.manual) switchScreen(data.mode, data);
         });
 
         // Scans → leaderboard
@@ -615,20 +678,7 @@
             renderLeaderboardFull();
         });
 
-        // Active items → detective board + spotlight new ones
-        db.ref('games/' + gameId + '/state/activeItems').on('value', snap => {
-            const newItems = snap.val() || [];
-            // Find newly added items
-            const added = newItems.filter(id => !activeItems.includes(id));
-            activeItems = newItems;
-            renderDetectiveBoard();
 
-            // Queue spotlight for each new item (skip willsDeath — GM announces that)
-            added.filter(id => id !== 'willsDeath').forEach(id => {
-                const item = findItem(id);
-                if (item) queueSpotlight(item);
-            });
-        });
 
         // Photos → slideshow
         db.ref('games/' + gameId + '/state/photos').orderByChild('time').on('value', snap => {
@@ -644,7 +694,7 @@
 
     // ── SCREEN SWITCHING ──────────────────────────────────────
     function switchScreen(mode, data) {
-        if (mode === currentMode) return;
+        if (mode === currentMode && !data?.force) return;
 
         const overlay = document.getElementById('transitionOverlay');
         overlay.classList.add('active');

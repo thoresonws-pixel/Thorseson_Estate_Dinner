@@ -2291,6 +2291,7 @@ ${inviteUrl}
         try {
             await db.ref('games/' + gameId + '/state/bigScreen').set({
                 mode,
+                manual: true,
                 updatedAt: new Date().toISOString()
             });
             // Update active state on buttons
@@ -2398,6 +2399,13 @@ ${inviteUrl}
             }
             if (phase.onStart?.distributeQuests) {
                 await distributeQuests();
+            }
+
+            // Auto-drive big screen for known phases
+            if (phase.id === 'cocktail') {
+                await db.ref('games/' + gameId + '/state/bigScreen').set({
+                    mode: 'slideshow', manual: false, updatedAt: new Date().toISOString()
+                });
             }
 
             showToast('Phase advanced: ' + phase.label, 'success');
