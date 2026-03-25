@@ -75,7 +75,7 @@ const questsDatabase = {
             requires: ["charles_sterling"],
             giveTo:   "any",
             exclude:  ["charles_sterling"],
-            text:     "Seek out {{charles_sterling}}. An old friend of William's with decades in Dallas banking. Ask what he knows about the company's recent financial troubles.",
+            text:     "Seek out {{charles_sterling}}. An old friend of William's with decades in Dallas banking. Ask what they know about the company's recent financial troubles.",
             complete: "{{charles_sterling}} chose words carefully. Said the European situation was complicated. Said William had been under unusual pressure. Did not say more."
         },
 
