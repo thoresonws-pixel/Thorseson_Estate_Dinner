@@ -1031,24 +1031,6 @@
             <div class="section-title" style="margin-bottom:16px;">Pre-Game Checklist</div>
         </div>
 
-        <div style="margin-top:28px;">
-            <div class="section-title" style="margin-bottom:16px;">Quick Actions</div>
-            <div class="quick-actions">
-                <a onclick="switchTab('run', document.querySelector('[onclick*=\"run\"]'))" class="quick-card">
-                    <span class="quick-card-icon">🎭</span>
-                    <span class="quick-card-label">Run Game</span>
-                </a>
-                <a onclick="switchTab('characters', document.querySelector('[onclick*=\"characters\"]'))" class="quick-card">
-                    <span class="quick-card-icon">⚄</span>
-                    <span class="quick-card-label">Generate Roles</span>
-                </a>
-
-                <a onclick="copyInviteLink()" class="quick-card">
-                    <span class="quick-card-icon">🔗</span>
-                    <span class="quick-card-label">Copy Invite Link</span>
-                </a>
-            </div>
-        </div>
 
     </div>
 
@@ -1489,6 +1471,13 @@ function renderChecklist() {
             status: hasQuestionnaire === total && total > 0 ? 'ok' : 'warn',
             icon:   hasQuestionnaire === total && total > 0 ? '✓' : '⚠',
             action: null
+        },
+        {
+            label: 'Roles generated',
+            value: rolesGenerated ? 'Complete' : 'Not yet',
+            status: rolesGenerated ? 'ok' : 'warn',
+            icon:   rolesGenerated ? '✓' : '⚄',
+            action: rolesGenerated ? null : { label: '⚄ Generate Roles', fn: "switchTab('characters', document.querySelector('[onclick*=characters]')); setTimeout(openGenerateRoles, 300);" }
         },
         {
             label: 'Game started',
