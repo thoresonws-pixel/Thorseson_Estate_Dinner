@@ -334,6 +334,25 @@
         <div class="section-title" style="margin-top:48px;">Account</div>
         <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(201,162,39,0.12);padding:28px 28px 24px;margin-bottom:40px;">
 
+            <!-- Contact Info -->
+            <div style="margin-bottom:28px;">
+                <div style="font-family:'Special Elite',monospace;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(201,162,39,0.5);margin-bottom:12px;">Contact Information</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div>
+                        <div style="font-family:'Special Elite',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(201,162,39,0.4);margin-bottom:6px;">Email</div>
+                        <input type="email" id="contactEmail" placeholder="your@email.com"
+                            style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(201,162,39,0.15);color:#f5f0e6;font-family:'Cormorant Garamond',Georgia,serif;font-size:15px;padding:9px 12px;outline:none;"
+                            oninput="scheduleSave()">
+                    </div>
+                    <div>
+                        <div style="font-family:'Special Elite',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(201,162,39,0.4);margin-bottom:6px;">Phone</div>
+                        <input type="tel" id="contactPhone" placeholder="555-123-4567"
+                            style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(201,162,39,0.15);color:#f5f0e6;font-family:'Cormorant Garamond',Georgia,serif;font-size:15px;padding:9px 12px;outline:none;"
+                            oninput="scheduleSave()">
+                    </div>
+                </div>
+            </div>
+
             <!-- Gender Preference -->
             <div style="margin-bottom:28px;">
                 <div style="font-family:'Special Elite',monospace;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(201,162,39,0.5);margin-bottom:12px;">Character Gender Preference</div>
@@ -633,6 +652,10 @@ async function loadAccountSettings() {
     document.getElementById('involvValue').textContent = inv;
     document.getElementById('involvLabel').textContent = INVOLV_LABELS[inv] || '';
 
+    // Load contact info
+    if (u.email) document.getElementById('contactEmail').value = u.email;
+    if (u.phone) document.getElementById('contactPhone').value = u.phone;
+
     // Load waiver
     if (u.waiverSigned) {
         document.getElementById('waiverStatus').style.display = 'block';
@@ -669,6 +692,10 @@ function scheduleSave() {
 async function saveAccount() {
     if (!currentUser) return;
     const updates = {};
+    const emailVal = document.getElementById('contactEmail').value.trim();
+    const phoneVal = document.getElementById('contactPhone').value.trim();
+    if (emailVal) updates.email = emailVal;
+    if (phoneVal) updates.phone = phoneVal;
     if (accountGender) updates.genderPref = accountGender;
     updates.involvementScore = accountInvolv;
     await db.ref('users/' + currentUser.uid).update(updates);
@@ -681,6 +708,8 @@ async function saveAccount() {
         if (game.players && game.players[currentUser.uid]) {
             gameUpdates['games/' + gid + '/players/' + currentUser.uid + '/questionnaire/gender'] = accountGender || 'any';
             gameUpdates['games/' + gid + '/players/' + currentUser.uid + '/questionnaire/involvementScore'] = accountInvolv;
+            if (emailVal) gameUpdates['games/' + gid + '/players/' + currentUser.uid + '/email'] = emailVal;
+            if (phoneVal) gameUpdates['games/' + gid + '/players/' + currentUser.uid + '/phone'] = phoneVal;
         }
     });
     if (Object.keys(gameUpdates).length) await db.ref().update(gameUpdates);
