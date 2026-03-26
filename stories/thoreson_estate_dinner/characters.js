@@ -40,7 +40,7 @@ var characterDatabase = {
             career:       "Legal manager for the Thoreson estate. Handles all filings, contracts, and correspondence.",
             hobby:        "Reads extensively — history and law, mostly. Has a small but carefully chosen library.",
             family:       "Unmarried. No children. No family she mentions.",
-            knowsWilliam: "Has worked for the Thoreson family for nearly ten years. William trusted her with everything."
+            knowsWilliam: "Has worked for the Thoreson family for nearly ten years. William trusted her with everything.",
             quiz: {
                 question: "What does Miranda do for the Thoreson family?",
                 correct:  "Manages all their legal affairs",
@@ -74,7 +74,7 @@ var characterDatabase = {
             career:       "Attorney. Studied law at SMU, built his own practice, now focuses almost entirely on Thoreson family matters.",
             hobby:        "Woodworking. Keeps a small workshop behind the house.",
             family:       "Married to Clara for six years. No children yet.",
-            knowsWilliam: "His father. Closest thing to a business partner William ever had."
+            knowsWilliam: "His father. Closest thing to a business partner William ever had.",
             quiz: {
                 question: "What is Scott's profession?",
                 correct:  "Attorney",
@@ -113,7 +113,7 @@ var characterDatabase = {
             career:       "Journalist at the Dallas Herald. Covers business and society.",
             hobby:        "Photography. Has a good eye for things other people overlook.",
             family:       "Unmarried.",
-            knowsWilliam: "William personally invited him tonight. Said the evening concerned him specifically."
+            knowsWilliam: "William personally invited him tonight. Said the evening concerned him specifically.",
             quiz: {
                 question: "What does Walter cover at the Dallas Herald?",
                 correct:  "Business and society",
@@ -152,7 +152,7 @@ var characterDatabase = {
             career:       "Licensed private investigator. Takes cases across Dallas — missing persons, fraud, the occasional domestic matter.",
             hobby:        "Jazz. Goes to the clubs on Commerce Street most weekends.",
             family:       "Divorced. One daughter, lives with her mother.",
-            knowsWilliam: "A cousin on the Thoreson side. Saw William at family gatherings over the years."
+            knowsWilliam: "A cousin on the Thoreson side. Saw William at family gatherings over the years.",
             quiz: {
                 question: "What does David do for a living?",
                 correct:  "Private investigator",
@@ -190,7 +190,7 @@ var characterDatabase = {
             career:       "No formal occupation. Significant family money from Memphis. Active in Dallas charitable circles.",
             hobby:        "Gardening. Has a well-known rose garden.",
             family:       "Widowed. Husband Edward passed in 1929. Two adult children in Memphis.",
-            knowsWilliam: "Met through charity work in the early 1910s. A family acquaintance of twenty-odd years."
+            knowsWilliam: "Met through charity work in the early 1910s. A family acquaintance of twenty-odd years.",
             quiz: {
                 question: "How does Patricia spend most of her time?",
                 correct:  "Charitable work and Dallas society",
@@ -226,7 +226,7 @@ var characterDatabase = {
             career:       "Retired schoolteacher. Taught at Dallas public schools for over thirty years.",
             hobby:        "Correspondence. Writes letters to people all over the country, every week.",
             family:       "Widowed. Husband George passed in 1921. Three children, seven grandchildren.",
-            knowsWilliam: "Has known William Thoreson since he was a young man with ambition and a partner nobody talks about anymore."
+            knowsWilliam: "Has known William Thoreson since he was a young man with ambition and a partner nobody talks about anymore.",
             quiz: {
                 question: "What did Dorothy do for most of her working life?",
                 correct:  "Taught at Dallas public schools",
@@ -267,7 +267,7 @@ var characterDatabase = {
             career:       "Translator and language tutor. Fluent in French, Italian, and some German.",
             hobby:        "Painting. Has a small collection of her own work she calls embarrassing and refuses to show anyone.",
             family:       "Unmarried. No children.",
-            knowsWilliam: "Her uncle on her mother's side. Grew up spending holidays at the Thoreson home."
+            knowsWilliam: "Her uncle on her mother's side. Grew up spending holidays at the Thoreson home.",
             quiz: {
                 question: "Where has Vivienne been living until recently?",
                 correct:  "Abroad — Paris and London",
@@ -303,7 +303,7 @@ var characterDatabase = {
             career:       "Business Manager at Thoreson Toys for fifteen years. Handles operations, staffing, suppliers — everything except the financial ledgers, which William kept personally.",
             hobby:        "Chess. Plays in a weekly club on Elm Street.",
             family:       "Married to Helen for twelve years. Two children, ages ten and seven.",
-            knowsWilliam: "Hired by William in 1920. Worked closely with him for fifteen years — or thought he did."
+            knowsWilliam: "Hired by William in 1920. Worked closely with him for fifteen years — or thought he did.",
             quiz: {
                 question: "What is Raymond's role at Thoreson Toys?",
                 correct:  "Business Manager — operations and staffing",
@@ -343,7 +343,7 @@ var characterDatabase = {
             career:       "Retired banker. Forty years at First National Bank of Dallas. Ended his career as Vice President of Commercial Lending.",
             hobby:        "Amateur photography. Has a darkroom at home.",
             family:       "Widowed. Spouse passed in 1928. One child who lives in Houston.",
-            knowsWilliam: "Met when William walked into the bank in 1902 looking for a business loan. Closest friend of over thirty years."
+            knowsWilliam: "Met when William walked into the bank in 1902 looking for a business loan. Closest friend of over thirty years.",
             quiz: {
                 question: "What did Charles do before retiring?",
                 correct:  "Banker — VP of Commercial Lending at First National",
@@ -382,7 +382,7 @@ var characterDatabase = {
             career:       "Businessman and investor. Interests in real estate, manufacturing, and — until recently — Thoreson Toys.",
             hobby:        "Golf. Plays at Dallas Country Club most Saturday mornings.",
             family:       "Married to Ruth for fourteen years. Three children.",
-            knowsWilliam: "Became an investor in Thoreson Toys four years ago after William made a personal pitch. The returns were excellent until they weren't."
+            knowsWilliam: "Became an investor in Thoreson Toys four years ago after William made a personal pitch. The returns were excellent until they weren't.",
             quiz: {
                 question: "How does Marcus know William Thoreson?",
                 correct:  "He invested in Thoreson Toys four years ago",
@@ -420,7 +420,7 @@ var characterDatabase = {
             career:       "Independent businessperson. Manages her own investment portfolio across several Dallas companies.",
             hobby:        "Bridge. Hosts a weekly game and considers it serious business.",
             family:       "Unmarried.",
-            knowsWilliam: "Has been a Thoreson Toys shareholder for six years. Knew William through the investor circle."
+            knowsWilliam: "Has been a Thoreson Toys shareholder for six years. Knew William through the investor circle.",
             quiz: {
                 question: "How long has Victoria been a Thoreson Toys shareholder?",
                 correct:  "Six years",
@@ -459,7 +459,7 @@ var characterDatabase = {
             career:       "No formal occupation. Old money from New Orleans. Active presence in Dallas society.",
             hobby:        "Hosting. Considers the dinner party an art form.",
             family:       "Married to Harold for twenty-eight years. No children.",
-            knowsWilliam: "Social acquaintance of many years. Moved in the same circles as the Thoresons throughout Dallas society."
+            knowsWilliam: "Social acquaintance of many years. Moved in the same circles as the Thoresons throughout Dallas society.",
             quiz: {
                 question: "Where is Elizabeth originally from?",
                 correct:  "New Orleans",

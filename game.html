@@ -1150,7 +1150,7 @@
         <div class="section-head">
             <div class="section-title">Character Assignments</div>
             <div style="display:flex;gap:10px;">
-                <button class="btn-gold" onclick="openGenerateRoles()" id="generateRolesBtn">⚄ Generate Roles</button>
+<button class="btn-gold" onclick="openGenerateRoles()" id="generateRolesBtn">⚄ Generate Roles</button>
             </div>
         </div>
 
@@ -1463,6 +1463,13 @@ function renderChecklist() {
 
     const items = [
         {
+            label: 'Invite link',
+            value: inviteUrl.substring(0, 40) + '…',
+            status: 'ok',
+            icon:   '✓',
+            action: { label: 'Copy', fn: "copyInviteLink()" }
+        },
+        {
             label: 'Players joined',
             value: total + ' joined',
             status: total >= 8 ? 'ok' : total >= 4 ? 'warn' : 'error',
@@ -1484,32 +1491,11 @@ function renderChecklist() {
             action: null
         },
         {
-            label: 'Roles generated',
-            value: rolesGenerated ? 'Complete' : 'Not yet',
-            status: rolesGenerated ? 'ok' : 'error',
-            icon:   rolesGenerated ? '✓' : '✗',
-            action: rolesGenerated ? null : { label: 'Generate', fn: "switchTab('characters', null)" }
-        },
-        {
-            label: 'Skills assigned',
-            value: skillsAssigned ? Object.keys(skillAssign).length + ' skills' : 'Not yet',
-            status: skillsAssigned ? 'ok' : 'warn',
-            icon:   skillsAssigned ? '✓' : '⚠',
-            action: null
-        },
-        {
-            label: 'Invite link sent',
-            value: inviteUrl.substring(0, 40) + '…',
-            status: 'ok',
-            icon:   '✓',
-            action: { label: 'Copy', fn: "copyInviteLink()" }
-        },
-        {
             label: 'Game started',
             value: gameStarted ? 'In progress' : 'Not started',
             status: gameStarted ? 'ok' : 'error',
             icon:   gameStarted ? '✓' : '✗',
-            action: gameStarted ? null : { label: 'Start', fn: "switchTab('run', null)" }
+            action: gameStarted ? null : { label: 'Start', fn: "switchTab('monitor', document.querySelector('[onclick*=monitor]'))" }
         }
     ];
 
