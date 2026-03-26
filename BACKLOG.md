@@ -100,3 +100,31 @@
 
 ## PROP IDEAS
 - **Period phone as PI delivery mechanism** — Replace the DJ/PI player role and text message delivery with a physical vintage rotary or candlestick phone mounted on the wall. When the GM hits the trigger on the dashboard, the phone rings mid-investigation. A player answers it and hears a pre-recorded Pinkerton agent delivering the act's clue hint and the code challenge prompt. This is dramatically superior to a text popup and removes the awkward information asymmetry of the PI role. Implementation: wireless doorbell module hidden inside the phone body, triggered by a Firebase flag; three short recorded "Hargrove, Pinkerton Agency" calls, one per act; `ringPhone` button on GM dashboard activates both the bell and the code challenge overlay on all player phones simultaneously. The PI character becomes the voice on the phone rather than a player at the table.
+
+## WRITER FEEDBACK — Toy & Riddle System (from Scott's writer friend)
+
+### Toys as Character Identity
+- Each guest arrives to find a toy left for them by William Thoreson, specific to their character and history
+- The toy IS their character introduction — they hold it, talk about it, use it to start conversations during cocktail hour
+- Each toy encodes a theme: e.g. unbalanceable scales = justice vs revenge, hourglass = time running out on comfortable lies, music box missing a piece = incomplete truth
+- Toys double as puzzle pieces — the group combines clues from multiple toys to unlock something (e.g. start the opening video/confession)
+- Toys become a cipher system running through the whole game — riddles reference "the one who never stops spinning" or "what the old woman counts" rather than character names directly
+
+### Two-Person Scan Gate
+- QR codes display a riddle referencing toys/characters before unlocking
+- Clue only unlocks when TWO specific characters scan the same QR code within a 10-second window
+- Flow: scan → read riddle → find the right partner → first person scans + taps "Wait for Partner" → 10-second window opens → partner scans → clue unlocks
+- Wrong person scans during window → timer resets, message: "This evidence requires a different witness"
+- No scan within 10 seconds → resets completely
+- Creates a visible theatrical moment — room watches the countdown, right person runs over
+- Riddle language should be solvable if you met the right people at cocktail hour, harder if you didn't — rewards cocktail hour engagement
+
+### Cellar Key Cold Open (rejected but noted)
+- Bartender can't find cellar key, group works together to open the bar
+- Scott rejected the drink-gating aspect but liked the shared group task idea
+- Could repurpose: toys unlock the opening video instead of the bar
+
+### Design work needed before building
+- Full toy list: one per character, each mapped to theme + riddle role + potential skill
+- Riddle writing: obscure enough to be satisfying, obvious enough to be solvable
+- This ripples through props, QR codes, skill gating, and bigscreen detective board
