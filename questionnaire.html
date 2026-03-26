@@ -334,6 +334,31 @@
                 </div>
             </div>
 
+            <!-- Waiver -->
+            <div class="question-block" style="border:1px solid rgba(201,162,39,0.2);padding:24px;background:rgba(0,0,0,0.2);">
+                <div class="question-label">Guest Agreement</div>
+                <div class="question-hint" style="margin-bottom:16px;">Please read and agree before continuing.</div>
+                <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);padding:16px 18px;border-radius:4px;margin-bottom:20px;max-height:180px;overflow-y:auto;">
+                    <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:15px;line-height:1.8;color:rgba(196,196,212,0.75);">
+                        <strong style="color:#f5f0e6;font-size:13px;letter-spacing:1px;">Age Verification</strong><br>
+                        I confirm that I am 21 years of age or older. I understand that valid photo ID will be required at the door and that I will be denied entry without it.<br><br>
+                        <strong style="color:#f5f0e6;font-size:13px;letter-spacing:1px;">Alcohol Policy</strong><br>
+                        I understand that alcohol will be available at this event. I agree that the host reserves the right to refuse service to any guest at any time, and to remove any guest who appears intoxicated or whose behaviour is disruptive to other guests. I accept full responsibility for my own alcohol consumption.<br><br>
+                        <strong style="color:#f5f0e6;font-size:13px;letter-spacing:1px;">Nature of the Event</strong><br>
+                        I understand that Thor's Murder Mysteries is a theatrical interactive experience involving staged scenarios and immersive storytelling. I consent to participate and understand that all scenarios are fictional.<br><br>
+                        <strong style="color:#f5f0e6;font-size:13px;letter-spacing:1px;">Photography</strong><br>
+                        I understand that photos may be taken during the event and shared with participants via the Thor's Murder Mysteries app. I will notify the host before the event if I have concerns about my image being shared.
+                    </div>
+                </div>
+                <label style="display:flex;align-items:flex-start;gap:14px;cursor:pointer;">
+                    <input type="checkbox" id="waiverCheck" onchange="checkWaiver()"
+                        style="margin-top:4px;width:18px;height:18px;accent-color:#c9a227;flex-shrink:0;cursor:pointer;">
+                    <span style="font-family:'Cormorant Garamond',serif;font-size:16px;color:rgba(196,196,212,0.85);line-height:1.5;">
+                        I confirm I am 21 or older, have read the above, and agree to the terms of this event.
+                    </span>
+                </label>
+            </div>
+
             <button class="btn-primary" id="continueBtn" disabled onclick="handleContinue()">
                 Continue to Character Selection
             </button>
@@ -367,6 +392,13 @@
 
     // ── Required groups — all must be answered to enable Continue ──
     const REQUIRED_GROUPS = ['gender'];
+    let waiverSigned = false;
+
+    function checkWaiver() {
+        waiverSigned = document.getElementById('waiverCheck').checked;
+        const allAnswered = REQUIRED_GROUPS.every(g => answers[g]) && waiverSigned;
+        document.getElementById('continueBtn').disabled = !allAnswered;
+    }
     const answers = {};
 
     // ── Auth check ────────────────────────────────────────────────
@@ -438,7 +470,7 @@
     }
 
     function checkComplete() {
-        const allAnswered = REQUIRED_GROUPS.every(g => answers[g]);
+        const allAnswered = REQUIRED_GROUPS.every(g => answers[g]) && waiverSigned;
         document.getElementById('continueBtn').disabled = !allAnswered;
     }
 
@@ -467,7 +499,7 @@
     answers['involvement'] = 5;
 
     async function handleContinue() {
-        if (!REQUIRED_GROUPS.every(g => answers[g])) return;
+        if (!REQUIRED_GROUPS.every(g => answers[g]) || !waiverSigned) return;
 
         const btn = document.getElementById('continueBtn');
         btn.disabled = true;
@@ -477,9 +509,11 @@
             await db.ref(`games/${currentGameId}/players/${currentUser.uid}`).update({
                 questionnaire: {
                     gender:          answers.gender,
-                    involvementScore: answers.involvement,  // number 1-10
+                    involvementScore: answers.involvement,
                     completedAt:     new Date().toISOString()
-                }
+                },
+                waiverSigned:    true,
+                waiverSignedAt:  new Date().toISOString()
             });
 
             window.location.href = 'pick.html';

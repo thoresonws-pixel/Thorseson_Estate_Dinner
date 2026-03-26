@@ -1069,7 +1069,7 @@
                     </tr>
                 </thead>
                 <tbody id="activityTable">
-                    <tr><td colspan="5" style="color:var(--fog);font-style:italic;text-align:center;padding:24px;">No activity data yet — game hasn't started.</td></tr>
+                    <tr><td colspan="8" style="color:var(--fog);font-style:italic;text-align:center;padding:24px;">No activity data yet — game hasn't started.</td></tr>
                 </tbody>
             </table>
         </div>
@@ -1091,15 +1091,18 @@
             <table class="guest-table">
                 <thead>
                     <tr>
+                        <th style="width:20px;"></th>
                         <th>Name</th>
                         <th>Email</th>
-                        <th>Status</th>
-                        <th>Joined</th>
+                        <th style="text-align:center;width:70px;">Joined</th>
+                        <th style="text-align:center;width:80px;">Character</th>
+                        <th style="text-align:center;width:90px;">Survey</th>
+                        <th style="text-align:center;width:70px;">Waiver</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody id="guestTableBody">
-                    <tr><td colspan="5" style="color:var(--fog);font-style:italic;text-align:center;padding:24px;">No guests yet.</td></tr>
+                    <tr><td colspan="8" style="color:var(--fog);font-style:italic;text-align:center;padding:24px;">No guests yet.</td></tr>
                 </tbody>
             </table>
         </div>
@@ -1209,7 +1212,7 @@
                     </tr>
                 </thead>
                 <tbody id="activityTable2">
-                    <tr><td colspan="5" style="color:var(--fog);font-style:italic;text-align:center;padding:24px;">Game hasn't started yet.</td></tr>
+                    <tr><td colspan="8" style="color:var(--fog);font-style:italic;text-align:center;padding:24px;">Game hasn't started yet.</td></tr>
                 </tbody>
             </table>
         </div>
@@ -1539,7 +1542,7 @@ function refreshHealth() {
     const tbody = document.getElementById(tbId);
     if (!tbody) return;
     if (playerList.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="color:var(--fog);font-style:italic;text-align:center;padding:24px;">No players yet.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" style="color:var(--fog);font-style:italic;text-align:center;padding:24px;">No players yet.</td></tr>';
         return;
     }
     tbody.innerHTML = playerList.map(p => {
@@ -1567,7 +1570,7 @@ function renderGuests() {
     const playerList = Object.entries(players);
 
     if (playerList.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="color:var(--fog);font-style:italic;text-align:center;padding:24px;">No guests yet.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" style="color:var(--fog);font-style:italic;text-align:center;padding:24px;">No guests yet.</td></tr>';
         return;
     }
 
@@ -1578,15 +1581,25 @@ function renderGuests() {
         const isPaid = p.paymentCollected || false;
         const isTest = uid.startsWith('test_player_');
 
-        const joinedDate = p.joinedAt ? new Date(p.joinedAt).toLocaleDateString('en-US', {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+        const hasChar      = !!p.characterId;
+        const hasSurvey    = !!p.questionnaire;
+        const hasWaiver    = !!p.waiverSigned;
+        const allDone      = hasChar && hasSurvey && hasWaiver;
+        const dot          = allDone ? '#3fb950' : (hasChar || hasSurvey ? '#c9a227' : '#c0392b');
+        const check = (ok) => ok
+            ? '<span style="color:#3fb950;font-size:16px;">✓</span>'
+            : '<span style="color:rgba(255,255,255,0.15);font-size:16px;">○</span>';
         return `
         <tr>
+            <td style="text-align:center;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${dot};"></span></td>
             <td>
                 <div class="guest-name">${p.displayName || uid} ${isTest ? '<span style="font-size:11px;color:var(--fog);">(test)</span>' : ''}</div>
             </td>
             <td style="font-size:13px;color:var(--mist);">${p.email || '—'}</td>
-            <td style="font-family:'Special Elite',monospace;font-size:10px;letter-spacing:1.5px;color:var(--fog);text-transform:uppercase;">${p.status || '—'}</td>
-            <td style="font-size:12px;color:var(--fog);">${joinedDate}</td>
+            <td style="text-align:center;">${check(true)}</td>
+            <td style="text-align:center;">${check(hasChar)}</td>
+            <td style="text-align:center;">${check(hasSurvey)}</td>
+            <td style="text-align:center;">${check(hasWaiver)}</td>
             <td><button class="btn-danger" onclick="removePlayer('${uid}', '${p.displayName || uid}')">Remove</button></td>
         </tr>`;
     }).join('');
