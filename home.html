@@ -493,6 +493,7 @@ async function joinParty() {
         // Add player to game
         await db.ref('games/' + gameId + '/players/' + currentUser.uid).set({
             displayName: currentUser.displayName || currentUser.email.split('@')[0],
+            email:       currentUser.email || null,
             joinedAt:    new Date().toISOString(),
             status:      'selecting'
         });
