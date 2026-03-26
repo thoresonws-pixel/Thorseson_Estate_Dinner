@@ -717,7 +717,7 @@ async function triggerInstall() {
 
 function dismissInstall() {
     document.getElementById('installBanner').style.display = 'none';
-    localStorage.setItem('installDismissed', 'true');
+    sessionStorage.setItem('installDismissed', 'true');
 }
 
 // ── HOME TABS ─────────────────────────────────────────────────
