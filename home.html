@@ -363,25 +363,12 @@
             <!-- Waiver -->
             <div style="border-top:1px solid rgba(201,162,39,0.08);padding-top:24px;margin-bottom:4px;">
                 <div style="font-family:'Special Elite',monospace;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(201,162,39,0.5);margin-bottom:12px;">Guest Agreement</div>
-                <div id="waiverStatus" style="display:none;font-family:'Special Elite',monospace;font-size:10px;letter-spacing:2px;color:#3fb950;margin-bottom:12px;">✓ Signed</div>
+                <div id="waiverStatus" style="display:none;">
+                    <span style="font-family:'Special Elite',monospace;font-size:10px;letter-spacing:2px;color:#3fb950;">✓ Agreement signed</span>
+                </div>
                 <div id="waiverForm">
-                    <div style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.06);padding:14px 16px;max-height:160px;overflow-y:auto;margin-bottom:14px;font-family:'Cormorant Garamond',Georgia,serif;font-size:14px;line-height:1.75;color:rgba(196,196,212,0.65);">
-                        <strong style="color:#f5f0e6;font-size:12px;letter-spacing:1px;">Age Verification</strong><br>
-                        I confirm that I am 21 years of age or older. I understand that valid photo ID will be required at the door.<br><br>
-                        <strong style="color:#f5f0e6;font-size:12px;letter-spacing:1px;">Alcohol Policy</strong><br>
-                        I understand that alcohol will be available at this event. I agree that the host reserves the right to refuse service or remove any guest who appears intoxicated or disruptive. I accept full responsibility for my own consumption.<br><br>
-                        <strong style="color:#f5f0e6;font-size:12px;letter-spacing:1px;">Nature of the Event</strong><br>
-                        I understand that Thor's Murder Mysteries is a theatrical interactive experience. I consent to participate and understand all scenarios are fictional.<br><br>
-                        <strong style="color:#f5f0e6;font-size:12px;letter-spacing:1px;">Photography</strong><br>
-                        I understand that photos may be taken during the event and shared with participants. I will notify the host before the event if I have concerns.
-                    </div>
-                    <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
-                        <input type="checkbox" id="waiverCheck" style="margin-top:3px;width:16px;height:16px;accent-color:#c9a227;flex-shrink:0;cursor:pointer;">
-                        <span style="font-family:'Cormorant Garamond',serif;font-size:15px;color:rgba(196,196,212,0.8);line-height:1.5;">
-                            I confirm I am 21 or older and agree to the terms above.
-                        </span>
-                    </label>
-                    <button onclick="signWaiver()" style="margin-top:14px;background:var(--gold);color:#06040a;border:none;font-family:'Special Elite',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;padding:12px 24px;cursor:pointer;">Sign Agreement</button>
+                    <p style="font-family:'Cormorant Garamond',serif;font-size:15px;color:rgba(196,196,212,0.6);margin-bottom:14px;line-height:1.6;">Before attending you'll need to read and sign our guest agreement covering age verification, alcohol policy, and the theatrical nature of the event.</p>
+                    <button onclick="openWaiverModal()" style="background:#c9a227;color:#06040a;border:none;font-family:'Special Elite',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;padding:13px 28px;cursor:pointer;font-weight:600;">Read &amp; Sign Agreement</button>
                 </div>
             </div>
 
@@ -391,6 +378,49 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- Waiver Modal -->
+<div id="waiverModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;align-items:center;justify-content:center;">
+    <div style="background:#0d0b14;border:1px solid rgba(201,162,39,0.2);border-top:2px solid #c9a227;width:90%;max-width:560px;max-height:90vh;display:flex;flex-direction:column;">
+        <!-- Modal header -->
+        <div style="padding:20px 24px 16px;border-bottom:1px solid rgba(201,162,39,0.1);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+            <div>
+                <div style="font-family:'Special Elite',monospace;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(201,162,39,0.4);margin-bottom:4px;">Thor's Murder Mysteries</div>
+                <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#f5f0e6;">Guest Agreement</div>
+            </div>
+            <button onclick="closeWaiverModal()" style="background:none;border:none;color:rgba(139,139,158,0.5);font-size:22px;cursor:pointer;padding:4px;">✕</button>
+        </div>
+        <!-- Scrollable body -->
+        <div id="waiverBody" onscroll="checkWaiverScroll()" style="flex:1;overflow-y:auto;padding:24px;font-family:'Cormorant Garamond',Georgia,serif;font-size:16px;line-height:1.8;color:rgba(196,196,212,0.75);">
+            <p style="margin-bottom:20px;font-style:italic;color:rgba(196,196,212,0.5);">Please read the full agreement before accepting.</p>
+
+            <strong style="color:#f5f0e6;font-family:'Special Elite',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;">1. Age Verification</strong>
+            <p style="margin:10px 0 20px;">I confirm that I am 21 years of age or older. I understand that valid government-issued photo identification will be required upon arrival at the event, and that I will be denied entry if I cannot provide it.</p>
+
+            <strong style="color:#f5f0e6;font-family:'Special Elite',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;">2. Alcohol Policy</strong>
+            <p style="margin:10px 0 20px;">I understand that alcohol will be available at this event. I agree that the host and any staff reserve the right to refuse service to any guest at any time, and to remove any guest who appears to be intoxicated or whose behaviour is disruptive to other guests. I accept full personal responsibility for my own alcohol consumption and any consequences thereof.</p>
+
+            <strong style="color:#f5f0e6;font-family:'Special Elite',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;">3. Nature of the Event</strong>
+            <p style="margin:10px 0 20px;">I understand that Thor's Murder Mysteries is a theatrical, interactive experience involving staged scenarios, immersive storytelling, and actor participation. I consent to take part in this experience and acknowledge that all scenarios, characters, and situations presented are entirely fictional.</p>
+
+            <strong style="color:#f5f0e6;font-family:'Special Elite',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;">4. Photography & Media</strong>
+            <p style="margin:10px 0 20px;">I understand that photographs and video may be taken during the event and shared with fellow participants via the Thor's Murder Mysteries platform. If I have any concerns about my image being captured or shared, I will notify the host prior to the event beginning.</p>
+
+            <strong style="color:#f5f0e6;font-family:'Special Elite',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;">5. Liability</strong>
+            <p style="margin:10px 0 20px;">I participate voluntarily and acknowledge that Thor's Murder Mysteries and its organizers are not liable for any personal injury, loss, or damage to property that may occur during the event, except where caused by gross negligence.</p>
+
+            <div style="height:40px;"></div><!-- spacer to ensure scroll reaches bottom -->
+        </div>
+        <!-- Footer — accept button locks until scrolled -->
+        <div style="padding:20px 24px;border-top:1px solid rgba(201,162,39,0.1);flex-shrink:0;">
+            <div id="waiverScrollHint" style="font-family:'Special Elite',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(139,139,158,0.4);text-align:center;margin-bottom:14px;">↓ Scroll to read the full agreement</div>
+            <button id="waiverAcceptBtn" onclick="signWaiver()" disabled
+                style="width:100%;background:rgba(201,162,39,0.2);color:rgba(201,162,39,0.4);border:1px solid rgba(201,162,39,0.2);font-family:'Special Elite',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;padding:15px;cursor:not-allowed;transition:all 0.3s;">
+                I Have Read and Accept the Agreement
+            </button>
+        </div>
+    </div>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
@@ -660,13 +690,46 @@ async function saveAccount() {
     setTimeout(() => el.style.display = 'none', 2000);
 }
 
-async function signWaiver() {
-    const checked = document.getElementById('waiverCheck').checked;
-    if (!checked) {
-        alert('Please check the box to confirm your agreement.');
-        return;
+function openWaiverModal() {
+    const modal = document.getElementById('waiverModal');
+    modal.style.display = 'flex';
+    // Reset scroll and button
+    document.getElementById('waiverBody').scrollTop = 0;
+    const btn = document.getElementById('waiverAcceptBtn');
+    btn.disabled = true;
+    btn.style.background = 'rgba(201,162,39,0.2)';
+    btn.style.color = 'rgba(201,162,39,0.4)';
+    btn.style.borderColor = 'rgba(201,162,39,0.2)';
+    btn.style.cursor = 'not-allowed';
+    document.getElementById('waiverScrollHint').style.display = 'block';
+}
+
+function closeWaiverModal() {
+    document.getElementById('waiverModal').style.display = 'none';
+}
+
+function checkWaiverScroll() {
+    const body = document.getElementById('waiverBody');
+    const scrolledToBottom = body.scrollTop + body.clientHeight >= body.scrollHeight - 20;
+    if (scrolledToBottom) {
+        const btn = document.getElementById('waiverAcceptBtn');
+        btn.disabled = false;
+        btn.style.background = '#c9a227';
+        btn.style.color = '#06040a';
+        btn.style.borderColor = '#c9a227';
+        btn.style.cursor = 'pointer';
+        document.getElementById('waiverScrollHint').style.display = 'none';
     }
-    await db.ref('users/' + currentUser.uid).update({
+}
+
+// Close modal on backdrop click
+document.addEventListener('click', e => {
+    const modal = document.getElementById('waiverModal');
+    if (modal && e.target === modal) closeWaiverModal();
+});
+
+async function signWaiver() {
+        await db.ref('users/' + currentUser.uid).update({
         waiverSigned: true,
         waiverSignedAt: new Date().toISOString()
     });
@@ -684,6 +747,7 @@ async function signWaiver() {
 
     document.getElementById('waiverStatus').style.display = 'block';
     document.getElementById('waiverForm').style.display = 'none';
+    closeWaiverModal();
 }
 
 
